@@ -4,10 +4,8 @@ import { pgTable, serial, varchar, text, date, integer, boolean, unique, primary
 export const users = pgTable("users", {
 	user_id: serial("user_id").primaryKey(),
 	user_type: varchar("user_type", { enum: ["talent", "employer"] }).notNull(),
-	first_name: varchar("first_name", { length: 255 }),
-	last_name: varchar("last_name", { length: 255 }),
+	full_name: varchar("full_name", { length: 255 }),
 	email: varchar("email", { length: 255 }).unique().notNull(),
-	location: varchar("location", { length: 255 }),
 	created_at: date("created_at").defaultNow(),
 });
 
@@ -20,13 +18,14 @@ export const talent_profiles = pgTable("talent_profiles", {
 		.references(() => users.user_id)
 		.unique()
 		.notNull(),
+	avatar_url: varchar("avatar_url", { length: 255 }),
+	phone_number: varchar("phone_number", { length: 255 }),
 	location: varchar("location", { length: 255 }),
-	education: text("education"),
-	work_experience: text("work_experience"),
-	skills: varchar("skill", { length: 255 }).array(), // Array of strings for skills
-	personality_type: varchar("personality_type", { length: 255 }),
-	personality_description: text("personality_description"),
-	questions_section: text("questions_section"),
+	skills: varchar("skill", { length: 255 }).array(),
+
+	// personality_type: varchar("personality_type", { length: 255 }),
+	// personality_description: text("personality_description"),
+	// questions_section: text("questions_section"),
 });
 
 // Education Entries

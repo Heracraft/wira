@@ -122,3 +122,9 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+.thinScrollBar::-webkit-scrollbar {
+    width: 0;
+	padding: 0;
+	background: transparent;
+}
