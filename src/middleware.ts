@@ -1,6 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
+import type { User } from "@supabase/supabase-js";
+
+function redirectTo(path: string, request: NextRequest) {
+	const url = request.nextUrl.clone();
+	url.pathname = path;
+	return NextResponse.redirect(url);
+}
+
 export async function updateSession(request: NextRequest) {
 	let response = NextResponse.next({
 		request,
@@ -34,32 +42,47 @@ export async function updateSession(request: NextRequest) {
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	if (!user && !request.nextUrl.pathname.startsWith("/login") && !request.nextUrl.pathname.startsWith("/auth")) {
-		// no user, potentially respond by redirecting the user to the login page
-		const url = request.nextUrl.clone();
-		url.pathname = "/auth";
-		return NextResponse.redirect(url);
+	if (!user && !request.nextUrl.pathname.startsWith("/auth")) {
+		// no user & is not heading to auth page, potentially respond by redirecting the user to the login page
+		return redirectTo("/auth", request);
 	}
 
-	// TODO: Reach metadata to check if onboarding is completed, else redirect to onboarding page
-	// TODO: Redirect to the verify email page if the user is not verified
-	else{
-		console.log(user?.user_metadata.onboarding_completed);
-		// if (user?.email_confirmed_at === null && !request.nextUrl.pathname.startsWith("/auth")) {
-		// 	// user is not verified, redirect to the verify email page
-		// 	const url = request.nextUrl.clone();
-		// 	url.pathname = "/auth/verify-email";
-		// 	return NextResponse.redirect(url);
-		// }
+	// [x]: Reach metadata to check if onboarding is completed, else redirect to onboarding page
+	// [ ]: Redirect to the verify email page if the user is not verified
+	else if (!user?.user_metadata.isOnboarded && !request.nextUrl.pathname.startsWith("/onboarding") && !request.nextUrl.pathname.startsWith("/auth") && !request.nextUrl.pathname.startsWith("/admin")) {
+		// user is verified but onboarding is not completed, redirect to the onboarding
+		return redirectTo("/onboarding", request);
+	}
+	// if (user?.email_confirmed_at === null && !request.nextUrl.pathname.startsWith("/auth")) {
+	// 	// user is not verified, redirect to the verify email page
+	// 	const url = request.nextUrl.clone();
+	// 	url.pathname = "/auth/verify-email";
+	// 	return NextResponse.redirect(url);
+	// }
 
-		if (!user?.user_metadata.isOnboarded && !request.nextUrl.pathname.startsWith("/onboarding")) {
-			// user is verified but onboarding is not completed, redirect to the onboarding
-			const url = request.nextUrl.clone();
-			url.pathname = "/onboarding";
-			return NextResponse.redirect(url);
+	const toDashBoard = (user: User) => {
+		// redirect to role-specific dashboard if user is logged in and trying to access dashboard using /dashboard
+		let userType = user.user_metadata.userType;
+		if (userType === "talent") {
+			return redirectTo(`/dashboard/talent/personal-info`, request);
+		} else if (userType === "employer") {
+			return redirectTo(`/dashboard/employer`, request);
+		}
+	};
+
+	if (user && user?.user_metadata.isOnboarded) {
+		// user is logged in and onboarding is completed
+
+		if (request.nextUrl.pathname.startsWith("/auth")) {
+			// redirect to dashboard if user is logged in and trying to access auth pages
+			return toDashBoard(user);
+		}
+
+		if (request.nextUrl.pathname === "/dashboard") {
+			// redirect to role-specific dashboard if user is logged in and trying to access dashboard using /dashboard
+			return toDashBoard(user);
 		}
 	}
-
 
 	// IMPORTANT: You *must* return the supabaseResponse object as it is.
 	// If you're creating a new response object with NextResponse.next() make sure to:

@@ -1,0 +1,1 @@
+ALTER TABLE "talentProfiles" ADD COLUMN "linkedInProfile" varchar(255);

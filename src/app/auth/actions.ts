@@ -17,6 +17,9 @@ export async function login(credentials: { email: string; password: string }) {
 		password,
 	};
 
+	console.log({data});
+	
+
 	const { error } = await supabase.auth.signInWithPassword(data);
 
 	if (error) {

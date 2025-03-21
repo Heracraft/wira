@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm, SubmitHandler, set } from "react-hook-form";
 
-import SubmitButton from "@/components/auth/SubmitButton";
+import SubmitButton from "@/components/submitButton";
 import PasswordInput from "@/components/auth/PasswordInput";
 
 import { Button } from "@/components/ui/button";
@@ -34,9 +34,10 @@ export default function page() {
 
 	const onSubmit: SubmitHandler<Record<string, any>> = async (data) => {
 		try {
-			const email = data.username;
+			const email = data.email;
 			const password = data.password;
 			let res = await login({ email, password });
+			// TODO: fix: user state does not update after login
 			if (res.status == 400) {
 				throw new Error(res.message);
 			}
@@ -61,16 +62,24 @@ export default function page() {
 						<form onSubmit={handleSubmit(onSubmit)}>
 							<div className="grid gap-6">
 								<div className="grid gap-6">
-									{/* <div className="grid gap-2">
-										<Label htmlFor="email">Email</Label>
-										<Input id="email" type=" email" placeholder="m@example.com" required />
-									</div> */}
 									<div className="grid gap-2">
-										<Label htmlFor="username">Username</Label>
-										<Input {...register("username", { required: true })} id="username" type="text" placeholder="Enter your username" required autoComplete="username webauthn" />
-										{errors.username && (
+										<Label htmlFor="email">Email</Label>
+										<Input
+											{...register("email", {
+												required: "Email is required",
+												pattern: {
+													value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+													message: "Invalid email address",
+												},
+											})}
+											id="email"
+											type=" email"
+											placeholder="m@example.com"
+											required
+										/>
+										{errors.email && (
 											<span role="alert" className="text-muted-foreground text-xs">
-												A username is required
+												{errors.email.message as string}
 											</span>
 										)}
 									</div>

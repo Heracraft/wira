@@ -8,6 +8,41 @@
       "when": 1739507045841,
       "tag": "0000_tranquil_micromacro",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1741572443222,
+      "tag": "0001_worthless_warbound",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1741658035099,
+      "tag": "0002_far_meteorite",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1742525451707,
+      "tag": "0003_sloppy_hammerhead",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1742525529196,
+      "tag": "0004_last_mimic",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1742527544626,
+      "tag": "0005_slim_starbolt",
+      "breakpoints": true
     }
   ]
 }

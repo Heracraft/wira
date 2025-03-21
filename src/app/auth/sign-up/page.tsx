@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label";
 import { Loader2, Info } from "lucide-react";
 
 import PasswordInput from "@/components/auth/PasswordInput";
-import SubmitButton from "@/components/auth/SubmitButton";
+import SubmitButton from "@/components/SubmitButton";
 
 import { signup } from "../actions";
 

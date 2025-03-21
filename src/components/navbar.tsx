@@ -3,29 +3,48 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { useState } from "react";
+import { use, useState } from "react";
 
-import { Menu, Package } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 import { Button } from "./ui/button";
 
-const routes = [
+import { Menu, Package } from "lucide-react";
+
+import { userStore } from "@/lib/store";
+
+type Route = {
+	label: string;
+	href: string;
+	for: "all" | "employer" | "talent";
+	restricted?: boolean;
+};
+
+const routes: Route[] = [
 	{
 		label: "Home",
 		href: "/",
+		for: "all",
+	},
+	{
+		label: "Dashboard",
+		href: "/dashboard",
+		for: "all",
+		restricted: true,
 	},
 	{
 		label: "Search",
 		href: "/search",
-	},
-	{
-		label: "Messages",
-		href: "/messages",
+		for: "employer",
+		restricted: true,
 	},
 ];
 
 export default function Navbar() {
 	const pathname = usePathname() || "/";
+
+	const user = userStore((state) => state.user);
 
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 	const toggleMobileMenu = () => {
@@ -43,6 +62,9 @@ export default function Navbar() {
 				</a>
 				<div className="gap-10 h-full hidden md:flex">
 					{routes.map((route, index) => {
+						if ((route.restricted && !user) || (route.for != user?.userType && route.for != "all")) {
+							return null;
+						}
 						if (route.href == pathname) {
 							return (
 								<Link key={index} href={route.href} className="flex items-center h-full text-primary relative after:content-[''] after:absolute after:top-full after:-translate-y-0.5 after:-translate-x-1/2 after:left-1/2 after:w-[200%] after:h-1 after:bg-primary after:rounded">
@@ -57,12 +79,16 @@ export default function Navbar() {
 							);
 						}
 					})}
+					
 				</div>
 			</div>
 			{isMobileMenuOpen && (
 				<div className="absolute top-full inset-x-0 bg-background md:hidden  px-2 pb-4">
 					<div className="flex flex-col gap-3 p-2 border rounded-lg">
 						{routes.map((route, index) => {
+							if ((route.restricted && !user) || route.for != user?.userType) {
+								return null;
+							}
 							if (route.href == pathname) {
 								return (
 									<Link key={index} href={route.href} className="flex items-center bg-primary text-white w-full px-3 py-2 rounded">
@@ -77,37 +103,49 @@ export default function Navbar() {
 								);
 							}
 						})}
+						{/* [x]: include /dashboard and search routes with conditions to them */}
 					</div>
 				</div>
 			)}
 
-			{/* <div className="relative hidden flex-1 mx-5 md:block max-w-md">
-					<div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-						<svg className="w-5 h-5 text-neutral-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-							<path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-						</svg>
-						<span className="sr-only">Search icon</span>
-					</div>
-					<input type="text" className="peer block outline-none w-full p-2 pl-10 text-sm text-neutral-900 border border-neutral-300 rounded-lg bg-neutral-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-neutral-700 dark:border-neutral-600 dark:placeholder-neutral-500 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search..." />
-				</div> */}
-
-			{/* <div className="flex">
-					<Avatar config={{ url: $user.photoURL }} />
-					
-					<button
-						className="hidden sm:block px-3 py-2 font-semibold text-neutral-700 dark:text-neutral-50 rounded-lg">Log out</button
-					>
-				</div> */}
-			{/* if not signed in */}
 			<div className="flex-1 flex items-center justify-end py-2.5">
 				<div className="flex gap-2">
 					{/* <a href={`/auth?continueUrl=${$page.url.pathname}`}> */}
-					<a href="#">
-						<Button className="bg-primary text-white sm:hidden">Sign Up</Button>
-						<Button className="bg-primary text-white hidden sm:block" size={"lg"}>
-							Sign Up
-						</Button>
-					</a>
+					{user && user.fullName ? (
+						<DropdownMenu>
+							<DropdownMenuTrigger>
+								<Avatar>
+									<AvatarImage src={user.avatarUrl || undefined} />
+									<AvatarFallback>
+										{user.fullName
+											.split(" ")
+											.map((el) => el[0])
+											.join("")}
+									</AvatarFallback>
+								</Avatar>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent className="w-36">
+								<DropdownMenuLabel>{user.fullName}</DropdownMenuLabel>
+								<DropdownMenuItem asChild>
+									<Link href={`/dashboard/${user.userType}`}>Profile</Link>
+								</DropdownMenuItem>
+								<DropdownMenuItem>
+									<Link href="/settings">Settings</Link>
+								</DropdownMenuItem>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem>
+									<Link href="/auth/sign-out">Sign Out</Link>
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					) : (
+						<a href="/auth/sign-up">
+							<Button className="bg-primary text-white sm:hidden">Sign Up</Button>
+							<Button className="bg-primary text-white hidden sm:block" size={"lg"}>
+								Sign Up
+							</Button>
+						</a>
+					)}
 					<button className="rounded hover:bg-accent p-2 block md:hidden" onClick={() => toggleMobileMenu()}>
 						<Menu className="size-6 text-muted-foreground" />
 					</button>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState, ChangeEventHandler, useEffect } from "react";
+import React, { useState} from "react";
 
 import { useForm, SubmitHandler, Controller, useWatch } from "react-hook-form";
 
@@ -10,22 +10,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Calendar } from "@/components/ui/calendar";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
+import DatePickerInput from "@/components/auth/DatePicker";
 import { PhoneInput } from "@/components/auth/PhoneNumberInput";
-import SubmitButton from "@/components/auth/SubmitButton";
+import SubmitButton from "@/components/SubmitButton";
 
-import { CalendarIcon, CircleCheck, ChevronsUpDown } from "lucide-react";
-
-import { format, isValid, parse } from "date-fns";
-
-import { toast } from "sonner";
+import {CircleCheck, ChevronsUpDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-
 import { industries } from "@/lib/shared";
+import { onBoardCompany, onBoardTalent } from "./actions";
+import { userStore } from "@/lib/store";
 
 const accountTypes = [
 	{
@@ -48,47 +45,7 @@ function formatDate(date: Date, locale: string = "en-US"): string {
 	}).format(date);
 }
 
-function DatePickerInput({ date, setDate }: { date: Date; setDate: React.Dispatch<React.SetStateAction<Date | undefined>> }) {
-	const [open, setOpen] = useState(false);
-	const [inputValue, setInputValue] = useState("");
-	// const [date, setDate] = useState<Date>();
 
-	const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-		setInputValue(e.currentTarget.value);
-		const date = parse(e.currentTarget.value, "dd-MM-y", new Date());
-		if (isValid(date)) {
-			setDate(date);
-		} else {
-			setDate(undefined);
-		}
-	};
-
-	const handleSelectDate = React.useCallback((selected: any) => {
-		setDate(selected);
-		if (selected) {
-			setOpen(false);
-			setInputValue(format(selected, "dd-MM-y"));
-		} else {
-			setInputValue("");
-		}
-	}, []);
-
-	return (
-		<Popover open={open} onOpenChange={setOpen}>
-			<fieldset className="relative">
-				<Input placeholder="DD-MM-YYYY" value={inputValue} onChange={handleInputChange} />
-				<PopoverTrigger asChild>
-					<Button aria-label="Pick a date" variant={"secondary"} className={cn("absolute right-1 top-1/2 h-7 -translate-y-1/2 rounded-sm border px-1.5 font-normal", !date && "text-muted-foreground")}>
-						<CalendarIcon className="h-4 w-4" />
-					</Button>
-				</PopoverTrigger>
-			</fieldset>
-			<PopoverContent className="w-auto p-0">
-				<Calendar mode="single" defaultMonth={date} selected={date} onSelect={handleSelectDate} initialFocus />
-			</PopoverContent>
-		</Popover>
-	);
-}
 
 function Stepper({ steps, currentStep, setCurrentStep, className }: { steps: string[]; currentStep: number; setCurrentStep?: (step: number) => void; className?: string }) {
 	return (
@@ -133,7 +90,14 @@ function Stepper({ steps, currentStep, setCurrentStep, className }: { steps: str
 }
 
 export default function page() {
+	const user = userStore((state) => state.user);
+	// console.log(user);
 	const router = useRouter();
+
+	const [error, setError] = useState({
+		status: false,
+		message: "",
+	});
 
 	const [currentStep, setCurrentStep] = useState(0);
 
@@ -150,17 +114,53 @@ export default function page() {
 
 	const onTalentSubmit: SubmitHandler<Record<string, any>> = async (data) => {
 		try {
-			setCurrentStep(2);
-		} catch (error) {
-			console.error(error);
+			if (!user) {
+				throw new Error("User not found");
+			}
+			let res = await onBoardTalent(user.id, {
+				fullName: data.fullName,
+				dateOfBirth: data.dateOfBirth.toISOString(),
+				email: user.email,
+				phoneNumber: data.phoneNumber,
+			});
+			if (res.status == 200) {
+				setCurrentStep(2);
+				setTimeout(() => {
+					router.push("/dashboard");
+				}, 5000);
+			}
+		} catch (error: any) {
+			console.log(error);
+			setError({ status: true, message: error.message });
+			setTimeout(() => {
+				setError({ status: false, message: "" });
+			}, 10000);
 		}
 	};
 
 	const onCompanySubmit: SubmitHandler<Record<string, any>> = async (data) => {
 		try {
+			if (!user){
+				throw new Error("User not found");
+			}
+			let res = await onBoardCompany(user.id, {
+				companyName: data.companyName,
+				contactPersonName: data.contactPersonName,
+				contactPersonPosition: data.contactPersonPosition,
+				companyWebsite: data.companyWebsite,
+				industry: data.industry,
+				email: user.email,
+			});
 			setCurrentStep(2);
-		} catch (error) {
+			if (res.status == 200) {
+				router.push("/dashboard");
+			}
+		} catch (error:any) {
 			console.error(error);
+			setError({ status: true, message: error.message });
+			setTimeout(() => {
+				setError({ status: false, message: "" });
+			}, 10000);
 		}
 	};
 
@@ -276,10 +276,11 @@ export default function page() {
 											isSubmitSuccessful,
 											isValid,
 										}}
-										loadingText="creating your account"
+										loadingText="Setting you up"
 									>
 										Finish
 									</SubmitButton>
+									{error.status && <p className="text-xs w-full text-center text-destructive">{error.message}</p>}
 								</form>
 							</CardContent>
 						</Card>
@@ -335,12 +336,8 @@ export default function page() {
 												render={({ field }) => (
 													<Popover>
 														<PopoverTrigger asChild>
-															<Button variant="outline" className="flex justify-between">
-																{field.value ? industries.find((industry) => {
-																	console.log(industry.value, field.value);
-																	
-																	return industry.value == field.value
-																})?.label : "Select an Industry"}
+															<Button variant="outline" className="flex justify-between font-normal">
+																{field.value}
 																<ChevronsUpDown size={20} />
 															</Button>
 														</PopoverTrigger>
@@ -351,11 +348,7 @@ export default function page() {
 																	<CommandEmpty>No Industry found</CommandEmpty>
 																	<CommandGroup>
 																		{industries.map((industry, index) => (
-																			<CommandItem key={index} onClick={() => {
-																				console.log("c;", industry.value);
-																				
-																				field.onChange(industry.value);
-																			}}>
+																			<CommandItem key={index} onSelect={() => field.onChange(industry.value)}>
 																				{industry.label}
 																			</CommandItem>
 																		))}
@@ -401,10 +394,12 @@ export default function page() {
 											isSubmitSuccessful,
 											isValid,
 										}}
-										loadingText="creating your account"
+										loadingText="Setting you up"
 									>
 										Finish
 									</SubmitButton>
+									{error.status && <p className="text-xs w-full text-center text-destructive">{error.message}</p>}
+
 								</form>
 							</CardContent>
 						</Card>
@@ -424,10 +419,7 @@ export default function page() {
 						<CardContent>
 							<div className="flex gap-2">
 								<Button asChild className="w-full">
-									<Link href="/dashboard">Start Investing</Link>
-								</Button>
-								<Button variant={"secondary"} asChild className="w-full">
-									<Link href="/">Learnmore</Link>
+									<Link href="/dashboard">Head to the dashboard</Link>
 								</Button>
 							</div>
 						</CardContent>

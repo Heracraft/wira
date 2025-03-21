@@ -2,79 +2,104 @@ import { pgTable, serial, varchar, text, date, integer, boolean, unique, primary
 
 // Users (Talent or Employers)
 export const users = pgTable("users", {
-	user_id: serial("user_id").primaryKey(),
-	user_type: varchar("user_type", { enum: ["talent", "employer"] }).notNull(),
-	full_name: varchar("full_name", { length: 255 }),
+	userId: varchar("userId", { length: 255 }).primaryKey(),
+	userType: varchar("userType", { enum: ["talent", "employer"] }).notNull(),
 	email: varchar("email", { length: 255 }).unique().notNull(),
-	created_at: date("created_at").defaultNow(),
+	createdAt: date("createdAt").defaultNow(),
 });
 
 export type InsertUser = typeof users.$inferInsert;
 
 // Talent Profiles
-export const talent_profiles = pgTable("talent_profiles", {
-	profile_id: serial("profile_id").primaryKey(),
-	user_id: integer("user_id")
-		.references(() => users.user_id)
+export const talentProfiles = pgTable("talentProfiles", {
+	profileId: serial("profileId").primaryKey(),
+	userId: varchar("userId", { length: 255 })
+		.references(() => users.userId)
 		.unique()
 		.notNull(),
-	avatar_url: varchar("avatar_url", { length: 255 }),
-	phone_number: varchar("phone_number", { length: 255 }),
-	location: varchar("location", { length: 255 }),
-	skills: varchar("skill", { length: 255 }).array(),
+	fullName: varchar("fullName", { length: 255 }),
+	phoneNumber: varchar("phoneNumber", { length: 255 }),
+	dateOfBirth: date("dateOfBirth"),
+	avatarUrl: varchar("avatarUrl", { length: 255 }),
+	// location: varchar("location", { length: 255 }),
+	country: varchar("country", { length: 255 }),
+	region: varchar("region", { length: 255 }),
+	postalCode: varchar("postalCode", { length: 255 }),
 
-	// personality_type: varchar("personality_type", { length: 255 }),
-	// personality_description: text("personality_description"),
-	// questions_section: text("questions_section"),
+	linkedInProfile: varchar("linkedInProfile", { length: 255 }),
+
+	// skills: varchar("skill", { length: 255 }).array(), // There is a separate table for skills
+
+	// personalityType: varchar("personalityType", { length: 255 }),
+	// personalityDescription: text("personalityDescription"),
+	// questionsSection: text("questionsSection"),
 });
 
+export const companyProfiles = pgTable("companyProfiles", {
+	profileId: serial("profileId").primaryKey(),
+	userId: varchar("userId")
+		.references(() => users.userId)
+		.unique()
+		.notNull(),
+	companyName: varchar("companyName", { length: 255 }).notNull(),
+	contactPersonName: varchar("contactPersonName", { length: 255 }).notNull(),
+	contactPersonPosition: varchar("contactPersonPosition", { length: 255 }).notNull(),
+	companyWebsite: varchar("companyWebsite", { length: 255 }),
+	industry: varchar("industry", { length: 255 }),
+	country: varchar("country", { length: 255 }),
+	region: varchar("region", { length: 255 }),
+	avatarUrl: varchar("avatarUrl", { length: 255 }),
+});
+
+export type InsertCompanyProfile = typeof companyProfiles.$inferInsert;
+
 // Education Entries
-export const education_entries = pgTable("education_entries", {
-	education_id: serial("education_id").primaryKey(),
-	profile_id: integer("profile_id")
-		.references(() => talent_profiles.profile_id)
+export const educationEntries = pgTable("educationEntries", {
+	educationId: serial("educationId").primaryKey(),
+	profileId: integer("profileId")
+		.references(() => talentProfiles.profileId)
 		.notNull(),
 	institution: varchar("institution", { length: 255 }),
 	degree: varchar("degree", { length: 255 }),
-	start_date: date("start_date"),
-	end_date: date("end_date"),
+	startDate: date("startDate"),
+	endDate: date("endDate"),
 });
 
 // Work Experience Entries
-export const work_experience_entries = pgTable("work_experience_entries", {
-	experience_id: serial("experience_id").primaryKey(),
-	profile_id: integer("profile_id")
-		.references(() => talent_profiles.profile_id)
+export const workExperienceEntries = pgTable("workExperienceEntries", {
+	experienceId: serial("experienceId").primaryKey(),
+	profileId: integer("profileId")
+		.references(() => talentProfiles.profileId)
 		.notNull(),
 	company: varchar("company", { length: 255 }),
 	position: varchar("position", { length: 255 }),
-	start_date: date("start_date"),
-	end_date: date("end_date"),
+	startDate: date("startDate"),
+	endDate: date("endDate"),
 	description: text("description"),
 });
 
 // Skills
 export const skills = pgTable("skills", {
-	skill_id: serial("skill_id").primaryKey(),
-	skill_name: varchar("skill_name", { length: 255 }).unique().notNull(),
+	skillId: serial("skillId").primaryKey(),
+	skillName: varchar("skillName", { length: 255 }).unique().notNull(),
 });
 
 // Linking Table for Talent Profiles and Skills (Many-to-Many)
-export const talent_skills = pgTable(
-	"talent_skills",
+export const talentSkills = pgTable(
+	"talentSkills",
 	{
-		talent_id: integer("talent_id")
-			.references(() => talent_profiles.profile_id)
+		talentId: integer("talentId")
+			.references(() => talentProfiles.profileId)
 			.notNull(),
-		skill_id: integer("skill_id")
-			.references(() => skills.skill_id)
+		skillId: integer("skillId")
+			.references(() => skills.skillId)
 			.notNull(),
-		experience_level: varchar("experience_level", { length: 255 }),
+		experienceLevel: varchar("experienceLevel", { length: 255 }),
 	},
 	(table) => [
-		primaryKey({ columns: [table.talent_id, table.skill_id] }),
+		primaryKey({ columns: [table.talentId, table.skillId] }),
 		// Composite key to prevent duplicates
 	]
 );
 
-// ... (Other tables like job_postings, matches, career_insights, testimonials, etc. -  You can translate those similarly)
+// ... (Other tables like jobPostings, matches, careerInsights, testimonials, etc. -  You can translate those similarly)
