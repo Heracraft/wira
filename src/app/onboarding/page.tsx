@@ -15,7 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 
 import DatePickerInput from "@/components/auth/DatePicker";
 import { PhoneInput } from "@/components/auth/PhoneNumberInput";
-import SubmitButton from "@/components/SubmitButton";
+import SubmitButton from "@/components/submitButton";
 
 import {CircleCheck, ChevronsUpDown } from "lucide-react";
 
