@@ -43,6 +43,13 @@
       "when": 1742527544626,
       "tag": "0005_slim_starbolt",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1742609552384,
+      "tag": "0006_curved_legion",
+      "breakpoints": true
     }
   ]
 }

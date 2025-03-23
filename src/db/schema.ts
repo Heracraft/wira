@@ -61,8 +61,8 @@ export const educationEntries = pgTable("educationEntries", {
 		.notNull(),
 	institution: varchar("institution", { length: 255 }),
 	degree: varchar("degree", { length: 255 }),
-	startDate: date("startDate"),
-	endDate: date("endDate"),
+	startDate: varchar("startDate", { length: 25 }),
+	endDate: varchar("endDate",{ length: 25 }),
 });
 
 // Work Experience Entries

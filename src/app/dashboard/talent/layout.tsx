@@ -39,7 +39,7 @@ export default function Page({
 					</li>
 				))}
 			</ul>
-			<div className="flex flex-col p-10 gap-5 flex-1">{children}</div>
+			<div className="flex flex-col p-10 gap-5 flex-1 max-w-xl">{children}</div>
 		</>
 	);
 }

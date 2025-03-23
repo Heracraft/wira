@@ -16,14 +16,15 @@ type buttonProps = {
 	children: React.ReactNode;
 	buttonState: buttonState;
 	loadingText?: string;
+	size?: "default" | "sm" | "lg" | "icon";
 };
 
-export default function SubmitButton({ className, children, buttonState, loadingText }: buttonProps) {
+export default function SubmitButton({ className, children, buttonState, loadingText, size="default" }: buttonProps) {
 	const { isSubmitting, isSubmitSuccessful, isSubmitted, isValid } = buttonState;
 
 	if (isSubmitting) {
 		return (
-			<Button type="submit" className={cn("w-full flex items-center gap-2",className)}>
+			<Button type="submit" className={cn("w-full flex items-center gap-2", className)} size={size}>
 				<Loader2 className="animate-spin" size={20} />
 				{loadingText || children + "ing"}
 			</Button>
@@ -31,13 +32,13 @@ export default function SubmitButton({ className, children, buttonState, loading
 	}
 	if (!isValid && isSubmitted && !isSubmitSuccessful) {
 		return (
-			<Button disabled type="submit" className={cn("w-full",className)}>
+			<Button disabled type="submit" className={cn("w-full", className)} size={size}>
 				{children}
 			</Button>
 		);
 	}
 	return (
-		<Button type="submit" className={cn("w-full",className)}>
+		<Button type="submit" className={cn("w-full", className)} size={size}>
 			{children}
 		</Button>
 	);

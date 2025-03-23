@@ -42,6 +42,7 @@ export async function updateSession(request: NextRequest) {
 		data: { user },
 	} = await supabase.auth.getUser();
 
+	// TODO: allow public access to / route
 	if (!user && !request.nextUrl.pathname.startsWith("/auth")) {
 		// no user & is not heading to auth page, potentially respond by redirecting the user to the login page
 		return redirectTo("/auth", request);
