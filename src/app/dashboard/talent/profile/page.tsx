@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import type { FieldValues } from "react-hook-form";
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from "@/components/ui/dropdown-menu";
@@ -18,12 +19,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { buttonVariants, Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 
 import SubmitButton from "@/components/submitButton";
+import MonthPicker from "@/components/MonthPicker";
 
 import { Plus, X, EllipsisVertical, Pencil, Trash2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 type EducationEntry = {
 	degree: string;
@@ -104,9 +108,94 @@ function EducationForm({ onSubmitHandler, defaultValues }: { onSubmitHandler: (i
 	);
 }
 
+type WorkExperienceEntry = {
+	company: string;
+	position: string;
+	startDate: Date | string;
+	endDate: string | Date;
+	description: string;
+};
+
+function WorkExperienceForm({ onSubmitHandler, defaultValues }: { onSubmitHandler: (item: WorkExperienceEntry) => void; defaultValues?: WorkExperienceEntry }) {
+	const [entry, setEntry] = useState<WorkExperienceEntry>({
+		company: "",
+		position: "",
+		startDate: "",
+		endDate: "",
+		description: "",
+	});
+
+	useEffect(() => {
+		if (defaultValues) {
+			setEntry(defaultValues);
+		}
+	}, []);
+
+	return (
+		<>
+			<div>
+				<Label>
+					Company/Organization <span className="text-red-500">*</span>
+				</Label>
+				<Input value={entry.company} onChange={(e) => setEntry({ ...entry, company: e.target.value })} placeholder="Example Corp" />
+			</div>
+			<div>
+				<Label>
+					Position <span className="text-red-500">*</span>
+				</Label>
+				<Input value={entry.position} onChange={(e) => setEntry({ ...entry, position: e.target.value })} placeholder="e.g., Software Engineer" />
+			</div>
+			<div>
+				<Label>
+					Start Date <span className="text-red-500">*</span>
+				</Label>
+				<MonthPicker
+					date={entry.startDate as Date}
+					currentMonth={new Date()}
+					setMonth={(value) => {
+						if (value) {
+							setEntry((prevState) => {
+								return { ...prevState, startDate: value };
+							});
+						}
+					}}
+				/>
+			</div>
+			<div>
+				<Label>
+					End Date <span className="text-red-500">*</span>
+				</Label>
+				<MonthPicker
+					date={entry.endDate as Date}
+					currentMonth={new Date()}
+					setMonth={(value) => {
+						if (value) {
+							setEntry((prevState) => {
+								return { ...prevState, endDate: value };
+							});
+						}
+					}}
+				/>
+			</div>
+			<div>
+				<Label>
+					Description <span className="text-red-500">*</span>
+				</Label>
+				<Textarea value={entry.description} onChange={(e) => setEntry({ ...entry, description: e.target.value })} placeholder="Describe your role and responsibilities" />
+			</div>
+			<DialogClose asChild>
+				<Button onClick={() => onSubmitHandler(entry)} className="w-full bg-neutral-950">
+					Add
+				</Button>
+			</DialogClose>
+		</>
+	);
+}
+
 export default function Page() {
 	// const [eduBackgroundsRequired, setEduBackgroundsRequired] = useState(1);
 	const [isEditing, setIsEditing] = useState(false);
+	const [skillsInput, setSkillsInput] = useState("");
 
 	const {
 		register,
@@ -119,23 +208,54 @@ export default function Page() {
 		mode: "onBlur",
 	});
 
+	const formValues = watch();
+
+	useEffect(() => {
+		// Save form values to local storage every 10 seconds
+		const handler = setTimeout(() => {
+			localStorage.setItem("form-snapshot-profile", JSON.stringify(formValues));
+		}, 5000);
+
+		return () => clearTimeout(handler);
+	}, [formValues]);
+
+	useEffect(() => {
+		// Load form values from local storage on component mount
+		const snapshot = localStorage.getItem("form-snapshot-profile");
+		if (snapshot) {
+			const parsedSnapshot = JSON.parse(snapshot);
+			Object.keys(parsedSnapshot).forEach((key) => {
+				setValue(key, parsedSnapshot[key]);
+			});
+		}
+	}, []);
+
 	return (
-		<>
-			<h3 className="font-medium text-lg">Personal Info</h3>
+		<form className="flex max-w-xl flex-1 flex-col gap-5 p-10" onSubmit={handleSubmit((data) => console.log(data))}>
+			<h3 className="text-lg font-medium">Personal Info</h3>
 			<div>
 				<Label>Education Background</Label>
 				<Controller
 					name="education"
 					control={control}
 					defaultValue={[]}
-					rules={{ required: "At least one education entry is required" }}
+					rules={{
+						validate: (value) => {
+							if (value.length < 1) {
+								return "At least one education background is required";
+							}
+							if (value.length > 3) {
+								return "Maximum of 3 education backgrounds allowed";
+							}
+						},
+					}}
 					render={({ field, fieldState }) => {
 						return (
 							<Dialog>
-								<div className="mt-2 p-3 gap-2 border border-dashed rounded cursor-pointer flex flex-col justify-center">
+								<div className="mt-2 flex cursor-pointer flex-col justify-center gap-2 rounded border border-dashed p-3">
 									{field.value.map((entry: EducationEntry, index: number) => (
 										<div key={index} className={cn(buttonVariants({ variant: "outline" }), "flex items-center font-normal")}>
-											<div className="flex-1 flex justify-center gap-2">
+											<div className="flex flex-1 justify-center gap-2">
 												<span>{entry.degree}</span>
 												<span>-</span>
 												<span className="text-sm">{entry.institution}</span>
@@ -176,7 +296,7 @@ export default function Page() {
 
 									{field.value.length != 3 && (
 										<DialogTrigger asChild>
-											<Button variant={"outline"} className="flex items-center w-full max-w-md.">
+											<Button variant={"outline"} className="max-w-md. flex w-full items-center">
 												<Plus className="mr-2" />
 												Add entry
 											</Button>
@@ -200,7 +320,8 @@ export default function Page() {
 												<DialogHeader>
 													<DialogTitle>Add Education Background</DialogTitle>
 													<DialogDescription>
-														Please add at least {noOfeduBackgroundsRequired - field.value.length} more education background{noOfeduBackgroundsRequired - field.value.length > 1 ? "s" : ""}.
+														Please add at least {noOfeduBackgroundsRequired - field.value.length} more education background
+														{noOfeduBackgroundsRequired - field.value.length > 1 ? "s" : ""}.
 													</DialogDescription>
 												</DialogHeader>
 												<EducationForm
@@ -231,6 +352,7 @@ export default function Page() {
 										/>
 									</DialogContent>
 								)}
+								{fieldState.error && <p className="mt-2 text-xs text-destructive">{fieldState.error.message}</p>}
 							</Dialog>
 						);
 					}}
@@ -238,11 +360,170 @@ export default function Page() {
 			</div>
 			<div>
 				<Label>Work Experience</Label>
+				<Controller
+					name="workExperience"
+					control={control}
+					defaultValue={[]}
+					rules={{
+						validate: (value) => {
+							if (value.length < 1) {
+								return "At least one work experience is required";
+							}
+							if (value.length > 5) {
+								return "Maximum of 5 work experiences allowed";
+							}
+							return true;
+						},
+					}}
+					render={({ field, fieldState }) => {
+						return (
+							<Dialog>
+								<div className="mt-2 flex cursor-pointer flex-col justify-center gap-2 rounded border border-dashed p-3">
+									{field.value.map((entry: WorkExperienceEntry, index: number) => (
+										<div key={index} className={cn(buttonVariants({ variant: "outline" }), "flex items-center font-normal")}>
+											<div className="flex flex-1 justify-center gap-2">
+												<span>{entry.company}</span>
+												<span>-</span>
+												<span>{entry.position}</span>
+											</div>
+											<DropdownMenu>
+												<DropdownMenuTrigger asChild>
+													<Button variant="ghost">
+														<EllipsisVertical />
+													</Button>
+												</DropdownMenuTrigger>
+												<DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+													<DropdownMenuItem
+														asChild
+														onClick={() => {
+															setIsEditing(true);
+														}}
+													>
+														<DialogTrigger>
+															<Pencil />
+															Edit
+														</DialogTrigger>
+													</DropdownMenuItem>
+													<DropdownMenuItem
+														className="text-destructive"
+														onClick={() => {
+															const newValue = [...field.value];
+															newValue.splice(index, 1);
+															field.onChange(newValue);
+														}}
+													>
+														<Trash2 />
+														Delete
+													</DropdownMenuItem>
+												</DropdownMenuContent>
+											</DropdownMenu>
+										</div>
+									))}
+
+									<DialogTrigger asChild>
+										<Button variant={"outline"} className="max-w-md. flex w-full items-center">
+											<Plus className="mr-2" />
+											Add entry
+										</Button>
+									</DialogTrigger>
+								</div>
+
+								{/* ADD dialog */}
+								<DialogContent className="flex flex-col gap-2">
+									<DialogHeader>
+										<DialogTitle>Add Work Experience</DialogTitle>
+										<DialogDescription>Provide details about your work experience.</DialogDescription>
+									</DialogHeader>
+									<WorkExperienceForm
+										onSubmitHandler={(item: WorkExperienceEntry) => {
+											field.onChange([...field.value, item]);
+										}}
+									/>
+								</DialogContent>
+
+								{/* EDIT dialog */}
+								{isEditing && (
+									<DialogContent className="flex flex-col gap-2">
+										<DialogHeader>
+											<DialogTitle>Edit Work Experience Entry</DialogTitle>
+											<DialogDescription>Update your work experience entry.</DialogDescription>
+										</DialogHeader>
+										<WorkExperienceForm
+											onSubmitHandler={(item: WorkExperienceEntry) => {
+												const newValue = [...field.value];
+												newValue.splice(0, 1, item);
+												field.onChange(newValue);
+												setIsEditing(false);
+											}}
+											defaultValues={field.value[0]}
+										/>
+									</DialogContent>
+								)}
+								{fieldState.error && <p className="mt-2 text-xs text-destructive">{fieldState.error.message}</p>}
+							</Dialog>
+						);
+					}}
+				/>
 			</div>
 			<div>
 				<Label>Skills</Label>
+				<Controller
+					control={control}
+					name="skills"
+					defaultValue={[]}
+					rules={{
+						validate: (value) => {
+							if (value.length < 1) {
+								return "At least one skill is required";
+							}
+							if (value.length > 10) {
+								return "Maximum of 10 skills allowed";
+							}
+							return true;
+						},
+					}}
+					render={({ field, fieldState }) => (
+						<>
+							<div className="flex flex-wrap items-center gap-2 rounded border border-dashed p-3">
+								{field.value.length > 0 && (
+									<div className="flex flex-wrap gap-2">
+										{field.value.map((skill: string, index: number) => (
+											<Badge key={index} className="flex cursor-pointer" variant="outline">
+												<span className="w-20 flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-normal">{skill}</span>
+												<X
+													size={12}
+													className="ml-1"
+													onClick={() => {
+														const newValue = [...field.value];
+														newValue.splice(index, 1);
+														field.onChange(newValue);
+													}}
+												/>
+											</Badge>
+										))}
+									</div>
+								)}
+								{field.value.length < 10 && (
+									<input
+										className="rounded border px-4 py-0.5 text-sm !outline-none"
+										placeholder="Add a skill"
+										value={skillsInput}
+										onChange={(e) => setSkillsInput(e.target.value)}
+										onKeyDown={(e) => {
+											if (e.key === "Enter" && skillsInput.trim() !== "") {
+												field.onChange([...field.value, skillsInput.trim()]);
+												setSkillsInput("");
+											}
+										}}
+									/>
+								)}
+							</div>
+							{fieldState.error && <p className="mt-2 text-xs text-destructive">{fieldState.error.message}</p>}
+						</>
+					)}
+				/>
 			</div>
-			<div className="flex justify-end mt-auto">
+			<div className="mt-auto flex justify-end">
 				<SubmitButton
 					buttonState={{
 						isSubmitting: false,
@@ -256,6 +537,6 @@ export default function Page() {
 					size="lg"
 				/>
 			</div>
-		</>
+		</form>
 	);
 }

@@ -19,7 +19,7 @@ import { buttonVariants } from "@/components/ui/button";
 
 // import LocationInputs from "./LocationInputs";
 import { PhoneInput } from "@/components/auth/PhoneNumberInput";
-import DatePickerInput from "@/components/auth/DatePicker";
+import DatePickerInput from "@/components/DatePicker";
 import SubmitButton from "@/components/submitButton";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -53,7 +53,7 @@ export default function Page() {
 		}
 	}, [user]);
 	return (
-		<>
+		<form className="flex flex-col p-10 gap-5 flex-1 max-w-xl" onSubmit={handleSubmit((data) => console.log(data))}>
 			<div className="flex flex-col  gap-5 font-medium text-lg">Personal Info</div>
 			<div className="flex flex-col gap-5 w-full max-w-md">
 				<div>
@@ -135,6 +135,6 @@ export default function Page() {
 					className="w-fit"
 				/>
 			</div>
-		</>
+		</form>
 	);
 }

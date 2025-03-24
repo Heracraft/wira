@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-import DatePickerInput from "@/components/auth/DatePicker";
+import DatePickerInput from "@/components/DatePicker";
 import { PhoneInput } from "@/components/auth/PhoneNumberInput";
 import SubmitButton from "@/components/submitButton";
 

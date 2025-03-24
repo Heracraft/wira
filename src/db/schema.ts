@@ -21,14 +21,15 @@ export const talentProfiles = pgTable("talentProfiles", {
 	phoneNumber: varchar("phoneNumber", { length: 255 }),
 	dateOfBirth: date("dateOfBirth"),
 	avatarUrl: varchar("avatarUrl", { length: 255 }),
-	// location: varchar("location", { length: 255 }),
+	
+	// location,
 	country: varchar("country", { length: 255 }),
 	region: varchar("region", { length: 255 }),
 	postalCode: varchar("postalCode", { length: 255 }),
 
 	linkedInProfile: varchar("linkedInProfile", { length: 255 }),
 
-	// skills: varchar("skill", { length: 255 }).array(), // There is a separate table for skills
+	skills: varchar("skill", { length: 255 }).array(), // There could be a separate table for skills
 
 	// personalityType: varchar("personalityType", { length: 255 }),
 	// personalityDescription: text("personalityDescription"),
@@ -78,28 +79,28 @@ export const workExperienceEntries = pgTable("workExperienceEntries", {
 	description: text("description"),
 });
 
-// Skills
-export const skills = pgTable("skills", {
-	skillId: serial("skillId").primaryKey(),
-	skillName: varchar("skillName", { length: 255 }).unique().notNull(),
-});
+// Skills - **dropped: unnecessary for now**
+// export const skills = pgTable("skills", {
+// 	skillId: serial("skillId").primaryKey(),
+// 	skillName: varchar("skillName", { length: 255 }).unique().notNull(),
+// });
 
-// Linking Table for Talent Profiles and Skills (Many-to-Many)
-export const talentSkills = pgTable(
-	"talentSkills",
-	{
-		talentId: integer("talentId")
-			.references(() => talentProfiles.profileId)
-			.notNull(),
-		skillId: integer("skillId")
-			.references(() => skills.skillId)
-			.notNull(),
-		experienceLevel: varchar("experienceLevel", { length: 255 }),
-	},
-	(table) => [
-		primaryKey({ columns: [table.talentId, table.skillId] }),
-		// Composite key to prevent duplicates
-	]
-);
+// **dropped: unnecessary for now**: Linking Table for Talent Profiles and Skills (Many-to-Many)
+// export const talentSkills = pgTable(
+// 	"talentSkills",
+// 	{
+// 		talentId: integer("talentId")
+// 			.references(() => talentProfiles.profileId)
+// 			.notNull(),
+// 		skillId: integer("skillId")
+// 			.references(() => skills.skillId)
+// 			.notNull(),
+// 		experienceLevel: varchar("experienceLevel", { length: 255 }),
+// 	},
+// 	(table) => [
+// 		primaryKey({ columns: [table.talentId, table.skillId] }),
+// 		// Composite key to prevent duplicates
+// 	]
+// );
 
 // ... (Other tables like jobPostings, matches, careerInsights, testimonials, etc. -  You can translate those similarly)

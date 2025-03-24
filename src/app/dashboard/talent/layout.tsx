@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -24,8 +24,7 @@ export default function Page({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	
-	const pathname = usePathname()
+	const pathname = usePathname();
 
 	// console.log(pathname);
 	// [ ]: Memoize?
@@ -34,12 +33,14 @@ export default function Page({
 		<>
 			<ul className="flex flex-col border-r bg-neutral-100 py-10 gap-2 rounded-l-xl">
 				{sections.map((section, index) => (
-					<li key={index} className={cn(buttonVariants({ variant: "ghost" }), "justify-start font-normal py-5 px-10 rounded-none", pathname?.includes(section.href) ? "bg-neutral-200" : "")}>
-						<Link prefetch={true} href={section.href}>{section.label}</Link>
-					</li>
+					<Link prefetch={true} href={section.href}>
+						<li key={index} className={cn(buttonVariants({ variant: "ghost" }), "justify-start font-normal py-5 px-10 rounded-none w-full", pathname?.includes(section.href) ? "bg-neutral-200 hover:bg-neutral-300" : "")}>
+							{section.label}
+						</li>
+					</Link>
 				))}
 			</ul>
-			<div className="flex flex-col p-10 gap-5 flex-1 max-w-xl">{children}</div>
+			{children}
 		</>
 	);
 }
