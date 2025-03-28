@@ -12,7 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 
 import { cn } from "@/lib/utils";
 
-export default function DatePickerInput({ date, setDate }: { date: Date; setDate: React.Dispatch<React.SetStateAction<Date | undefined>> }) {
+export default function DatePickerInput({ date, setDate }: { date: Date | undefined; setDate: React.Dispatch<React.SetStateAction<Date | undefined>> }) {
 	const [open, setOpen] = useState(false);
 	const [inputValue, setInputValue] = useState("");
 	// const [date, setDate] = useState<Date>();
@@ -40,8 +40,8 @@ export default function DatePickerInput({ date, setDate }: { date: Date; setDate
 	useEffect(() => {
 		console.log({ date });
 
-		if (date && !inputValue) {
-			const rawDate = parse(date as any, "y-MM-dd", new Date());
+		if (date && !inputValue && typeof date === "string") {
+			const rawDate = parse(date as any, "yyyy-MM-dd", new Date());
 			setInputValue(format(rawDate, "dd-MM-y"));
 		}
 	}, [date]);

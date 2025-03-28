@@ -1,3 +1,7 @@
+First of many documents to come. This document will be about the components and folder structure of the project. Hit `Ctrl + Shift + V` (Vscode) to view the markdown preview.
+
+---
+
 ### File structure
 + /src/lib
 	+ store(.server).ts
@@ -9,3 +13,8 @@
 
 + /supabase/migrations
 	Migrations for postgres db hosted on supabase
+
+### Components
+Since routes are defined by folders and files in Next.js, each folder in the `app` directory corresponds to a route. But only the `page.(js|jsx|ts|tsx)` file in the folder is the actual code for the route. This means we can colocate components used by said route.
+
+So components only used by a specific route, can be colocated in the same folder as the route. This way we can avoid cluter in the `components` folder. So henceforth, the `components` folder will only contain shared components all else will be colocated.

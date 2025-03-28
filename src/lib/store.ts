@@ -20,9 +20,14 @@ type Action = {
 	logout: () => void;
 };
 
-// TODO: write the types for the user store
 export const userStore = create<State & Action>((set) => ({
 	user: null,
 	setUser: (user: User) => set({ user }),
 	logout: () => set({ user: null }),
 }));
+
+export const profileStore=create((set) => ({
+	profile: null,
+	setProfile: (profile: any) => set({ profile }),
+	clear: () => set({ profile: null }),
+}))

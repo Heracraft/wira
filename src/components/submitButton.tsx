@@ -9,6 +9,7 @@ type buttonState = {
 	isSubmitted: boolean;
 	isSubmitSuccessful: boolean;
 	isValid: boolean;
+	isDirty?: boolean;
 };
 
 type buttonProps = {
@@ -20,7 +21,18 @@ type buttonProps = {
 };
 
 export default function SubmitButton({ className, children, buttonState, loadingText, size="default" }: buttonProps) {
-	const { isSubmitting, isSubmitSuccessful, isSubmitted, isValid } = buttonState;
+	const { isSubmitting, isSubmitSuccessful, isSubmitted, isValid, isDirty } = buttonState;
+
+	
+	
+	if (!isDirty && !isSubmitting && typeof isDirty !== 'undefined') {
+		return (
+			<Button disabled type="submit" className={cn("w-full", className)} size={size}>
+				{children}
+			</Button>
+		)
+	}
+
 
 	if (isSubmitting) {
 		return (
@@ -31,12 +43,20 @@ export default function SubmitButton({ className, children, buttonState, loading
 		);
 	}
 	if (!isValid && isSubmitted && !isSubmitSuccessful) {
+		if (!isValid){
+			return (
+				<Button disabled type="submit" className={cn("w-full", className)} size={size}>
+					{children}
+				</Button>
+			);
+		}
 		return (
 			<Button disabled type="submit" className={cn("w-full", className)} size={size}>
 				{children}
 			</Button>
 		);
 	}
+	
 	return (
 		<Button type="submit" className={cn("w-full", className)} size={size}>
 			{children}

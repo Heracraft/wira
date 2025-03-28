@@ -1,11 +1,14 @@
-"use client";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { db } from "@/db/index";
+import { talentProfiles, workExperienceEntries, educationEntries } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
-import { buttonVariants } from "@/components/ui/button";
+import Sidebar from "../sidebar";
+import TalentProfileProvider from "./profileProvider";
 
-import { cn } from "@/lib/utils";
+import type { TalentProfile } from "@/types/dashboard";
 
 const sections = [
 	{
@@ -13,34 +16,57 @@ const sections = [
 		href: "/dashboard/talent/personal-info",
 	},
 	{
-		label: "Profile",
-		href: "/dashboard/talent/profile",
+		label: "Education & Experience",
+		href: "/dashboard/talent/education&experience",
+	},
+	{
+		label: "Preferences",
+		href: "/dashboard/talent/preferences",
+	},
+	{
+		label: "Review & Submit",
+		href: "/dashboard/talent/review&submit",
 	},
 	// Account?: to edit email, password, avatar, etc.
 ];
 
-export default function Page({
+export default async function Page({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const pathname = usePathname();
+	let talentProfile = null;
+	let workExperience = null;
+	let educationBackground = null;
 
-	// console.log(pathname);
-	// [ ]: Memoize?
+	let profile: null | TalentProfile = null;
+
+	try {
+		const headersList = await headers();
+		const uid = headersList.get("x-uid");
+
+		let profileId;
+
+		if (uid) {
+			talentProfile = (await db.select().from(talentProfiles).where(eq(talentProfiles.userId, uid)))[0];
+			profileId = talentProfile.profileId;
+			workExperience = await db.select().from(workExperienceEntries).where(eq(workExperienceEntries.profileId, profileId));
+			educationBackground = await db.select().from(educationEntries).where(eq(educationEntries.profileId, profileId));
+
+			profile = { ...talentProfile, workExperience, education: educationBackground };
+		} else {
+			throw new Error("Unauthorized");
+		}
+	} catch (error) {
+		console.log(error);
+		// TODO: handle error properly
+		redirect("/unathorized");
+	}
 
 	return (
 		<>
-			<ul className="flex flex-col border-r bg-neutral-100 py-10 gap-2 rounded-l-xl">
-				{sections.map((section, index) => (
-					<Link prefetch={true} href={section.href}>
-						<li key={index} className={cn(buttonVariants({ variant: "ghost" }), "justify-start font-normal py-5 px-10 rounded-none w-full", pathname?.includes(section.href) ? "bg-neutral-200 hover:bg-neutral-300" : "")}>
-							{section.label}
-						</li>
-					</Link>
-				))}
-			</ul>
-			{children}
+			<Sidebar sections={sections} />
+			{talentProfile && <TalentProfileProvider profile={profile}>{children}</TalentProfileProvider>}
 		</>
 	);
 }

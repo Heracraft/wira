@@ -76,7 +76,7 @@ export default function LocationInputs({ watch, register, control, setValue, err
 				</div>
 				<div className="mt-5">
 					<Label htmlFor="location">
-						Region <span className="text-red-500">*</span>
+						Region/State <span className="text-red-500">*</span>
 					</Label>
 					<Controller
 						name="region"

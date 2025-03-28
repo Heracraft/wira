@@ -73,6 +73,7 @@ export async function updateSession(request: NextRequest) {
 
 	if (user && user?.user_metadata.isOnboarded) {
 		// user is logged in and onboarding is completed
+		response.headers.set("x-uid", user.id);
 
 		if (request.nextUrl.pathname.startsWith("/auth")) {
 			// redirect to dashboard if user is logged in and trying to access auth pages

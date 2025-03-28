@@ -11,27 +11,27 @@ export const industries = [
 	{ label: "Non-Profit", value: "non-profit" },
 ];
 
-const workEnvironments = [
+export const workEnvironments = [
 	{ label: "Remote-first", value: "remote-first" },
 	{ label: "Hybrid", value: "hybrid" },
 	{ label: "In-office", value: "in-office" },
 	{ label: "Flexible", value: "flexible" },
 ];
 
-const teamDynamics = [
+export const teamDynamics = [
 	{ label: "Close-knit teams", value: "close-knit-teams" },
 	{ label: "Independent contributors", value: "independent-contributors" },
 	{ label: "Mixed", value: "mixed" },
 ];
 
-const workHours = [
+export const workHours = [
 	{ label: "Full-time", value: "full-time" },
 	{ label: "Part-time", value: "part-time" },
 	{ label: "Contract", value: "contract" },
 	{ label: "Freelance", value: "freelance" },
 ];
 
-const workSchedules = [
+export const workSchedules = [
 	{ label: "Standard 9-5", value: "standard-9-5" },
 	{ label: "Flexible hours", value: "flexible-hours" },
 	{ label: "Shift work", value: "shift-work" },

@@ -3,31 +3,35 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import type { FieldValues } from "react-hook-form";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { buttonVariants, Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 
+import FromSnapshot from "../../FormSnapshots";
 import SubmitButton from "@/components/submitButton";
 import MonthPicker from "@/components/MonthPicker";
 
-import { Plus, X, EllipsisVertical, Pencil, Trash2 } from "lucide-react";
+import { Plus, X, EllipsisVertical, Pencil, Trash2, Loader2 } from "lucide-react";
 
+import { TalentProfileContext } from "../context";
+import { createClient, userStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+
+import { updateTalentProfile } from "../../actions";
+
+import { toast } from "sonner";
+
+const SNAPSHOT_NAME = "form-snapshot-profile";
 
 type EducationEntry = {
 	degree: string;
@@ -192,10 +196,36 @@ function WorkExperienceForm({ onSubmitHandler, defaultValues }: { onSubmitHandle
 	);
 }
 
+async function uploadResume(file: File, uid: string, fileName: string) {
+	const supabase = createClient();
+
+	try {
+		const resumePath = `resumes/${uid}-${fileName}`;
+		const { error: uploadError } = await supabase.storage.from("static").upload(resumePath, file, { upsert: true });
+
+		if (uploadError) {
+			throw new Error("Error uploading resume.");
+		}
+
+		// Generate the public URL for the uploaded file
+		const { data: publicUrlData } = supabase.storage.from("static").getPublicUrl(resumePath);
+
+		if (publicUrlData) {
+			return publicUrlData.publicUrl;
+		}
+	} catch (error: any) {
+		throw new Error(error.message);
+	}
+}
+
 export default function Page() {
+	const context = useContext(TalentProfileContext);
+	const user = userStore((state) => state.user);
+
 	// const [eduBackgroundsRequired, setEduBackgroundsRequired] = useState(1);
 	const [isEditing, setIsEditing] = useState(false);
 	const [skillsInput, setSkillsInput] = useState("");
+	const [uploadStatus, setUploadStatus] = useState<"uploading" | "uploaded" | "error" | "idle">("idle");
 
 	const {
 		register,
@@ -203,42 +233,47 @@ export default function Page() {
 		watch,
 		control,
 		setValue,
-		formState: { errors },
+		setError,
+		formState: {isDirty, isSubmitting, isSubmitted, isSubmitSuccessful, isValid},
 	} = useForm({
 		mode: "onBlur",
 	});
 
 	const formValues = watch();
 
-	useEffect(() => {
-		// Save form values to local storage every 10 seconds
-		const handler = setTimeout(() => {
-			localStorage.setItem("form-snapshot-profile", JSON.stringify(formValues));
-		}, 5000);
-
-		return () => clearTimeout(handler);
-	}, [formValues]);
-
-	useEffect(() => {
-		// Load form values from local storage on component mount
-		const snapshot = localStorage.getItem("form-snapshot-profile");
-		if (snapshot) {
-			const parsedSnapshot = JSON.parse(snapshot);
-			Object.keys(parsedSnapshot).forEach((key) => {
-				setValue(key, parsedSnapshot[key]);
+	const onSubmit: SubmitHandler<Record<string, any>> = async (data) => {
+		try {
+			if (!user) {
+				throw new Error("User not found");
+			}
+			const res = await updateTalentProfile(data, user.id);
+			if (res.status == 400) {
+				throw new Error(res.message);
+			}
+			toast.success(res.message);
+			setTimeout(() => {
+				// just in case some snapshot has already been debounced to be saved (5 secs)
+				localStorage.removeItem(SNAPSHOT_NAME);
+			}, 6000);
+		} catch (error: any) {
+			toast.error("An error occured", {
+				description: (error.message as string) + ". Please try again",
 			});
 		}
-	}, []);
+	};
 
 	return (
-		<form className="flex max-w-xl flex-1 flex-col gap-5 p-10" onSubmit={handleSubmit((data) => console.log(data))}>
-			<h3 className="text-lg font-medium">Personal Info</h3>
+		<form className="flex max-w-xl flex-1 flex-col gap-5 p-10" onSubmit={handleSubmit(onSubmit)}>
+			{/* TODO: change snapshot-name for this page to "education&experience" */}
+			<FromSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName="form-snapshot-profile" />
+
+			<h3 className="text-md font-medium">Education & Experience</h3>
 			<div>
 				<Label>Education Background</Label>
 				<Controller
 					name="education"
 					control={control}
-					defaultValue={[]}
+					defaultValue={context?.education||[]}
 					rules={{
 						validate: (value) => {
 							if (value.length < 1) {
@@ -266,7 +301,7 @@ export default function Page() {
 														<EllipsisVertical />
 													</Button>
 												</DropdownMenuTrigger>
-												<DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+												<DropdownMenuContent>
 													<DropdownMenuItem
 														asChild
 														onClick={() => {
@@ -363,7 +398,7 @@ export default function Page() {
 				<Controller
 					name="workExperience"
 					control={control}
-					defaultValue={[]}
+					defaultValue={context?.workExperience||[]}
 					rules={{
 						validate: (value) => {
 							if (value.length < 1) {
@@ -470,7 +505,7 @@ export default function Page() {
 				<Controller
 					control={control}
 					name="skills"
-					defaultValue={[]}
+					defaultValue={context?.skills||[]}
 					rules={{
 						validate: (value) => {
 							if (value.length < 1) {
@@ -511,6 +546,8 @@ export default function Page() {
 										onChange={(e) => setSkillsInput(e.target.value)}
 										onKeyDown={(e) => {
 											if (e.key === "Enter" && skillsInput.trim() !== "") {
+												e.preventDefault(); // otherwise the form will submit
+												// e.stopPropagation();
 												field.onChange([...field.value, skillsInput.trim()]);
 												setSkillsInput("");
 											}
@@ -523,13 +560,98 @@ export default function Page() {
 					)}
 				/>
 			</div>
+			<div className="grid w-full max-w-sm items-center gap-1.5">
+				<Label htmlFor="picture">
+					Upload Resume <span className="text-destructive">*</span>
+				</Label>
+				{/* Only here to register the field and set the validation rules. Refer to 'entry 1:hacks.md'*/}
+				<Controller
+					control={control}
+					name="resume"
+					rules={{
+						required: "A resume is required",
+					}}
+					defaultValue={context?.resume || ""}
+					render={({ field, fieldState }) => {
+						if (uploadStatus === "uploading") {
+							return (
+								<div className={cn(buttonVariants({ variant: "outline" }), "items-center gap-2")}>
+									<Loader2 size={20} className="animate-spin" />
+									Uploading...
+								</div>
+							);
+						}
+						if (uploadStatus === "uploaded" || field.value) {
+							return (
+								<div className={cn(buttonVariants({ variant: "outline" }), "font-normal")}>
+									<p className="flex-1 text-center">Uploaded</p>
+									<X
+										onClick={() => {
+											console.log("clicked");
+
+											setUploadStatus("idle");
+											setValue("resume", "");
+										}}
+										size={20}
+										className="!pointer-events-auto text-destructive"
+									/>
+								</div>
+							);
+						}
+						return (
+							<>
+								<Input
+									id="picture"
+									type="file"
+									placeholder="upload your resume here"
+									disabled={uploadStatus === "error"}
+									onChange={async (e) => {
+										try {
+											const resume = e.target.files ? e.target.files[0] : null;
+											if (!resume || !context?.userId) return;
+
+											if (resume.size > 100 * 1024 * 1024) {
+												setError("resume", { type: "manual", message: "File size must be less than 100MB" });
+												return;
+											}
+
+											if (resume.type !== "application/pdf") {
+												setError("resume", { type: "manual", message: "File must be a PDF" });
+												return;
+											}
+
+											const fileName = resume.name;
+											setUploadStatus("uploading");
+
+											const resumeUrl = await uploadResume(resume, context.userId, fileName);
+
+											setValue("resume", resumeUrl);
+
+											setUploadStatus("uploaded");
+											// const uid
+										} catch (error) {
+											console.log(error);
+											setError("resume", { type: "manual", message: "An error occurred, try again." });
+											setUploadStatus("error");
+											setTimeout(() => {
+												setUploadStatus("idle");
+											}, 5000);
+										}
+									}}
+								/>
+								{fieldState.error && <p className="mt-2 text-xs text-destructive">{fieldState.error.message}</p>}
+							</>
+						);
+					}}
+				/>
+			</div>
 			<div className="mt-auto flex justify-end">
 				<SubmitButton
 					buttonState={{
-						isSubmitting: false,
-						isSubmitted: false,
-						isSubmitSuccessful: false,
-						isValid: true,
+						isSubmitting,
+						isSubmitted,
+						isSubmitSuccessful,
+						isValid,
 					}}
 					loadingText="Saving"
 					children="Save"

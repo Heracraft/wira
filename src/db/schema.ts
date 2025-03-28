@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, text, date, integer, boolean, unique, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, serial, varchar, text, date, integer, boolean, unique, primaryKey, jsonb } from "drizzle-orm/pg-core";
 
 // Users (Talent or Employers)
 export const users = pgTable("users", {
@@ -21,7 +21,7 @@ export const talentProfiles = pgTable("talentProfiles", {
 	phoneNumber: varchar("phoneNumber", { length: 255 }),
 	dateOfBirth: date("dateOfBirth"),
 	avatarUrl: varchar("avatarUrl", { length: 255 }),
-	
+
 	// location,
 	country: varchar("country", { length: 255 }),
 	region: varchar("region", { length: 255 }),
@@ -31,10 +31,25 @@ export const talentProfiles = pgTable("talentProfiles", {
 
 	skills: varchar("skill", { length: 255 }).array(), // There could be a separate table for skills
 
+	industryInterests: varchar("industryInterests", { length: 255 }).array(),
+	preferredCompanyTypes: varchar("preferredCompanyTypes", { length: 255 }).array(),
+	workTypePreference: varchar("workTypePreference", { enum: ["full-time", "part-time", "both"] }),
+
+	resume: varchar("resume", { length: 255 }),
+
+	profileCompletionStatus: jsonb("profileCompletionStatus").default({
+		personalInfo: false,
+		educationExperience: false,
+		preferences: false,
+	}).notNull(),
+	
+
 	// personalityType: varchar("personalityType", { length: 255 }),
 	// personalityDescription: text("personalityDescription"),
 	// questionsSection: text("questionsSection"),
 });
+
+export type TalentProfileRow = typeof talentProfiles.$inferSelect;
 
 export const companyProfiles = pgTable("companyProfiles", {
 	profileId: serial("profileId").primaryKey(),
@@ -66,6 +81,8 @@ export const educationEntries = pgTable("educationEntries", {
 	endDate: varchar("endDate",{ length: 25 }),
 });
 
+export type EducationEntry = typeof educationEntries.$inferSelect;
+
 // Work Experience Entries
 export const workExperienceEntries = pgTable("workExperienceEntries", {
 	experienceId: serial("experienceId").primaryKey(),
@@ -78,6 +95,8 @@ export const workExperienceEntries = pgTable("workExperienceEntries", {
 	endDate: date("endDate"),
 	description: text("description"),
 });
+
+export type WorkExperienceEntry = typeof workExperienceEntries.$inferSelect;
 
 // Skills - **dropped: unnecessary for now**
 // export const skills = pgTable("skills", {
