@@ -41,6 +41,7 @@ export const talentProfiles = pgTable("talentProfiles", {
 		personalInfo: false,
 		educationExperience: false,
 		preferences: false,
+		overallComplete:true
 	}).notNull(),
 	
 
@@ -77,6 +78,8 @@ export const educationEntries = pgTable("educationEntries", {
 		.notNull(),
 	institution: varchar("institution", { length: 255 }),
 	degree: varchar("degree", { length: 255 }),
+	major: varchar("major", { length: 255 }),
+	gpa: varchar("gpa", { length: 255 }),
 	startDate: varchar("startDate", { length: 25 }),
 	endDate: varchar("endDate",{ length: 25 }),
 });

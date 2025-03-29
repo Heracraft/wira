@@ -52,52 +52,54 @@ export default function Navbar() {
 	};
 
 	return (
-		<nav className="bg-white border-neutral-200 px-2 sm:px-4 shadow z-10 flex relative">
+		<nav className="relative z-20 flex border-neutral-200 bg-white px-2 shadow sm:px-4">
 			{/* <div className="w-full flex flex-wrap items-center justify-between mx-auto md:mx-0"> */}
-			<div className="flex flex-1 justify-between items-center">
+			<div className="flex flex-1 items-center justify-between">
 				<a href="/" className="flex items-center">
-					<Package className="w-7 h-7 !my-0 mr-2" />
+					<Package className="!my-0 mr-2 h-7 w-7" />
 
-					<span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Wira</span>
+					<span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Wira</span>
 				</a>
-				<div className="gap-10 h-full hidden md:flex">
+				<div className="hidden h-full gap-10 md:flex">
 					{routes.map((route, index) => {
 						if ((route.restricted && !user) || (route.for != user?.userType && route.for != "all")) {
+							// check if the route is restricted and the user is not logged in
+							// or if the route is for a specific user type and the current user type does not match
+							// in this case, we return null to not render the route
 							return null;
 						}
-						if (route.href == pathname) {
+						if (pathname == route.href || (route.href != "/" && pathname.startsWith(route.href))) {
 							return (
-								<Link key={index} href={route.href} className="flex items-center h-full text-primary relative after:content-[''] after:absolute after:top-full after:-translate-y-0.5 after:-translate-x-1/2 after:left-1/2 after:w-[200%] after:h-1 after:bg-primary after:rounded">
+								<Link key={index} href={route.href} className="relative justify-center flex h-full w-20 items-center text-center text-primary after:absolute after:left-1/2 after:top-full after:h-1 after:w-[130%] after:-translate-x-1/2 after:-translate-y-0.5 after:rounded after:bg-primary after:content-['']">
 									{route.label}
 								</Link>
 							);
 						} else {
 							return (
-								<Link key={index} href={route.href} className="flex items-center h-full">
+								<Link key={index} href={route.href} className="justify-center flex h-full w-20 items-center text-center">
 									{route.label}
 								</Link>
 							);
 						}
 					})}
-					
 				</div>
 			</div>
 			{isMobileMenuOpen && (
-				<div className="absolute top-full inset-x-0 bg-background md:hidden  px-2 pb-4">
-					<div className="flex flex-col gap-3 p-2 border rounded-lg">
+				<div className="absolute inset-x-0 top-full z-20 bg-background px-2 pb-4 md:hidden">
+					<div className="flex flex-col gap-3 rounded-lg border p-2">
 						{routes.map((route, index) => {
-							if ((route.restricted && !user) || route.for != user?.userType) {
+							if ((route.restricted && !user) || (route.for != user?.userType && route.for != "all")) {
 								return null;
 							}
-							if (route.href == pathname) {
+							if (pathname == route.href || (route.href != "/" && pathname.startsWith(route.href))) {
 								return (
-									<Link key={index} href={route.href} className="flex items-center bg-primary text-white w-full px-3 py-2 rounded">
+									<Link key={index} href={route.href} className="flex w-full items-center rounded bg-primary px-3 py-2 text-white">
 										{route.label}
 									</Link>
 								);
 							} else {
 								return (
-									<Link key={index} href={route.href} className="flex items-center hover:bg-primary-200 w-full px-3 py-2 rounded">
+									<Link key={index} href={route.href} className="flex w-full items-center rounded px-3 py-2 hover:bg-primary-200">
 										{route.label}
 									</Link>
 								);
@@ -108,7 +110,7 @@ export default function Navbar() {
 				</div>
 			)}
 
-			<div className="flex-1 flex items-center justify-end py-2.5">
+			<div className="flex flex-1 items-center justify-end py-2.5">
 				<div className="flex gap-2">
 					{/* <a href={`/auth?continueUrl=${$page.url.pathname}`}> */}
 					{user && user.fullName ? (
@@ -130,7 +132,7 @@ export default function Navbar() {
 									<Link href={`/dashboard/${user.userType}`}>Profile</Link>
 								</DropdownMenuItem>
 								<DropdownMenuItem>
-									<Link href="/settings">Settings</Link>
+									<Link href={`/dashboard/${user.userType}/settings`}>Settings</Link>
 								</DropdownMenuItem>
 								<DropdownMenuSeparator />
 								<DropdownMenuItem>
@@ -141,12 +143,12 @@ export default function Navbar() {
 					) : (
 						<a href="/auth/sign-up">
 							<Button className="bg-primary text-white sm:hidden">Sign Up</Button>
-							<Button className="bg-primary text-white hidden sm:block" size={"lg"}>
+							<Button className="hidden bg-primary text-white sm:block" size={"lg"}>
 								Sign Up
 							</Button>
 						</a>
 					)}
-					<button className="rounded hover:bg-accent p-2 block md:hidden" onClick={() => toggleMobileMenu()}>
+					<button className="block rounded p-2 hover:bg-accent md:hidden" onClick={() => toggleMobileMenu()}>
 						<Menu className="size-6 text-muted-foreground" />
 					</button>
 				</div>

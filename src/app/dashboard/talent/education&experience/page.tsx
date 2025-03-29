@@ -30,6 +30,7 @@ import { cn } from "@/lib/utils";
 import { updateTalentProfile } from "../../actions";
 
 import { toast } from "sonner";
+import type { ProfileCompletion } from "@/types/dashboard";
 
 const SNAPSHOT_NAME = "form-snapshot-profile";
 
@@ -222,8 +223,13 @@ export default function Page() {
 	const context = useContext(TalentProfileContext);
 	const user = userStore((state) => state.user);
 
+	const profileCompletionStatus = context?.profileCompletionStatus as ProfileCompletion;
+
 	// const [eduBackgroundsRequired, setEduBackgroundsRequired] = useState(1);
-	const [isEditing, setIsEditing] = useState(false);
+	const [editingStatus, setEditingStatus] = useState({
+		isEditing: false,
+		index: 0,
+	});
 	const [skillsInput, setSkillsInput] = useState("");
 	const [uploadStatus, setUploadStatus] = useState<"uploading" | "uploaded" | "error" | "idle">("idle");
 
@@ -234,7 +240,7 @@ export default function Page() {
 		control,
 		setValue,
 		setError,
-		formState: {isDirty, isSubmitting, isSubmitted, isSubmitSuccessful, isValid},
+		formState: { isDirty, isSubmitting, isSubmitted, isSubmitSuccessful, isValid },
 	} = useForm({
 		mode: "onBlur",
 	});
@@ -246,7 +252,18 @@ export default function Page() {
 			if (!user) {
 				throw new Error("User not found");
 			}
-			const res = await updateTalentProfile(data, user.id);
+			const res = await updateTalentProfile(
+				{
+					...data,
+					profileCompletionStatus: {
+						personalInfo: profileCompletionStatus.personalInfo,
+						educationExperience: true,
+						preferences: profileCompletionStatus.preferences,
+						overallComplete: profileCompletionStatus.overallComplete,
+					},
+				},
+				user.id,
+			);
 			if (res.status == 400) {
 				throw new Error(res.message);
 			}
@@ -263,17 +280,20 @@ export default function Page() {
 	};
 
 	return (
-		<form className="flex max-w-xl flex-1 flex-col gap-5 p-10" onSubmit={handleSubmit(onSubmit)}>
+		<form className="flex w-full max-w-xl flex-1 flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
 			{/* TODO: change snapshot-name for this page to "education&experience" */}
 			<FromSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName="form-snapshot-profile" />
-
-			<h3 className="text-md font-medium">Education & Experience</h3>
+			<div className="flex">
+				{/* An empty shell for the mobile sideBarTrigger button to portal into */}
+				<div id="mobileSideBarTrigger"></div>
+				<h3 className="text-base font-medium">Education & Experience</h3>
+			</div>
 			<div>
 				<Label>Education Background</Label>
 				<Controller
 					name="education"
 					control={control}
-					defaultValue={context?.education||[]}
+					defaultValue={context?.education || []}
 					rules={{
 						validate: (value) => {
 							if (value.length < 1) {
@@ -290,11 +310,7 @@ export default function Page() {
 								<div className="mt-2 flex cursor-pointer flex-col justify-center gap-2 rounded border border-dashed p-3">
 									{field.value.map((entry: EducationEntry, index: number) => (
 										<div key={index} className={cn(buttonVariants({ variant: "outline" }), "flex items-center font-normal")}>
-											<div className="flex flex-1 justify-center gap-2">
-												<span>{entry.degree}</span>
-												<span>-</span>
-												<span className="text-sm">{entry.institution}</span>
-											</div>
+											<div className="max-w-[30ch] flex-1 gap-2 overflow-hidden text-ellipsis whitespace-nowrap lg:max-w-none lg:text-center">{`${entry.degree} in ${entry.major} at ${entry.institution}`}</div>
 											<DropdownMenu>
 												<DropdownMenuTrigger asChild>
 													<Button variant="ghost">
@@ -305,7 +321,10 @@ export default function Page() {
 													<DropdownMenuItem
 														asChild
 														onClick={() => {
-															setIsEditing(true);
+															setEditingStatus({
+																isEditing: true,
+																index,
+															});
 														}}
 													>
 														<DialogTrigger>
@@ -349,7 +368,7 @@ export default function Page() {
 											noOfeduBackgroundsRequired = 3;
 										}
 									});
-									if (field.value.length != noOfeduBackgroundsRequired && !isEditing) {
+									if (field.value.length != noOfeduBackgroundsRequired && !editingStatus.isEditing) {
 										return (
 											<DialogContent className="flex flex-col gap-2">
 												<DialogHeader>
@@ -370,7 +389,7 @@ export default function Page() {
 								})()}
 
 								{/* EDIT dialog */}
-								{isEditing && (
+								{editingStatus.isEditing && (
 									<DialogContent className="flex flex-col gap-2">
 										<DialogHeader>
 											<DialogTitle>Edit Education Background Entry</DialogTitle>
@@ -379,11 +398,14 @@ export default function Page() {
 										<EducationForm
 											onSubmitHandler={(item: EducationEntry) => {
 												const newValue = [...field.value];
-												newValue.splice(0, 1, item);
+												newValue.splice(editingStatus.index, 1, item);
 												field.onChange(newValue);
-												setIsEditing(false);
+												setEditingStatus({
+													isEditing: false,
+													index: 0,
+												});
 											}}
-											defaultValues={field.value[0]}
+											defaultValues={field.value[editingStatus.index]}
 										/>
 									</DialogContent>
 								)}
@@ -398,7 +420,7 @@ export default function Page() {
 				<Controller
 					name="workExperience"
 					control={control}
-					defaultValue={context?.workExperience||[]}
+					defaultValue={context?.workExperience || []}
 					rules={{
 						validate: (value) => {
 							if (value.length < 1) {
@@ -416,11 +438,8 @@ export default function Page() {
 								<div className="mt-2 flex cursor-pointer flex-col justify-center gap-2 rounded border border-dashed p-3">
 									{field.value.map((entry: WorkExperienceEntry, index: number) => (
 										<div key={index} className={cn(buttonVariants({ variant: "outline" }), "flex items-center font-normal")}>
-											<div className="flex flex-1 justify-center gap-2">
-												<span>{entry.company}</span>
-												<span>-</span>
-												<span>{entry.position}</span>
-											</div>
+											<div className="max-w-[30ch] flex-1 gap-2 overflow-hidden text-ellipsis whitespace-nowrap lg:max-w-none lg:text-center">{`${entry.position} at ${entry.company}`}</div>
+
 											<DropdownMenu>
 												<DropdownMenuTrigger asChild>
 													<Button variant="ghost">
@@ -431,7 +450,10 @@ export default function Page() {
 													<DropdownMenuItem
 														asChild
 														onClick={() => {
-															setIsEditing(true);
+															setEditingStatus({
+																isEditing: true,
+																index,
+															});
 														}}
 													>
 														<DialogTrigger>
@@ -477,7 +499,7 @@ export default function Page() {
 								</DialogContent>
 
 								{/* EDIT dialog */}
-								{isEditing && (
+								{editingStatus.isEditing && (
 									<DialogContent className="flex flex-col gap-2">
 										<DialogHeader>
 											<DialogTitle>Edit Work Experience Entry</DialogTitle>
@@ -486,11 +508,14 @@ export default function Page() {
 										<WorkExperienceForm
 											onSubmitHandler={(item: WorkExperienceEntry) => {
 												const newValue = [...field.value];
-												newValue.splice(0, 1, item);
+												newValue.splice(editingStatus.index, 1, item);
 												field.onChange(newValue);
-												setIsEditing(false);
+												setEditingStatus({
+													isEditing: true,
+													index: 0,
+												});
 											}}
-											defaultValues={field.value[0]}
+											defaultValues={field.value[editingStatus.index]}
 										/>
 									</DialogContent>
 								)}
@@ -505,7 +530,7 @@ export default function Page() {
 				<Controller
 					control={control}
 					name="skills"
-					defaultValue={context?.skills||[]}
+					defaultValue={context?.skills || []}
 					rules={{
 						validate: (value) => {
 							if (value.length < 1) {

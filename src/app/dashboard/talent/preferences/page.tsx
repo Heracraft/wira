@@ -25,11 +25,15 @@ import { industries, workEnvironments, teamDynamics } from "@/lib/shared";
 
 import { updateTalentProfile } from "../../actions";
 
+import type { ProfileCompletion } from "@/types/dashboard";
+
 const SNAPSHOT_NAME = "form-snapshot-prefernces";
 
 export default function Page() {
 	const context = useContext(TalentProfileContext);
 	const user = userStore((state) => state.user);
+
+	const profileCompletionStatus = context?.profileCompletionStatus as ProfileCompletion; 
 
 	const {
 		register,
@@ -47,7 +51,15 @@ export default function Page() {
 			if (!user) {
 				throw new Error("User not found");
 			}
-			const res = await updateTalentProfile(data, user.id);
+			const res = await updateTalentProfile({
+				...data,
+				profileCompletionStatus: {
+					personalInfo: profileCompletionStatus.personalInfo,
+					educationExperience: profileCompletionStatus.educationExperience,
+					preferences: true,
+					overallComplete:profileCompletionStatus.overallComplete
+				},
+			}, user.id);
 			if (res.status == 400) {
 				throw new Error(res.message);
 			}
@@ -71,7 +83,7 @@ export default function Page() {
 	}, [context]);
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="flex max-w-xl flex-1 flex-col gap-5 p-10">
+		<form onSubmit={handleSubmit(onSubmit)} className="flex w-full max-w-xl flex-1 flex-col gap-5">
 			<FormSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName={SNAPSHOT_NAME} />
 
 			{/* Career Interests and Goals */}

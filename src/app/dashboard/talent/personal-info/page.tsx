@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
 import { useEffect, useContext } from "react";
@@ -27,6 +25,8 @@ import { updateTalentProfile } from "../../actions";
 
 import { toast } from "sonner";
 
+import type {ProfileCompletion} from "@/types/dashboard"
+
 // Lazy load the LocationInputs component because all that location data is 22KB
 const LazyLocationInputs = dynamic(() => import("./LocationInputs"), {
 	loading: () => <Skeleton className="h-9 w-full rounded-md" />,
@@ -38,8 +38,8 @@ export default function Page() {
 	const user = userStore((state) => state.user);
 
 	const context = useContext(TalentProfileContext);
-	// console.log(context);
 
+	const profileCompletionStatus = context?.profileCompletionStatus as ProfileCompletion
 	const {
 		register,
 		handleSubmit,
@@ -81,7 +81,18 @@ export default function Page() {
 			if (!user) {
 				throw new Error("User not found");
 			}
-			const res = await updateTalentProfile(data, user.id);
+			const res = await updateTalentProfile(
+				{
+					...data,
+					profileCompletionStatus: {
+						personalInfo: true,
+						educationExperience: profileCompletionStatus.educationExperience,
+						preferences: profileCompletionStatus.preferences,
+						overallComplete:profileCompletionStatus.overallComplete
+					},
+				},
+				user.id,
+			);
 			if (res.status == 400) {
 				throw new Error(res.message);
 			}
@@ -98,7 +109,7 @@ export default function Page() {
 	};
 
 	return (
-		<form className="flex max-w-xl flex-1 flex-col gap-5 p-10" onSubmit={handleSubmit(onSubmit)}>
+		<form className="flex w-full max-w-xl flex-1 flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
 			<FormSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName={SNAPSHOT_NAME} />
 
 			<div className="text-md flex flex-col gap-5 font-medium">Personal Info</div>

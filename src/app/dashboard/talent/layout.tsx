@@ -5,8 +5,8 @@ import { db } from "@/db/index";
 import { talentProfiles, workExperienceEntries, educationEntries } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-import Sidebar from "../sidebar";
 import TalentProfileProvider from "./profileProvider";
+import SidebarLayout from "../SideBarLayout";
 
 import type { TalentProfile } from "@/types/dashboard";
 
@@ -14,20 +14,23 @@ const sections = [
 	{
 		label: "Personal Information",
 		href: "/dashboard/talent/personal-info",
+		completionProperty: "personalInfo",
 	},
 	{
 		label: "Education & Experience",
 		href: "/dashboard/talent/education&experience",
+		completionProperty: "educationExperience",
 	},
 	{
 		label: "Preferences",
 		href: "/dashboard/talent/preferences",
+		completionProperty: "preferences",
 	},
 	{
 		label: "Review & Submit",
 		href: "/dashboard/talent/review&submit",
+		completionProperty: "overallComplete",
 	},
-	// Account?: to edit email, password, avatar, etc.
 ];
 
 export default async function Page({
@@ -59,14 +62,16 @@ export default async function Page({
 		}
 	} catch (error) {
 		console.log(error);
-		// TODO: handle error properly
-		redirect("/unathorized");
+		redirect("/unauthorized");
 	}
 
 	return (
-		<>
-			<Sidebar sections={sections} />
-			{talentProfile && <TalentProfileProvider profile={profile}>{children}</TalentProfileProvider>}
-		</>
+		<div className="flex h-full w-full flex-1 justify-center p-5 md:px-20 xl:px-36">
+			{talentProfile && (
+				<TalentProfileProvider profile={profile}>
+					<SidebarLayout sections={sections}>{children}</SidebarLayout>
+				</TalentProfileProvider>
+			)}
+		</div>
 	);
 }

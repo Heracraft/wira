@@ -14,6 +14,9 @@ First of many documents to come. This document will be about the components and 
 + /supabase/migrations
 	Migrations for postgres db hosted on supabase
 
++ /archive
+	Implementations of features that are not used in the current version of the application but may be useful for future reference. This can include old routes, components, or logic that has been deprecated but not deleted.
+
 ### Components
 Since routes are defined by folders and files in Next.js, each folder in the `app` directory corresponds to a route. But only the `page.(js|jsx|ts|tsx)` file in the folder is the actual code for the route. This means we can colocate components used by said route.
 
