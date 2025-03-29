@@ -2,17 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
-import { use, useState } from "react";
+import { useState } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 import { Menu, Package } from "lucide-react";
 
-import { userStore } from "@/lib/store";
+import { revalidatePathFromClient } from "@/app/auth/actions";
+
+import { createClient, userStore } from "@/lib/store";
 
 type Route = {
 	label: string;
@@ -42,6 +44,8 @@ const routes: Route[] = [
 ];
 
 export default function Navbar() {
+	const supabase = createClient();
+
 	const pathname = usePathname() || "/";
 
 	const user = userStore((state) => state.user);
@@ -70,13 +74,13 @@ export default function Navbar() {
 						}
 						if (pathname == route.href || (route.href != "/" && pathname.startsWith(route.href))) {
 							return (
-								<Link key={index} href={route.href} className="relative justify-center flex h-full w-20 items-center text-center text-primary after:absolute after:left-1/2 after:top-full after:h-1 after:w-[130%] after:-translate-x-1/2 after:-translate-y-0.5 after:rounded after:bg-primary after:content-['']">
+								<Link key={index} href={route.href} className="relative flex h-full w-20 items-center justify-center text-center text-primary after:absolute after:left-1/2 after:top-full after:h-1 after:w-[130%] after:-translate-x-1/2 after:-translate-y-0.5 after:rounded after:bg-primary after:content-['']">
 									{route.label}
 								</Link>
 							);
 						} else {
 							return (
-								<Link key={index} href={route.href} className="justify-center flex h-full w-20 items-center text-center">
+								<Link key={index} href={route.href} className="flex h-full w-20 items-center justify-center text-center">
 									{route.label}
 								</Link>
 							);
@@ -126,8 +130,12 @@ export default function Navbar() {
 									</AvatarFallback>
 								</Avatar>
 							</DropdownMenuTrigger>
-							<DropdownMenuContent className="w-36">
-								<DropdownMenuLabel>{user.fullName}</DropdownMenuLabel>
+							<DropdownMenuContent className="w-44">
+								<DropdownMenuLabel className="flex flex-col">
+									{user.fullName}
+									{user.userType == "employer" && <span className="text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">{user.companyName}</span>}
+								</DropdownMenuLabel>
+								<DropdownMenuSeparator />
 								<DropdownMenuItem asChild>
 									<Link href={`/dashboard/${user.userType}`}>Profile</Link>
 								</DropdownMenuItem>
@@ -135,8 +143,13 @@ export default function Navbar() {
 									<Link href={`/dashboard/${user.userType}/settings`}>Settings</Link>
 								</DropdownMenuItem>
 								<DropdownMenuSeparator />
-								<DropdownMenuItem>
-									<Link href="/auth/sign-out">Sign Out</Link>
+								<DropdownMenuItem
+									onClick={async () => {
+										await supabase.auth.signOut();
+										revalidatePathFromClient("/", true);
+									}}
+								>
+									Sign Out
 								</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenu>

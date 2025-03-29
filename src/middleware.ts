@@ -67,7 +67,7 @@ export async function updateSession(request: NextRequest) {
 		if (userType === "talent") {
 			return redirectTo(`/dashboard/talent/personal-info`, request);
 		} else if (userType === "employer") {
-			return redirectTo(`/dashboard/employer`, request);
+			return redirectTo(`/dashboard/employer/company-profile`, request);
 		}
 	};
 

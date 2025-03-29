@@ -6,4 +6,5 @@ export type User = {
 	userType?: "talent" | "employer";
 	phoneNumber?: string | null;
 	dateOfBirth?: string | null;
+	companyName?: string;
 };

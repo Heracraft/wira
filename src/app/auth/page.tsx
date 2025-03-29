@@ -1,5 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { revalidatePath } from "next/cache";
+
 import Link from "next/link";
 
 import { useState } from "react";
@@ -15,7 +17,7 @@ import { Label } from "@/components/ui/label";
 
 import { cn } from "@/lib/utils";
 
-import { login } from "./actions";
+import { login, revalidatePathFromClient } from "./actions";
 
 export default function page() {
 	const [error, setError] = useState({
@@ -41,6 +43,7 @@ export default function page() {
 			if (res.status == 400) {
 				throw new Error(res.message);
 			}
+			revalidatePathFromClient("/", true);
 		} catch (error: any) {
 			setError({ status: true, message: error.message });
 			setTimeout(() => {
@@ -51,8 +54,8 @@ export default function page() {
 	};
 
 	return (
-		<div className="flex-1 flex w-full h-full justify-center items-center">
-			<div className="flex flex-col gap-6 max-w-sm w-full">
+		<div className="flex h-full w-full flex-1 items-center justify-center">
+			<div className="flex w-full max-w-sm flex-col gap-6">
 				<Card>
 					<CardHeader className="text-center">
 						<CardTitle className="text-xl">Welcome back</CardTitle>
@@ -78,7 +81,7 @@ export default function page() {
 											required
 										/>
 										{errors.email && (
-											<span role="alert" className="text-muted-foreground text-xs">
+											<span role="alert" className="text-xs text-muted-foreground">
 												{errors.email.message as string}
 											</span>
 										)}
@@ -110,7 +113,7 @@ export default function page() {
 									>
 										Login
 									</SubmitButton>
-									{error.status && <p className="text-xs w-full text-center text-destructive">{error.message}</p>}
+									{error.status && <p className="w-full text-center text-xs text-destructive">{error.message}</p>}
 								</div>
 								<div className="text-center text-sm">
 									Don&apos;t have an account?{" "}
@@ -122,7 +125,7 @@ export default function page() {
 						</form>
 					</CardContent>
 				</Card>
-				<div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
+				<div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
 					By clicking continue, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
 				</div>
 			</div>

@@ -59,6 +59,15 @@ export default async function RootLayout({
 				initialUserState.dateOfBirth = talentProfile.dateOfBirth;
 			}
 		}
+		else if (user.user_metadata.userType === "employer") {
+			const companyProfile = (await db.select().from(companyProfiles).where(eq(companyProfiles.userId, user.id)))[0];
+			// console.log({ companyProfile });
+			if (companyProfile) {
+				initialUserState.companyName = companyProfile.companyName as string;
+				initialUserState.avatarUrl = companyProfile.avatarUrl;
+				initialUserState.fullName = companyProfile.contactPersonName;
+			}
+		}
 	}
 
 	return (

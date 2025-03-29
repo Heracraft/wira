@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/db";
-import { talentProfiles, workExperienceEntries, educationEntries, companyProfiles } from "@/db/schema";
+import { talentProfiles, workExperienceEntries, educationEntries } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 // TODO: implement server side validation
@@ -50,18 +50,6 @@ export async function updateTalentProfile(data: Record<string, any>, userId: str
 	}
 }
 
-export async function updateCompanyProfile(data: Record<string, any>, userId: string) {
-	try {
-		await db.update(companyProfiles).set(data).where(eq(companyProfiles.userId, userId));
-
-		revalidatePath("/dashboard/employer/", "layout"); 
-
-		return { status: 200, message: "Profile updated successfully" };
-	}
-	catch (error) {
-		return { status: 400, message: "Something went wrong" };
-	}
-}
 export async function submitFeedback(data: Record<string, any>) {
 	// This function is used to submit feedback through the server to discord
 	try {

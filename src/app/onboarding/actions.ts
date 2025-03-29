@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import { db } from "@/db/index";
 import { users, talentProfiles, companyProfiles } from "@/db/schema";
 
@@ -64,6 +66,8 @@ export async function onBoardCompany(userId: string, profileData: { email: strin
 			companyWebsite,
 			industry,
 		});
+
+		revalidatePath("/", "layout");
 
 		return { status: 200 };
 	} catch (error: any) {

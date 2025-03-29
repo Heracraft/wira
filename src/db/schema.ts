@@ -37,13 +37,14 @@ export const talentProfiles = pgTable("talentProfiles", {
 
 	resume: varchar("resume", { length: 255 }),
 
-	profileCompletionStatus: jsonb("profileCompletionStatus").default({
-		personalInfo: false,
-		educationExperience: false,
-		preferences: false,
-		overallComplete:true
-	}).notNull(),
-	
+	profileCompletionStatus: jsonb("profileCompletionStatus")
+		.default({
+			personalInfo: false,
+			educationExperience: false,
+			preferences: false,
+			overallComplete: true,
+		})
+		.notNull(),
 
 	// personalityType: varchar("personalityType", { length: 255 }),
 	// personalityDescription: text("personalityDescription"),
@@ -65,10 +66,12 @@ export const companyProfiles = pgTable("companyProfiles", {
 	industry: varchar("industry", { length: 255 }),
 	country: varchar("country", { length: 255 }),
 	region: varchar("region", { length: 255 }),
+	postalCode: varchar("postalCode", { length: 255 }),
 	avatarUrl: varchar("avatarUrl", { length: 255 }),
 });
 
 export type InsertCompanyProfile = typeof companyProfiles.$inferInsert;
+export type CompanyProfileRow = typeof companyProfiles.$inferSelect;
 
 // Education Entries
 export const educationEntries = pgTable("educationEntries", {
@@ -81,7 +84,7 @@ export const educationEntries = pgTable("educationEntries", {
 	major: varchar("major", { length: 255 }),
 	gpa: varchar("gpa", { length: 255 }),
 	startDate: varchar("startDate", { length: 25 }),
-	endDate: varchar("endDate",{ length: 25 }),
+	endDate: varchar("endDate", { length: 25 }),
 });
 
 export type EducationEntry = typeof educationEntries.$inferSelect;

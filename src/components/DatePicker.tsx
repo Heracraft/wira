@@ -38,7 +38,7 @@ export default function DatePickerInput({ date, setDate }: { date: Date | undefi
 	}, []);
 
 	useEffect(() => {
-		console.log({ date });
+		// console.log({ date });
 
 		if (date && !inputValue && typeof date === "string") {
 			const rawDate = parse(date as any, "yyyy-MM-dd", new Date());

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState} from "react";
+import React, { useState } from "react";
 
 import { useForm, SubmitHandler, Controller, useWatch } from "react-hook-form";
 
@@ -17,7 +17,7 @@ import DatePickerInput from "@/components/DatePicker";
 import { PhoneInput } from "@/components/auth/PhoneNumberInput";
 import SubmitButton from "@/components/submitButton";
 
-import {CircleCheck, ChevronsUpDown } from "lucide-react";
+import { CircleCheck, ChevronsUpDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { industries } from "@/lib/shared";
@@ -45,8 +45,6 @@ function formatDate(date: Date, locale: string = "en-US"): string {
 	}).format(date);
 }
 
-
-
 function Stepper({ steps, currentStep, setCurrentStep, className }: { steps: string[]; currentStep: number; setCurrentStep?: (step: number) => void; className?: string }) {
 	return (
 		<div className={cn("flex gap-2", className)}>
@@ -60,12 +58,12 @@ function Stepper({ steps, currentStep, setCurrentStep, className }: { steps: str
 								}
 							}}
 							key={index}
-							className={cn("cursor-pointer flex items-center md:w-full", index == currentStep ? "text-foreground" : "text-muted-foreground")}
+							className={cn("flex cursor-pointer items-center md:w-full", index == currentStep ? "text-foreground" : "text-muted-foreground")}
 						>
 							{index == currentStep ? <CircleCheck size={20} className="me-2 fill-muted-foreground stroke-background" /> : <span className="me-1">{index + 1}.</span>}
 							{steps[index]}
-							<div className="h-[1px] flex-1 flex-2 bg-muted-foreground ml-1 hidden md:block"></div>
-							<div className="md:hidden ml-2 text-xl">/</div>
+							<div className="flex-2 ml-1 hidden h-[1px] flex-1 bg-muted-foreground md:block"></div>
+							<div className="ml-2 text-xl md:hidden">/</div>
 						</span>
 					);
 				} else {
@@ -77,7 +75,7 @@ function Stepper({ steps, currentStep, setCurrentStep, className }: { steps: str
 								}
 							}}
 							key={index}
-							className={cn("cursor-pointer flex items-center", index == currentStep ? "text-foreground" : "text-muted-foreground")}
+							className={cn("flex cursor-pointer items-center", index == currentStep ? "text-foreground" : "text-muted-foreground")}
 						>
 							{index == currentStep ? <CircleCheck size={20} className="me-2 fill-muted-foreground stroke-background" /> : <span className="me-1">{index + 1}.</span>}
 							{steps[index]}
@@ -140,7 +138,7 @@ export default function page() {
 
 	const onCompanySubmit: SubmitHandler<Record<string, any>> = async (data) => {
 		try {
-			if (!user){
+			if (!user) {
 				throw new Error("User not found");
 			}
 			let res = await onBoardCompany(user.id, {
@@ -155,7 +153,7 @@ export default function page() {
 			if (res.status == 200) {
 				router.push("/dashboard");
 			}
-		} catch (error:any) {
+		} catch (error: any) {
 			console.error(error);
 			setError({ status: true, message: error.message });
 			setTimeout(() => {
@@ -166,15 +164,15 @@ export default function page() {
 
 	if (currentStep == 0) {
 		return (
-			<div className="flex flex-1 w-full h-full justify-center items-center">
-				<div className="flex flex-col gap-6 max-w-lg w-full">
+			<div className="flex h-full w-full flex-1 items-center justify-center">
+				<div className="flex w-full max-w-lg flex-col gap-6">
 					<Card>
 						<CardHeader className="text-center">
 							<Stepper className="mb-5" steps={["Account Type", "Personal Info", "Done"]} currentStep={currentStep} setCurrentStep={setCurrentStep} />
 							<CardTitle className="text-xl">What kind of account would you like to open?</CardTitle>
 						</CardHeader>
 						<CardContent className="flex">
-							<div className="flex justify-center w-full gap-5 px-5 text-muted-foreground	">
+							<div className="flex w-full justify-center gap-5 px-5 text-muted-foreground">
 								{accountTypes.map((accountType, index) => {
 									if (selectedAccountType == accountType.value) {
 										return (
@@ -184,11 +182,11 @@ export default function page() {
 													setCurrentStep(1);
 													setValue("accountType", accountType.value);
 												}}
-												className="flex flex-col shadow-sm items-center. justify-between gap-2 p-4 border border-primary rounded-lg"
+												className="items-center. flex flex-col justify-between gap-2 rounded-lg border border-primary p-4 shadow-sm"
 											>
 												{/* <BriefcaseBusiness size={48} className="ring-foreground" /> */}
 												<span className="font-medium">{accountType.label}</span>
-												<p className=" text-xs">{accountType.description}</p>
+												<p className="text-xs">{accountType.description}</p>
 											</button>
 										);
 									} else {
@@ -199,11 +197,11 @@ export default function page() {
 													setCurrentStep(1);
 													setValue("accountType", accountType.value);
 												}}
-												className="flex flex-col shadow-sm items-center. justify-between gap-2 p-4 border hover:border-primary-300 rounded-lg"
+												className="items-center. flex flex-col justify-between gap-2 rounded-lg border p-4 shadow-sm hover:border-primary-300"
 											>
 												{/* <BriefcaseBusiness size={48} className="ring-foreground" /> */}
 												<span className="font-medium">{accountType.label}</span>
-												<p className=" text-xs">{accountType.description}</p>
+												<p className="text-xs">{accountType.description}</p>
 											</button>
 										);
 									}
@@ -211,7 +209,7 @@ export default function page() {
 							</div>
 						</CardContent>
 					</Card>
-					<div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
+					<div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
 						Adhere to our <Link href="#">Acceptable use Policy</Link> . You cannot use a personal account for business purposes.
 					</div>
 				</div>
@@ -220,8 +218,8 @@ export default function page() {
 	} else if (currentStep == 1) {
 		if (selectedAccountType == "talent") {
 			return (
-				<div className="flex flex-1 w-full h-full justify-center items-center">
-					<div className="flex flex-col gap-6 max-w-md w-full">
+				<div className="flex h-full w-full flex-1 items-center justify-center">
+					<div className="flex w-full max-w-md flex-col gap-6">
 						<Card>
 							<CardHeader className="text-center">
 								<Stepper className="mb-2" steps={["Account Type", "Personal Info", "Done"]} currentStep={currentStep} setCurrentStep={setCurrentStep} />
@@ -229,13 +227,13 @@ export default function page() {
 								<CardDescription>Lets get to know you</CardDescription>
 							</CardHeader>
 							<CardContent>
-								<form onSubmit={handleSubmit(onTalentSubmit)} className="grid gap-5 w-full max-w-sm mx-auto">
-									<div className="grid gap-5 ">
+								<form onSubmit={handleSubmit(onTalentSubmit)} className="mx-auto grid w-full max-w-sm gap-5">
+									<div className="grid gap-5">
 										<div className="grid gap-2">
 											<Label htmlFor="email">Full name</Label>
 											<Input {...register("fullName", { required: true })} id="fullName" type="text" autoComplete="name" />
 											{errors.fullName && (
-												<span role="alert" className="text-muted-foreground text-xs">
+												<span role="alert" className="text-xs text-muted-foreground">
 													{errors.fullName.message as string}
 												</span>
 											)}
@@ -256,7 +254,7 @@ export default function page() {
 															// {...register("phoneNumber", { required: true, maxLength: 15 })}
 														/>
 														{errors.phoneNumber && (
-															<span role="alert" className="text-muted-foreground text-xs">
+															<span role="alert" className="text-xs text-muted-foreground">
 																{errors.phoneNumber.message as string}
 															</span>
 														)}
@@ -280,7 +278,7 @@ export default function page() {
 									>
 										Finish
 									</SubmitButton>
-									{error.status && <p className="text-xs w-full text-center text-destructive">{error.message}</p>}
+									{error.status && <p className="w-full text-center text-xs text-destructive">{error.message}</p>}
 								</form>
 							</CardContent>
 						</Card>
@@ -289,8 +287,8 @@ export default function page() {
 			);
 		} else {
 			return (
-				<div className="flex flex-1 w-full h-full justify-center items-center">
-					<div className="flex flex-col gap-6 max-w-md w-full">
+				<div className="flex h-full w-full flex-1 items-center justify-center">
+					<div className="flex w-full max-w-md flex-col gap-6">
 						<Card>
 							<CardHeader className="text-center">
 								<Stepper className="mb-2" steps={["Account Type", "Company Info", "Done"]} currentStep={currentStep} setCurrentStep={setCurrentStep} />
@@ -298,32 +296,71 @@ export default function page() {
 								<CardDescription>Lets get to your company</CardDescription>
 							</CardHeader>
 							<CardContent>
-								<form onSubmit={handleSubmit(onCompanySubmit)} className="grid gap-5 w-full max-w-sm mx-auto">
-									<div className="grid gap-5 ">
+								<form onSubmit={handleSubmit(onCompanySubmit)} className="mx-auto grid w-full max-w-sm gap-5">
+									<div className="grid gap-5">
 										<div className="grid gap-2">
-											<Label htmlFor="companyName">Company Name</Label>
-											<Input {...register("companyName", { required: "Company Name is required" })} id="companyName" type="text" />
+											<Label htmlFor="companyName">
+												Company Name <span className="text-xs text-destructive">*</span>
+											</Label>
+											<Input
+												id="companyName"
+												{...register("companyName", {
+													required: "Company name is required",
+													maxLength: { value: 255, message: "Company name cannot exceed 255 characters" },
+												})}
+											/>
 											{errors.companyName && (
-												<span role="alert" className="text-muted-foreground text-xs">
+												<p role="alert" className="mt-1 text-xs text-destructive">
 													{errors.companyName.message as string}
-												</span>
+												</p>
 											)}
 										</div>
 										<div className="grid gap-2">
-											<Label htmlFor="contactPersonName">Contact Person Name</Label>
-											<Input {...register("contactPersonName")} id="contactPersonName" type="text" />
+											<Label htmlFor="contactPersonName">
+												Contact Person Name <span className="text-xs text-destructive">*</span>
+											</Label>
+											<Input
+												id="contactPersonName"
+												{...register("contactPersonName", {
+													required: "Contact person name is required",
+													maxLength: { value: 255, message: "Contact person name cannot exceed 255 characters" },
+												})}
+											/>
+											{errors.contactPersonName && (
+												<p role="alert" className="mt-1 text-xs text-destructive">
+													{errors.contactPersonName.message as string}
+												</p>
+											)}
 										</div>
 										<div className="grid gap-2">
-											<Label htmlFor="contactPersonPosition">Contact Person Position</Label>
-											<Input {...register("contactPersonPosition")} id="contactPersonPosition" type="text" />
+											<Label htmlFor="contactPersonPosition">
+												Contact Person Position <span className="text-xs text-destructive">*</span>
+											</Label>
+											<Input
+												id="contactPersonPosition"
+												{...register("contactPersonPosition", {
+													required: "Contact person position is required",
+													maxLength: { value: 255, message: "Contact person position cannot exceed 255 characters" },
+												})}
+											/>
+											{errors.contactPersonPosition && (
+												<p role="alert" className="mt-1 text-xs text-destructive">
+													{errors.contactPersonPosition.message as string}
+												</p>
+											)}
 										</div>
 										<div className="grid gap-2">
-											<Label htmlFor="companyWebsite">Company Website </Label>
-											<Input {...register("companyWebsite", { required: "Company Website is required" })} id="companyWebsite" type="url" />
+											<Label htmlFor="companyWebsite">Company Website</Label>
+											<Input
+												id="companyWebsite"
+												{...register("companyWebsite", {
+													maxLength: { value: 255, message: "Company website cannot exceed 255 characters" },
+												})}
+											/>
 											{errors.companyWebsite && (
-												<span role="alert" className="text-muted-foreground text-xs">
+												<p role="alert" className="mt-1 text-xs text-destructive">
 													{errors.companyWebsite.message as string}
-												</span>
+												</p>
 											)}
 										</div>
 										<div className="grid gap-2">
@@ -333,7 +370,7 @@ export default function page() {
 												control={control}
 												defaultValue="Select an Industry"
 												rules={{ required: "An Industry is required" }}
-												render={({ field }) => (
+												render={({ field, fieldState }) => (
 													<Popover>
 														<PopoverTrigger asChild>
 															<Button variant="outline" className="flex justify-between font-normal">
@@ -356,6 +393,11 @@ export default function page() {
 																</CommandList>
 															</Command>
 														</PopoverContent>
+														{fieldState.error && (
+															<span role="alert" className="text-xs text-destructive">
+																{fieldState.error.message}
+															</span>
+														)}
 													</Popover>
 												)}
 											/>
@@ -398,8 +440,7 @@ export default function page() {
 									>
 										Finish
 									</SubmitButton>
-									{error.status && <p className="text-xs w-full text-center text-destructive">{error.message}</p>}
-
+									{error.status && <p className="w-full text-center text-xs text-destructive">{error.message}</p>}
 								</form>
 							</CardContent>
 						</Card>
@@ -409,10 +450,10 @@ export default function page() {
 		}
 	} else if (currentStep == 2) {
 		return (
-			<div className="flex flex-1 w-full h-full justify-center items-center">
-				<div className="flex flex-col gap-6 max-w-md w-full">
+			<div className="flex h-full w-full flex-1 items-center justify-center">
+				<div className="flex w-full max-w-md flex-col gap-6">
 					<Card>
-						<CardHeader className="text-center items-center">
+						<CardHeader className="items-center text-center">
 							<CardTitle className="text-3xl">Congratulations. Your account is ready</CardTitle>
 							{/* <CardDescription> </CardDescription> */}
 						</CardHeader>

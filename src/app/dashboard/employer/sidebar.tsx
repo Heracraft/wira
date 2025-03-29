@@ -13,19 +13,18 @@ import { cn } from "@/lib/utils";
 
 import { PanelLeftClose, PanelLeft, Check } from "lucide-react";
 
-import { TalentProfileContext } from "./talent/context";
-import {CompanyProfileContext} from "./employer/context"
+import { CompanyProfileContext } from "./talent/context";
 
 import { Settings } from "lucide-react";
 
 import type { ProfileCompletion } from "@/types/dashboard";
 
-export default function Sidebar({ sections, title, isForMobile }: { sections: { label: string; href: string; completionProperty?: string }[]; title?: string; isForMobile: boolean }) {
+export default function Sidebar({ sections, title, isForMobile }: { sections: { label: string; href: string; completionProperty: string }[]; title?: string; isForMobile: boolean }) {
 	const pathname = usePathname();
 
-	const context = useContext(TalentProfileContext) || useContext(CompanyProfileContext);
+	const context = useContext(CompanyProfileContext) || null;
 
-	const profileCompletionStatus = "profileCompletionStatus" in (context || {}) ? (context as { profileCompletionStatus: any }).profileCompletionStatus : undefined;
+	const profileCompletionStatus = context?.profileCompletionStatus as any;
 
 	return (
 		<>
@@ -49,7 +48,7 @@ export default function Sidebar({ sections, title, isForMobile }: { sections: { 
 									{sections.map((section, index) => (
 										<Link key={index} prefetch={true} href={section.href} className={cn(buttonVariants({ variant: "ghost" }), "w-full justify-start rounded-none px-10 py-5 font-normal hover:bg-neutral-50", pathname?.includes(section.href) ? "bg-neutral-100 hover:bg-neutral-200" : "")}>
 											<li className="relative flex w-full items-center">
-												{section.completionProperty && profileCompletionStatus[section.completionProperty] && <Check className="absolute -left-6 text-emerald-700" />}
+												{profileCompletionStatus[section.completionProperty] && <Check className="absolute -left-6 text-emerald-700" />}
 												{section.label}
 											</li>
 										</Link>
@@ -77,7 +76,7 @@ export default function Sidebar({ sections, title, isForMobile }: { sections: { 
 							{sections.map((section, index) => (
 								<Link key={index} prefetch={true} href={section.href} className={cn(buttonVariants({ variant: "ghost" }), "w-full justify-start rounded-none px-10 py-5 font-normal hover:bg-neutral-200", pathname?.includes(section.href) ? "bg-neutral-300 hover:bg-neutral-200" : "")}>
 									<li className="relative flex w-full items-center">
-										{section.completionProperty && profileCompletionStatus[section.completionProperty] && <Check className="absolute -left-6 text-emerald-700" />}
+										{profileCompletionStatus[section.completionProperty] && <Check className="absolute -left-6 text-emerald-700" />}
 										{section.label}
 									</li>
 								</Link>

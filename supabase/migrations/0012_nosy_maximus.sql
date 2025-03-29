@@ -1,0 +1,1 @@
+ALTER TABLE "companyProfiles" ADD COLUMN "postalCode" varchar(255);
