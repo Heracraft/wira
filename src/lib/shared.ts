@@ -1,3 +1,60 @@
+export const plans = [
+	{
+		planName: "Essential",
+		amount: "999",
+		billingPeriod: "yearly",
+		talentEngagementLimit: 5,
+		description: "For small companies/startups.",
+		features: {
+			accessToProfiles: true,
+			fullProfileViews: 5,
+			freeTrial: true,
+		},
+		actionButtonConfig: {
+			label: "Get started",
+			href: "/auth/sign-up?plan=essential",
+			variant: "outline",
+		},
+	},
+	{
+		planName: "Pro",
+		amount: "9,999",
+		billingPeriod: "yearly",
+		talentEngagementLimit: 50,
+		description: "For midsize companies.",
+		features: {
+			accessToProfiles: true,
+			fullProfileViews: 50,
+			freeTrial: true,
+		},
+		actionButtonConfig: {
+			label: "Get started",
+			href: "/auth/sign-up?plan=pro",
+			variant: "default",
+		},
+	},
+	{
+		planName: "Enterprise",
+		amount: "Contact us",
+		billingPeriod: "yearly",
+		talentEngagementLimit: null,
+		description: "For large enterprises. ",
+		features: {
+			accessToProfiles: true,
+			customEngagementLimit: true,
+			documentVerification: true,
+			onboardingAssistance: true,
+			legalSupport: true,
+			freeTrial: true,
+		},
+		actionButtonConfig: {
+			label: "Contact us",
+			href: "mailto:admin@tu-fund.com",
+			variant: "default",
+		},
+	},
+];
+
 export const industries = [
 	{ label: "Manufacturing", value: "manufacturing" },
 	{ label: "Engineering", value: "engineering" },

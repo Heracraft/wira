@@ -1,8 +1,11 @@
 import "server-only";
 
+import { cookies } from "next/headers";
+
 import { createServerClient } from "@supabase/ssr";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
-import { cookies } from "next/headers";
+import Redis from "ioredis";
+import Stripe from "stripe";
 
 // exports server only clients
 
@@ -36,3 +39,12 @@ export function adminClient() {
 	});
 }
 
+export function createKv() {
+	const redis = new Redis(process.env.REDIS_URL!);
+	return redis;
+}
+
+const isDev = process.env.NODE_ENV === 'development';
+const stripeSecretKey = isDev ? process.env.STRIPE_TEST_SECRET_KEY : process.env.STRIPE_SECRET_KEY;
+
+export const stripeAdmin = new Stripe(stripeSecretKey!);

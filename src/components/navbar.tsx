@@ -41,6 +41,11 @@ const routes: Route[] = [
 		for: "employer",
 		restricted: true,
 	},
+	{
+		label: "Pricing",
+		href: "/pricing",
+		for: "all",
+	}
 ];
 
 export default function Navbar() {

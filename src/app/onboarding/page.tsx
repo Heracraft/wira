@@ -6,12 +6,15 @@ import React, { useState } from "react";
 
 import { useForm, SubmitHandler, Controller, useWatch } from "react-hook-form";
 
+import { PricingCard } from "../pricing/page";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 import DatePickerInput from "@/components/DatePicker";
 import { PhoneInput } from "@/components/auth/PhoneNumberInput";
@@ -23,6 +26,9 @@ import { cn } from "@/lib/utils";
 import { industries } from "@/lib/shared";
 import { onBoardCompany, onBoardTalent } from "./actions";
 import { userStore } from "@/lib/store";
+import { plans } from "@/lib/shared";
+
+import type { Plan } from "@/types/stripe";
 
 const accountTypes = [
 	{
@@ -97,7 +103,8 @@ export default function page() {
 		message: "",
 	});
 
-	const [currentStep, setCurrentStep] = useState(0);
+	// turn back
+	const [currentStep, setCurrentStep] = useState(2);
 
 	const {
 		register,
@@ -209,9 +216,6 @@ export default function page() {
 							</div>
 						</CardContent>
 					</Card>
-					<div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
-						Adhere to our <Link href="#">Acceptable use Policy</Link> . You cannot use a personal account for business purposes.
-					</div>
 				</div>
 			</div>
 		);
@@ -291,7 +295,7 @@ export default function page() {
 					<div className="flex w-full max-w-md flex-col gap-6">
 						<Card>
 							<CardHeader className="text-center">
-								<Stepper className="mb-2" steps={["Account Type", "Company Info", "Done"]} currentStep={currentStep} setCurrentStep={setCurrentStep} />
+								<Stepper className="mb-2" steps={["Account Type", "Company Info", "Billing"]} currentStep={currentStep} setCurrentStep={setCurrentStep} />
 								<CardTitle className="text-xl">Company information</CardTitle>
 								<CardDescription>Lets get to your company</CardDescription>
 							</CardHeader>
@@ -364,7 +368,9 @@ export default function page() {
 											)}
 										</div>
 										<div className="grid gap-2">
-											<Label htmlFor="industry">Industry</Label>
+											<Label htmlFor="industry">
+												Industry <span className="text-xs text-destructive">*</span>
+											</Label>
 											<Controller
 												name="industry"
 												control={control}
@@ -450,22 +456,37 @@ export default function page() {
 		}
 	} else if (currentStep == 2) {
 		return (
-			<div className="flex h-full w-full flex-1 items-center justify-center">
-				<div className="flex w-full max-w-md flex-col gap-6">
-					<Card>
-						<CardHeader className="items-center text-center">
-							<CardTitle className="text-3xl">Congratulations. Your account is ready</CardTitle>
-							{/* <CardDescription> </CardDescription> */}
-						</CardHeader>
-						<CardContent>
-							<div className="flex gap-2">
-								<Button asChild className="w-full">
-									<Link href="/dashboard">Head to the dashboard</Link>
-								</Button>
-							</div>
-						</CardContent>
-					</Card>
+			<div className="h-full. flex w-full flex-1 items-center justify-center">
+				<div className="flex w-full flex-col items-center gap-4">
+					<h2 className="text-3xl">Choose your plan</h2>
+					<div className="grid w-full max-w-2xl grid-cols-1 place-items-center gap-2 sm:grid-cols-2">
+						{plans.slice(0, 2).map((plan, index) => (
+							<PricingCard
+								key={index}
+								plan={plan as Plan}
+								user={user}
+								action={(planName, userType) => {
+									if (planName != "Enteprise") {
+										router.push(`/subscription?plan=${planName}`);
+									} else {
+										window.open("mailto:admin@tu-fund.com", "_blank");
+									}
+								}}
+							/>
+						))}
+					</div>
 				</div>
+				{/* <Dialog>
+							<DialogTrigger asChild>
+								<Button className="w-full">Start free trial</Button>
+							</DialogTrigger>
+							<DialogContent>
+								<DialogHeader>
+									<DialogTitle>Are you absolutely sure?</DialogTitle>
+									<DialogDescription>This action cannot be undone. This will permanently delete your account and remove your data from our servers.</DialogDescription>
+								</DialogHeader>
+							</DialogContent>
+						</Dialog> */}
 			</div>
 		);
 	}

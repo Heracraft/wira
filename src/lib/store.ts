@@ -1,6 +1,7 @@
 // exports browser clients and global state
 
 import { createBrowserClient } from "@supabase/ssr";
+import { loadStripe } from "@stripe/stripe-js";
 
 import { User } from "@/types/auth";
 
@@ -31,3 +32,4 @@ export const profileStore=create((set) => ({
 	setProfile: (profile: any) => set({ profile }),
 	clear: () => set({ profile: null }),
 }))
+

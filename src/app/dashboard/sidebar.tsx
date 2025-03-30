@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { PanelLeftClose, PanelLeft, Check } from "lucide-react";
 
 import { TalentProfileContext } from "./talent/context";
-import {CompanyProfileContext} from "./employer/context"
+import { CompanyProfileContext } from "./employer/context";
 
 import { Settings } from "lucide-react";
 
@@ -30,9 +30,9 @@ export default function Sidebar({ sections, title, isForMobile }: { sections: { 
 	return (
 		<>
 			{isForMobile ? (
-				<div className="block sm:hidden sticky top-0 z-10">
+				<div className="sticky top-0 z-10 block sm:hidden">
 					<Sheet>
-						<SheetTrigger className="flex h-12 w-full items-center gap-1 border-b border-dashed bg-muted rounded-t-xl px-2 py-2">
+						<SheetTrigger className="flex h-12 w-full items-center gap-1 rounded-t-xl border-b border-dashed bg-muted px-2 py-2">
 							<div className="grid h-full cursor-pointer place-content-center rounded p-1 hover:bg-neutral-200">
 								<PanelLeft size={18} />
 							</div>
@@ -47,8 +47,8 @@ export default function Sidebar({ sections, title, isForMobile }: { sections: { 
 							<div className="flex h-full flex-col">
 								<ul className="flex flex-col gap-0.5">
 									{sections.map((section, index) => (
-										<Link key={index} prefetch={true} href={section.href} className={cn(buttonVariants({ variant: "ghost" }), "w-full justify-start rounded-none px-10 py-5 font-normal hover:bg-neutral-50", pathname?.includes(section.href) ? "bg-neutral-100 hover:bg-neutral-200" : "")}>
-											<li className="relative flex w-full items-center">
+										<Link key={index} prefetch={true} href={section.href} className={cn(buttonVariants({ variant: "ghost" }), "w-full justify-start rounded-none px-10 py-5 font-normal hover:[&>li]:underline", pathname?.includes(section.href) ? "bg-neutral-200" : "")}>
+											<li className="relative flex w-full items-center underline-offset-2">
 												{section.completionProperty && profileCompletionStatus[section.completionProperty] && <Check className="absolute -left-6 text-emerald-700" />}
 												{section.label}
 											</li>
@@ -56,8 +56,8 @@ export default function Sidebar({ sections, title, isForMobile }: { sections: { 
 									))}
 								</ul>
 								<ul className="flex flex-1 flex-col justify-end rounded-bl-xl">
-									<Link prefetch={true} href={"settings"} className={cn(buttonVariants({ variant: "ghost" }), "mt-auto !flex h-14 w-full items-center justify-start rounded-bl px-10 font-normal hover:bg-neutral-50", pathname?.includes("settings") ? "bg-neutral-100 hover:bg-neutral-200" : "")}>
-										<li className="relative flex w-full items-center gap-2">
+									<Link prefetch={true} href={"settings"} className={cn(buttonVariants({ variant: "ghost" }), "mt-auto !flex h-14 w-full items-center justify-start rounded-bl px-10 font-normal hover:[&>li]:underline", pathname?.includes("settings") ? "bg-neutral-200" : "")}>
+										<li className="relative flex w-full items-center gap-2 underline-offset-2">
 											<Settings size={32} className="absolute -left-6 top-1/2 -translate-y-1/2" />
 											Account Settings
 										</li>
@@ -75,8 +75,8 @@ export default function Sidebar({ sections, title, isForMobile }: { sections: { 
 					<div className="flex h-full flex-col">
 						<ul className="flex flex-col gap-0.5">
 							{sections.map((section, index) => (
-								<Link key={index} prefetch={true} href={section.href} className={cn(buttonVariants({ variant: "ghost" }), "w-full justify-start rounded-none px-10 py-5 font-normal hover:bg-neutral-200", pathname?.includes(section.href) ? "bg-neutral-300 hover:bg-neutral-200" : "")}>
-									<li className="relative flex w-full items-center">
+								<Link key={index} prefetch={true} href={section.href} className={cn(buttonVariants({ variant: "ghost" }), "w-full justify-start rounded-none px-10 py-5 font-normal hover:[&>li]:underline", pathname?.includes(section.href) ? "bg-neutral-200" : "")}>
+									<li className="relative flex w-full items-center underline-offset-2">
 										{section.completionProperty && profileCompletionStatus[section.completionProperty] && <Check className="absolute -left-6 text-emerald-700" />}
 										{section.label}
 									</li>
@@ -84,8 +84,8 @@ export default function Sidebar({ sections, title, isForMobile }: { sections: { 
 							))}
 						</ul>
 						<ul className="flex flex-1 flex-col justify-end rounded-bl-xl">
-							<Link prefetch={true} href={"settings"} className={cn(buttonVariants({ variant: "ghost" }), "mt-auto !flex h-14 w-full items-center justify-start rounded-bl px-10 font-normal hover:bg-neutral-200", pathname?.includes("settings") ? "bg-neutral-300 hover:bg-neutral-200" : "")}>
-								<li className="relative flex w-full items-center gap-2">
+							<Link prefetch={true} href={"settings"} className={cn(buttonVariants({ variant: "ghost" }), "mt-auto !flex h-14 w-full items-center justify-start rounded-bl px-10 font-normal hover:[&>li]:underline", pathname?.includes("settings") ? "bg-neutral-200" : "")}>
+								<li className="relative flex w-full items-center gap-2 underline-offset-2">
 									<Settings size={32} className="absolute -left-6 top-1/2 -translate-y-1/2" />
 									Account Settings
 								</li>

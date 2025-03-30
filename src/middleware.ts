@@ -43,6 +43,10 @@ export async function updateSession(request: NextRequest) {
 	} = await supabase.auth.getUser();
 
 	// TODO: allow public access to / route
+	if (request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/auth" || request.nextUrl.pathname === "/pricing") {
+		return NextResponse.next();
+	}
+
 	if (!user && !request.nextUrl.pathname.startsWith("/auth")) {
 		// no user & is not heading to auth page, potentially respond by redirecting the user to the login page
 		return redirectTo("/auth", request);
@@ -62,7 +66,6 @@ export async function updateSession(request: NextRequest) {
 	// }
 
 	const toDashBoard = (user: User) => {
-		// redirect to role-specific dashboard if user is logged in and trying to access dashboard using /dashboard
 		let userType = user.user_metadata.userType;
 		if (userType === "talent") {
 			return redirectTo(`/dashboard/talent/personal-info`, request);
@@ -108,13 +111,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
 	matcher: [
-		/*
-		 * Match all request paths except for the ones starting with:
-		 * - _next/static (static files)
-		 * - _next/image (image optimization files)
-		 * - favicon.ico (favicon file)
-		 * Feel free to modify this pattern to include more paths.
-		 */
 		"/((?!_next/static|error|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
 	],
 };

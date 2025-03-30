@@ -69,7 +69,6 @@ export default function page() {
 				throw new Error(res.message);
 			}
 		} catch (error: any) {
-			//TODO: better type for error
 			console.log(error);
 			setError({ status: true, message: error.message });
 			setTimeout(() => {

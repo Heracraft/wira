@@ -128,4 +128,31 @@ export type WorkExperienceEntry = typeof workExperienceEntries.$inferSelect;
 // 	]
 // );
 
-// ... (Other tables like jobPostings, matches, careerInsights, testimonials, etc. -  You can translate those similarly)
+
+export const subscriptionPlans = pgTable("subscriptionPlans", {
+    planId: serial("planId").primaryKey(),
+    planName: varchar("planName", { length: 255 }).notNull(),
+	amount: varchar("amount", { length: 255 }).notNull(),
+	billingPeriod: varchar("billingPeriod", { enum: ["monthly", "yearly"] }).notNull(),
+    talentEngagementLimit: integer("talentEngagementLimit").notNull(),
+    description: text("description"),
+});
+
+export type SubscriptionPlan = typeof subscriptionPlans.$inferSelect;
+
+export const companySubscriptions = pgTable("companySubscriptions", {
+    subscriptionId: serial("subscriptionId").primaryKey(),
+    companyId: integer("companyId")
+        .references(() => companyProfiles.profileId)
+        .notNull(),
+    planId: integer("planId")
+        .references(() => subscriptionPlans.planId)
+        .notNull(),
+    startDate: date("startDate").defaultNow(),
+    endDate: date("endDate").notNull(),
+    talentsEngagedThisMonth: integer("talentsEngagedThisMonth").default(0),
+	isTrial: boolean("isTrial").default(false), 
+    trialEndDate: date("trialEndDate"), 
+});
+
+export type CompanySubscription = typeof companySubscriptions.$inferSelect;
