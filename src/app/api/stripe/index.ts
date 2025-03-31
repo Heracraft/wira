@@ -9,7 +9,7 @@ import { syncStripeDataToKV } from "@/app/api/stripe/helpers";
 import { stripeAdmin as stripe } from "@/lib/store.server";
 
 //const isDev = process.env.NODE_ENV === 'development';
-isDev=true
+const isDev=true
 const stripeWebhookSecret = isDev ? process.env.STRIPE_TEST_SECRET_KEY : process.env.STRIPE_SECRET_KEY;
 
 export const config = {
