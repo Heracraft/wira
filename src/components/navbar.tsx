@@ -142,7 +142,7 @@ export default function Navbar() {
 								</DropdownMenuLabel>
 								<DropdownMenuSeparator />
 								<DropdownMenuItem asChild>
-									<Link href={`/dashboard/${user.userType}`}>Profile</Link>
+									<Link href={`/dashboard`}>Profile</Link>
 								</DropdownMenuItem>
 								<DropdownMenuItem>
 									<Link href={`/dashboard/${user.userType}/settings`}>Settings</Link>

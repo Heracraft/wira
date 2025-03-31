@@ -37,7 +37,7 @@ export default function Sidebar({ sections, title, isForMobile }: { sections: { 
 								<PanelLeft size={18} />
 							</div>
 							<div data-orientation="vertical" role="none" className="mx-1 h-full w-[1px] shrink-0 self-stretch bg-neutral-200"></div>
-							<h1 className="text-base font-medium">{title}</h1>
+							<h1 className="text-base font-semibold">{title}</h1>
 						</SheetTrigger>
 						<SheetContent className="flex-col gap-2 !px-0">
 							<SheetHeader>
@@ -70,7 +70,7 @@ export default function Sidebar({ sections, title, isForMobile }: { sections: { 
 			) : (
 				<div className="group inset-y-0 left-0 z-10 hidden flex-col gap-2 rounded-l-xl border-r bg-muted sm:flex">
 					<div className="flex items-center rounded-tl-xl border-b bg-neutral-100 px-10 py-3">
-						<h1 className="text-base font-medium">{title}</h1>
+						<h1 className="text-base font-semibold">{title}</h1>
 					</div>
 					<div className="flex h-full flex-col">
 						<ul className="flex flex-col gap-0.5">

@@ -1,4 +1,18 @@
-import { pgTable, serial, varchar, text, date, integer, boolean, unique, primaryKey, jsonb } from "drizzle-orm/pg-core";
+import { customType, pgTable, serial, varchar, text, date, integer, jsonb } from "drizzle-orm/pg-core";
+
+// const tsvector = customType<{ data: string }>({
+// 	dataType() {
+// 		return `tsvector`;
+// 	},
+// });
+
+export const tsvector = customType<{
+	data: string;
+}>({
+	dataType() {
+		return `tsvector`;
+	},
+});
 
 // Users (Talent or Employers)
 export const users = pgTable("users", {
@@ -19,17 +33,20 @@ export const talentProfiles = pgTable("talentProfiles", {
 		.notNull(),
 	fullName: varchar("fullName", { length: 255 }),
 	phoneNumber: varchar("phoneNumber", { length: 255 }),
-	dateOfBirth: date("dateOfBirth"),
+
+	// in case you are wondering why this is not a date type,
+	// The answer is............... TIMEZONES!!!!!.
+	// fuck timezones.
+	dateOfBirth: varchar("dateOfBirth", { length: 255 }),
 	avatarUrl: varchar("avatarUrl", { length: 255 }),
 
-	// location,
 	country: varchar("country", { length: 255 }),
 	region: varchar("region", { length: 255 }),
 	postalCode: varchar("postalCode", { length: 255 }),
 
 	linkedInProfile: varchar("linkedInProfile", { length: 255 }),
 
-	skills: varchar("skill", { length: 255 }).array(), // There could be a separate table for skills
+	skills: varchar("skills", { length: 255 }).array(), // There could be a separate table for skills
 
 	industryInterests: varchar("industryInterests", { length: 255 }).array(),
 	preferredCompanyTypes: varchar("preferredCompanyTypes", { length: 255 }).array(),
@@ -45,6 +62,7 @@ export const talentProfiles = pgTable("talentProfiles", {
 			overallComplete: true,
 		})
 		.notNull(),
+	searchVector: tsvector("searchVector"), // not natively supported in drizzle-orm. Made a custom type for it
 
 	// personalityType: varchar("personalityType", { length: 255 }),
 	// personalityDescription: text("personalityDescription"),
@@ -73,7 +91,6 @@ export const companyProfiles = pgTable("companyProfiles", {
 export type InsertCompanyProfile = typeof companyProfiles.$inferInsert;
 export type CompanyProfileRow = typeof companyProfiles.$inferSelect;
 
-// Education Entries
 export const educationEntries = pgTable("educationEntries", {
 	educationId: serial("educationId").primaryKey(),
 	profileId: integer("profileId")
@@ -89,7 +106,6 @@ export const educationEntries = pgTable("educationEntries", {
 
 export type EducationEntry = typeof educationEntries.$inferSelect;
 
-// Work Experience Entries
 export const workExperienceEntries = pgTable("workExperienceEntries", {
 	experienceId: serial("experienceId").primaryKey(),
 	profileId: integer("profileId")
@@ -104,55 +120,60 @@ export const workExperienceEntries = pgTable("workExperienceEntries", {
 
 export type WorkExperienceEntry = typeof workExperienceEntries.$inferSelect;
 
-// Skills - **dropped: unnecessary for now**
-// export const skills = pgTable("skills", {
-// 	skillId: serial("skillId").primaryKey(),
-// 	skillName: varchar("skillName", { length: 255 }).unique().notNull(),
-// });
-
-// **dropped: unnecessary for now**: Linking Table for Talent Profiles and Skills (Many-to-Many)
-// export const talentSkills = pgTable(
-// 	"talentSkills",
-// 	{
-// 		talentId: integer("talentId")
-// 			.references(() => talentProfiles.profileId)
-// 			.notNull(),
-// 		skillId: integer("skillId")
-// 			.references(() => skills.skillId)
-// 			.notNull(),
-// 		experienceLevel: varchar("experienceLevel", { length: 255 }),
-// 	},
-// 	(table) => [
-// 		primaryKey({ columns: [table.talentId, table.skillId] }),
-// 		// Composite key to prevent duplicates
-// 	]
-// );
-
-
-export const subscriptionPlans = pgTable("subscriptionPlans", {
-    planId: serial("planId").primaryKey(),
-    planName: varchar("planName", { length: 255 }).notNull(),
-	amount: varchar("amount", { length: 255 }).notNull(),
-	billingPeriod: varchar("billingPeriod", { enum: ["monthly", "yearly"] }).notNull(),
-    talentEngagementLimit: integer("talentEngagementLimit").notNull(),
-    description: text("description"),
+export const waitlist = pgTable("waitlist", {
+	waitlistId: serial("waitlistId").primaryKey(),
+	employerId: varchar("employerId")
+		.references(() => companyProfiles.userId)
+		.notNull(),
+	talentId: integer("talentId")
+		.references(() => talentProfiles.profileId)
+		.notNull(),
+	addedAt: date("addedAt").defaultNow(),
+	// Status of the waitlist entry
+	// Useless for now, but could be used for automation, worflow management, giving feedback to users, etc.
+	// status: varchar("status", { enum: ["pending", "engaged", "removed"] }).default("pending"),
 });
 
-export type SubscriptionPlan = typeof subscriptionPlans.$inferSelect;
+export type WaitlistRow = typeof waitlist.$inferSelect;
+export type InsertWaitlist = typeof waitlist.$inferInsert;
 
-export const companySubscriptions = pgTable("companySubscriptions", {
-    subscriptionId: serial("subscriptionId").primaryKey(),
-    companyId: integer("companyId")
-        .references(() => companyProfiles.profileId)
-        .notNull(),
-    planId: integer("planId")
-        .references(() => subscriptionPlans.planId)
-        .notNull(),
-    startDate: date("startDate").defaultNow(),
-    endDate: date("endDate").notNull(),
-    talentsEngagedThisMonth: integer("talentsEngagedThisMonth").default(0),
-	isTrial: boolean("isTrial").default(false), 
-    trialEndDate: date("trialEndDate"), 
-});
+/*
+-- PostgreSQL Full Text Search
+-- To enable full text search, you need to create a tsvector column and a trigger to update it.
+-- The tsvector column will be used to store the search vector for the talent profiles.
+-- The trigger will automatically update the tsvector column whenever a row is inserted or updated.
 
-export type CompanySubscription = typeof companySubscriptions.$inferSelect;
+-- Add into a random migration.
+-- The trigger plus the index are defined in  this migration /supabase/migrations/0013_equal_maria_hill.sql
+-- The code for creating the trigger and function is as follows:
+
+CREATE OR REPLACE FUNCTION update_search_vector()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.searchVector := to_tsvector(
+    'english',
+    COALESCE(NEW.fullName, '') || ' ' ||
+    COALESCE(array_to_string(NEW.skills, ' '), '') || ' ' ||
+    COALESCE(array_to_string(NEW.industryInterests, ' '), '') || ' ' ||
+    COALESCE(NEW.country, '') || ' ' ||
+    COALESCE(NEW.region, '')
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_search_vector
+BEFORE INSERT OR UPDATE ON "talentProfiles"
+FOR EACH ROW EXECUTE FUNCTION update_search_vector();
+
+--> Create an index on the search vector column for faster searching
+CREATE INDEX idx_talent_profiles_search_vector
+ON "talentProfiles"
+USING GIN (searchVector); --> Another unsupported thing: index types
+
+// example query
+SELECT *
+FROM "talentProfiles"
+WHERE searchVector @@ to_tsquery('english', 'developer & javascript');
+
+*/

@@ -84,6 +84,7 @@ export default function Page() {
 			const res = await updateTalentProfile(
 				{
 					...data,
+					dateOfBirth: data.dateOfBirth.toString(),
 					profileCompletionStatus: {
 						personalInfo: true,
 						educationExperience: profileCompletionStatus.educationExperience,
@@ -112,7 +113,7 @@ export default function Page() {
 		<form className="flex w-full max-w-xl flex-1 flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
 			<FormSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName={SNAPSHOT_NAME} />
 
-			<div className="text-md flex flex-col gap-5 font-medium">Personal Info</div>
+			<div className="text-md font-semibold">Personal Info</div>
 			<div className="flex w-full max-w-md flex-col gap-5">
 				<div>
 					<Label htmlFor="fullName">

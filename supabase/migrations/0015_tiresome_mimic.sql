@@ -1,0 +1,1 @@
+ALTER TABLE "talentProfiles" RENAME COLUMN "skill" TO "skills";

@@ -6,7 +6,7 @@ import React, { useState } from "react";
 
 import { useForm, SubmitHandler, Controller, useWatch } from "react-hook-form";
 
-import { PricingCard } from "../pricing/page";
+import { PricingCard } from "@/components/PricingCard";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";

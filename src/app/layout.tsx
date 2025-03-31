@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 
+import { GoogleAnalytics } from '@next/third-parties/google'
+
 import { createClient } from "@/lib/store.server";
 
 import { Toaster } from "@/components/ui/sonner";
@@ -72,13 +74,13 @@ export default async function RootLayout({
 
 	return (
 		<html lang="en">
-			{/* TODO: separate this layout into two layout groups to avoid a pile of conditional rendering */}
-			<body className="flex h-[100dvh] flex-col overflow-x-hidden bg-neutral-50 antialiased">
+			<body className="flex h-[100dvh] font-Roboto flex-col overflow-x-hidden bg-neutral-50 antialiased">
 				<Navbar />
 				<AuthProvider initialState={initialUserState} />
 				<div className="flex h-full flex-1 flex-col py-5">{children}</div>
 				{pathname == "/" && <Footer />}
 				<Toaster richColors />
+				<GoogleAnalytics gaId="G-CP8CREK62S"/>
 			</body>
 		</html>
 	);

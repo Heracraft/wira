@@ -1,6 +1,6 @@
 // "use client";
 
-import Sidebar from "./sidebar";
+import Sidebar from "../sidebar";
 
 export default function SidebarLayout({ sections, children }: { sections: { label: string; href: string; completionProperty: string }[]; children: React.ReactNode }) {
 	return (

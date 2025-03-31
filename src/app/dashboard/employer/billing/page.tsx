@@ -4,6 +4,10 @@ import { headers } from "next/headers";
 
 import { isDev } from "@/lib/utils.server";
 
+import { Badge } from "@/components/ui/badge";
+
+import { format } from "date-fns";
+
 export default async function Page() {
 	const headersList = await headers();
 	const uid = headersList.get("x-uid");
@@ -14,25 +18,42 @@ export default async function Page() {
 	const kv = createKv();
 
 	const customerId = await kv.get(`${isDev ? "test-" : ""}stripe:customer:${uid}`);
-	const subscription = await kv.get(`${isDev ? "test-" : ""}stripe:subscription:${customerId}`);
+
 	if (!customerId) {
 		return new Response(JSON.stringify({ error: "Customer not found" }), { status: 404 });
 	}
-	if (!subscription) {
-		return new Response(JSON.stringify({ error: "Subscription not found" }), { status: 404 });
-	}
-	const subscriptionData = JSON.parse(subscription);
-	console.log("Subscription Data: ", subscriptionData);
 
-	const plan =await stripe.subscriptions.retrieve(subscriptionData.subscriptionId);
-    console.log("Plan: ", plan);
-    
+	const subscriptions = await stripe.subscriptions.list({
+		customer: customerId as string, // Pass the customer ID
+		limit: 1, // Fetch only the most recent subscription
+	});
+
+	if (!subscriptions.data.length) {
+		return new Response(JSON.stringify({ error: "No subscriptions found for this customer" }), { status: 404 });
+	}
+
+	const subscription = subscriptions.data[0];
+
+	const productId = subscription.items.data[0].price.product as string;
+	const product = await stripe.products.retrieve(productId);
 
 	return (
-		<div className="flex h-screen w-full flex-col items-center justify-center">
-			<h1 className="text-3xl font-bold">Billing</h1>
-			<p className="mt-4 text-lg">This is the billing page.</p>
-			<div className="mt-4 flex gap-2">{/* Add your billing related components here */}</div>
+		<div className="flex w-full flex-1 flex-col gap-5">
+			<div>
+				<h3 className="text-lg font-semibold">Billing & Subscription</h3>
+				<p className="text-sm text-muted-foreground">Manage your subscription plan, payment methods, and billing history.</p>
+			</div>
+			<div className="flex w-full max-w-md items-start justify-between rounded border p-2">
+				<span className="">
+					<h4>
+						Current Plan: <b className="font-semibold">{product.name}</b>
+					</h4>
+					<p className="text-sm text-muted-foreground">Your plan renews on {format(new Date(subscription.current_period_end*1000), "MMMM do, yyyy")}</p>
+				</span>
+				<Badge variant="outline" className="bg-green-50 text-green-600">
+					{subscription.status == "trialing" ? "Trial" : subscription.status == "active" ? "Active" : "Inactive"}
+				</Badge>
+			</div>
 		</div>
 	);
 }

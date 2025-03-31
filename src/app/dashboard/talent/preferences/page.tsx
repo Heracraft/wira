@@ -21,7 +21,7 @@ import FormSnapshot from "../../FormSnapshots";
 import { TalentProfileContext } from "../context";
 
 import { userStore } from "@/lib/store";
-import { industries, workEnvironments, teamDynamics } from "@/lib/shared";
+import { industries, companyTypes } from "@/lib/shared";
 
 import { updateTalentProfile } from "../../actions";
 
@@ -87,7 +87,7 @@ export default function Page() {
 			<FormSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName={SNAPSHOT_NAME} />
 
 			{/* Career Interests and Goals */}
-			<h3 className="text-md font-medium">Career Interests and Goals</h3>
+			<h3 className="text-lg font-semibold">Career Interests and Goals</h3>
 			<div>
 				<Label>Preferred Industry/Area of Interest</Label>
 				<div className="space-y-2">
@@ -139,7 +139,7 @@ export default function Page() {
 			</div> */}
 
 			{/* Position Preferences */}
-			<h3 className="text-md font-medium">Position Preferences</h3>
+			<h3 className="text-lg font-semibold">Position Preferences</h3>
 			<div>
 				<Label>Preferred Companies or Types of Companies</Label>
 				<Controller
@@ -152,7 +152,7 @@ export default function Page() {
 					render={({ field, fieldState }) => (
 						<>
 							<div className="space-y-2">
-								{["Start-ups", "Mid-sized Companies", "Large Enterprises"].map((companyType) => (
+								{companyTypes.map((companyType) => (
 									<div key={companyType} className="flex items-center">
 										<Checkbox
 											checked={field.value?.includes(companyType)}
@@ -246,7 +246,7 @@ export default function Page() {
 			</div> */}
 
 			{/* Work Type Preferences */}
-			<h3 className="text-md font-medium">Work Type Preferences</h3>
+			<h3 className="text-lg font-semibold">Work Type Preferences</h3>
 			<div>
 				<Label>Are you open to part-time, full-time, or both?</Label>
 				<Controller
@@ -280,7 +280,6 @@ export default function Page() {
 						</>
 					)}
 				/>
-				{/* {errors.internshipType && <p className="text-red-500">{errors.internshipType.message}</p>} */}
 			</div>
 			<div className="mt-auto flex justify-end">
 				<SubmitButton

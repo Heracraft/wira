@@ -1,7 +1,8 @@
 import {stripeAdmin as stripe} from "@/lib/store.server"
 
-export default function Page({searchParams}: {searchParams: {session_id: string}}) {
-    const checkoutSessionId = searchParams.session_id
+// export default function Page({searchParams}: {searchParams: {session_id: string}}) {
+export default function Page() {
+    // const checkoutSessionId = searchParams.session_id
 
     // ...
     return (

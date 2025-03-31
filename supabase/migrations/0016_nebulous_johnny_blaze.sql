@@ -1,0 +1,1 @@
+ALTER TABLE "talentProfiles" ALTER COLUMN "dateOfBirth" SET DATA TYPE varchar(255);

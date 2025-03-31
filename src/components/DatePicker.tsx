@@ -41,7 +41,10 @@ export default function DatePickerInput({ date, setDate }: { date: Date | undefi
 		// console.log({ date });
 
 		if (date && !inputValue && typeof date === "string") {
-			const rawDate = parse(date as any, "yyyy-MM-dd", new Date());
+			let rawDate = parse(date as any, "yyyy-MM-dd", new Date()) || new Date(date);
+			if (isNaN(rawDate.getTime())) {
+				rawDate=new Date(date)
+			}
 			setInputValue(format(rawDate, "dd-MM-y"));
 		}
 	}, [date]);

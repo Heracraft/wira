@@ -1,3 +1,5 @@
+export const companyTypes = ["Start-ups", "Mid-sized Companies", "Large Enterprises"];
+
 export const plans = [
 	{
 		planName: "Essential",
@@ -11,7 +13,7 @@ export const plans = [
 			freeTrial: true,
 		},
 		actionButtonConfig: {
-			label: "Get started",
+			label: "Start free trial",
 			href: "/auth/sign-up?plan=essential",
 			variant: "outline",
 		},
@@ -29,7 +31,6 @@ export const plans = [
 		},
 		actionButtonConfig: {
 			label: "Get started",
-			href: "/auth/sign-up?plan=pro",
 			variant: "default",
 		},
 	},
@@ -49,7 +50,6 @@ export const plans = [
 		},
 		actionButtonConfig: {
 			label: "Contact us",
-			href: "mailto:admin@tu-fund.com",
 			variant: "default",
 		},
 	},

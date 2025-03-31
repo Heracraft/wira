@@ -42,7 +42,9 @@ export async function updateSession(request: NextRequest) {
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	// TODO: allow public access to / route
+	// TODO: introduce rate limitng
+	// TODO: allow users to access their own profile
+
 	if (request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/auth" || request.nextUrl.pathname === "/pricing") {
 		return NextResponse.next();
 	}

@@ -10,12 +10,12 @@ import SidebarLayout from "../SideBarLayout";
 
 const sections = [
 	{
-		label: "Company Profile",
-		href: "/dashboard/employer/company-profile",
-	},
-	{
 		label: "Waitlist",
 		href: "/dashboard/employer/waitlist",
+	},
+	{
+		label: "Company Profile",
+		href: "/dashboard/employer/company-profile",
 	},
 	{
 		label: "Billing",
