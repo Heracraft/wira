@@ -44,7 +44,8 @@ export function createKv() {
 	return redis;
 }
 
-const isDev = process.env.NODE_ENV === 'development';
+//const isDev = process.env.NODE_ENV === 'development';
+const isDev=true
 const stripeSecretKey = isDev ? process.env.STRIPE_TEST_SECRET_KEY : process.env.STRIPE_SECRET_KEY;
 
 export const stripeAdmin = new Stripe(stripeSecretKey!);
