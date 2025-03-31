@@ -10,7 +10,10 @@ import { syncStripeDataToKV } from "@/app/api/stripe/helpers";
 
 import { Button } from "@/components/ui/button";
 
-const isDev = process.env.NODE_ENV === "development";
+import {isDev} from "@/lib/utils.server"
+
+// const isDev = process.env.NODE_ENV === "development";
+
 
 export default async function Page() {
 	const headersList = await headers();

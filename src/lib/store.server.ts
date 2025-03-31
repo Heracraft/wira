@@ -7,6 +7,8 @@ import { createClient as createAdminClient } from "@supabase/supabase-js";
 import Redis from "ioredis";
 import Stripe from "stripe";
 
+import {isDev} from "@/lib/utils.server"
+
 // exports server only clients
 
 export async function createClient() {
@@ -44,7 +46,7 @@ export function createKv() {
 	return redis;
 }
 
-const isDev = process.env.NODE_ENV === 'development';
+//const isDev = process.env.NODE_ENV === 'development';
 const stripeSecretKey = isDev ? process.env.STRIPE_TEST_SECRET_KEY : process.env.STRIPE_SECRET_KEY;
 
 export const stripeAdmin = new Stripe(stripeSecretKey!);

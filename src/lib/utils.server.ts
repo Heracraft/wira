@@ -23,4 +23,5 @@ export function transformDynamoDBresults(data:any) {
 
     return transformedData;
 }
-export const isDev = process.env.NODE_ENV === 'development';
+//export const isDev = process.env.NODE_ENV === 'development';
+export const isDev=true
