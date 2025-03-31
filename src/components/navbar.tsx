@@ -64,10 +64,9 @@ export default function Navbar() {
 		<nav className="relative z-20 flex border-neutral-200 bg-white px-2 shadow sm:px-4">
 			{/* <div className="w-full flex flex-wrap items-center justify-between mx-auto md:mx-0"> */}
 			<div className="flex flex-1 items-center justify-between">
-				<a href="/" className="flex items-center">
-					<Package className="!my-0 mr-2 h-7 w-7" />
-
-					<span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Wira</span>
+				<a href="/" className="flex items-center py-1">
+					<img src="/logo.svg" className="!my-0 mr-2 size-16" />
+					{/* <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Wira</span> */}
 				</a>
 				<div className="hidden h-full gap-10 md:flex">
 					{routes.map((route, index) => {
@@ -77,6 +76,8 @@ export default function Navbar() {
 							// in this case, we return null to not render the route
 							return null;
 						}
+						else if (route.label=="Pricing" && user?.userType=="talent") return null;
+
 						if (pathname == route.href || (route.href != "/" && pathname.startsWith(route.href))) {
 							return (
 								<Link key={index} href={route.href} className="relative flex h-full w-20 items-center justify-center text-center text-primary after:absolute after:left-1/2 after:top-full after:h-1 after:w-[130%] after:-translate-x-1/2 after:-translate-y-0.5 after:rounded after:bg-primary after:content-['']">
