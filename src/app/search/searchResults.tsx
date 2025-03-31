@@ -18,11 +18,20 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default async function SearchResults({ query }: { query: string }) {
-	const searchResults = await db
+	let searchResults 
+	if (query){
+		searchResults= await db
 		.select()
 		.from(talentProfiles)
 		.where(sql`"searchVector" @@ plainto_tsquery(${query})`)
 		.limit(30);
+	}
+	else{
+		searchResults= await db
+		.select()
+		.from(talentProfiles)
+		.limit(30);
+	}
 	// const searchResults = await new Promise((resolve) => setTimeout(() => resolve([]), 20000));
 
 	return (
