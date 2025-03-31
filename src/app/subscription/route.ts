@@ -3,8 +3,11 @@ import { NextRequest } from "next/server";
 import { stripeAdmin as stripe, createKv, createClient } from "@/lib/store.server";
 import { redirect } from "next/navigation";
 
+import {isDev} from "@/lib/utils.server"
+
 //const isDev = process.env.NODE_ENV === "development";
-const isDev=true
+
+
 
 export async function GET(request: NextRequest) {
 	const supabase = await createClient();
