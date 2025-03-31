@@ -104,7 +104,7 @@ export default function page() {
 	});
 
 	// turn back
-	const [currentStep, setCurrentStep] = useState(2);
+	const [currentStep, setCurrentStep] = useState(0);
 
 	const {
 		register,
