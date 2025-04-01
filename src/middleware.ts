@@ -16,7 +16,7 @@ export async function updateSession(request: NextRequest) {
 
 	response.headers.set("x-pathname", request.nextUrl.pathname);
 
-	let supabaseResponse = response;
+	let supabaseResponse = response; 
 	const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
 		cookies: {
 			getAll() {
@@ -78,7 +78,7 @@ export async function updateSession(request: NextRequest) {
 
 	if (user && user?.user_metadata.isOnboarded) {
 		// user is logged in and onboarding is completed
-		response.headers.set("x-uid", user.id);
+		response.headers.set("x-uid", user.id);		
 
 		if (request.nextUrl.pathname.startsWith("/auth")) {
 			// redirect to dashboard if user is logged in and trying to access auth pages
@@ -112,7 +112,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-	matcher: [
-		"/((?!_next/static|error|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-	],
+	matcher: ["/((?!_next/static|error|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
 };

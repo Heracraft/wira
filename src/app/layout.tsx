@@ -35,6 +35,10 @@ export default async function RootLayout({
 	const headersList = await headers();
 	const pathname = headersList.get("x-pathname");
 
+	// headersList.forEach((value, key) => {
+	// 	console.log(`${key}: ${value}`);
+	//   });
+
 	console.log({pathname:!pathname},{pathname});
 	
 

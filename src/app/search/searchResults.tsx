@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
-import { sql } from "drizzle-orm";
+import { sql, and } from "drizzle-orm";
 import { db } from "@/db";
 import { talentProfiles } from "@/db/schema";
 import { Telescope, View } from "lucide-react";
@@ -18,19 +18,15 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default async function SearchResults({ query }: { query: string }) {
-	let searchResults 
-	if (query){
-		searchResults= await db
-		.select()
-		.from(talentProfiles)
-		.where(sql`"searchVector" @@ plainto_tsquery(${query})`)
-		.limit(30);
-	}
-	else{
-		searchResults= await db
-		.select()
-		.from(talentProfiles)
-		.limit(30);
+	let searchResults;
+	if (query) {
+		searchResults = await db
+			.select()
+			.from(talentProfiles)
+			.where(and(sql`"searchVector" @@ plainto_tsquery(${query})`, sql.raw(`"profileCompletionStatus"->>'overallComplete' = 'true'`)))
+			.limit(30);
+	} else {
+		searchResults = await db.select().from(talentProfiles).where(sql.raw(`"profileCompletionStatus"->>'overallComplete' = 'true'`)).limit(30);
 	}
 	// const searchResults = await new Promise((resolve) => setTimeout(() => resolve([]), 20000));
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useForm, Controller } from "react-hook-form";
@@ -14,8 +14,9 @@ import { industries, companyTypes } from "@/lib/shared";
 
 export default function SearchBar() {
 	const router = useRouter();
+	const searchParams = useSearchParams();
 
-	const [q, setQ] = useState("");
+	const [q, setQ] = useState(searchParams.get("q") || "");
 	const [areSearchFiltersOpen, setSearchFilters] = useState(false);
 	const { register, handleSubmit, control } = useForm();
 

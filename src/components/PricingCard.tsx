@@ -6,7 +6,7 @@ import { Check, X } from "lucide-react";
 
 import type { Plan } from "@/types/stripe";
 
-export function PricingCard({ plan, user, action }: { plan: Plan; user: any; action: (planName: string, userType: string) => void }) {
+export function PricingCard({ plan, user, action }: { plan: Plan; user: any; action: (planName: string) => void }) {
 	return (
 		<div className="flex w-full max-w-xs flex-col rounded-xl border bg-background p-6">
 			<div className="flex w-full justify-end">
@@ -55,7 +55,7 @@ export function PricingCard({ plan, user, action }: { plan: Plan; user: any; act
 			</ul>
 			{/* TODO: change text to upgrade now if employer is logged in */}
 
-			{user?.userType === "talent" ? (
+			{user && user?.userType === "talent" ? (
 				// If pricing tiers are not available for the user type, show a disabled button. 
 				// Unauthed users will not see this button.
 				<Button disabled className="w-full">
@@ -64,7 +64,7 @@ export function PricingCard({ plan, user, action }: { plan: Plan; user: any; act
 			) : (
 				<Button
 					onClick={() => {
-						action(plan.planName, user.userType);
+						action(plan.planName);
 					}}
 					variant={plan.actionButtonConfig.variant as "outline" | "default" | "link" | "destructive" | "secondary" | "ghost" | null | undefined}
 					className="mt-auto w-full"

@@ -21,7 +21,7 @@ export default function Page() {
 						key={index}
 						plan={plan as Plan}
 						user={user}
-						action={(planName, userType) => {
+						action={(planName) => {
 							if (planName === "Enterprise") {
 								window.open("mailto:admin@tu-fund.com", "_blank");
 							} else {

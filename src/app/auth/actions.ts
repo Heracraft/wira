@@ -44,7 +44,7 @@ export async function signup(formData: { email: string; password: string }) {
 			data: {
 				isOnboarded: false,
 			},
-			emailRedirectTo: `/onboarding`,
+			// emailRedirectTo: `/onboarding`,
 		},
 	});
 

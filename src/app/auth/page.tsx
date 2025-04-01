@@ -1,6 +1,6 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { revalidatePath } from "next/cache";
+// import { useRouter } from "next/navigation";
+// import { revalidatePath } from "next/cache";
 
 import Link from "next/link";
 
@@ -35,19 +35,14 @@ export default function page() {
 	} = useForm();
 
 	const onSubmit: SubmitHandler<Record<string, any>> = async (data) => {
-		try {
-			const email = data.email;
-			const password = data.password;
-			let res = await login({ email, password });
-			// TODO: fix: user state does not update after login
-			if (res.status == 400) {
-				throw new Error(res.message);
-			}
-			revalidatePathFromClient("/", true);
-		} catch (error: any) {
+		const email = data.email;
+		const password = data.password;
+		let res = await login({ email, password });
+		// TODO: fix: user state does not update after login
+		if (res.status == 400) {
 			setError({ status: true, message: error.message });
 			setTimeout(() => {
-				reset();
+				// reset();
 				setError({ status: false, message: "" });
 			}, 10000);
 		}
