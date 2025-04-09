@@ -14,9 +14,7 @@ export async function updateSession(request: NextRequest) {
 		request,
 	});
 
-	response.headers.set("x-pathname", request.nextUrl.pathname);
-
-	let supabaseResponse = response; 
+	let supabaseResponse = response;
 	const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
 		cookies: {
 			getAll() {
@@ -42,11 +40,15 @@ export async function updateSession(request: NextRequest) {
 		data: { user },
 	} = await supabase.auth.getUser();
 
+
+	// Yeah, I know. This is a bit of a hack. But it works.
+	supabaseResponse.headers.set("x-pathname", request.nextUrl.pathname);
+
 	// TODO: introduce rate limitng
 	// TODO: allow users to access their own profile
 
 	if (request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/auth" || request.nextUrl.pathname === "/pricing") {
-		return NextResponse.next();
+		return supabaseResponse;
 	}
 
 	if (!user && !request.nextUrl.pathname.startsWith("/auth")) {
@@ -78,8 +80,6 @@ export async function updateSession(request: NextRequest) {
 
 	if (user && user?.user_metadata.isOnboarded) {
 		// user is logged in and onboarding is completed
-		response.headers.set("x-uid", user.id);		
-
 		if (request.nextUrl.pathname.startsWith("/auth")) {
 			// redirect to dashboard if user is logged in and trying to access auth pages
 			return toDashBoard(user);

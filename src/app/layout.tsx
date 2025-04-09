@@ -3,21 +3,13 @@ import { headers } from "next/headers";
 
 import { GoogleAnalytics } from '@next/third-parties/google'
 
-import { createClient } from "@/lib/store.server";
-
 import { Toaster } from "@/components/ui/sonner";
 import AuthProvider from "@/components/AuthProvider";
 
-import Navbar from "@/components/navbar";
+import Header from "@/components/Header";
 import Footer from "@/components/footer";
 
 import "./globals.css";
-
-import { User } from "@/types/auth";
-
-import { db } from "@/db/index";
-import { talentProfiles, companyProfiles } from "@/db/schema";
-import { eq } from "drizzle-orm";
 
 export const metadata: Metadata = {
 	title: {
@@ -35,55 +27,32 @@ export default async function RootLayout({
 	const headersList = await headers();
 	const pathname = headersList.get("x-pathname");
 
-	// headersList.forEach((value, key) => {
-	// 	console.log(`${key}: ${value}`);
-	//   });
+		// if (user.user_metadata.userType === "talent") {
+		// 	const talentProfile = (await db.select().from(talentProfiles).where(eq(talentProfiles.userId, user.id)))[0];
+		// 	// console.log({ talentProfile });
+		// 	if (talentProfile) {
+		// 		initialUserState.fullName = talentProfile.fullName as string;
+		// 		initialUserState.avatarUrl = talentProfile.avatarUrl;
+		// 		initialUserState.phoneNumber = talentProfile.phoneNumber;
+		// 		initialUserState.dateOfBirth = talentProfile.dateOfBirth;
+		// 	}
+		// }
+		// else if (user.user_metadata.userType === "employer") {
+		// 	const companyProfile = (await db.select().from(companyProfiles).where(eq(companyProfiles.userId, user.id)))[0];
+		// 	// console.log({ companyProfile });
+		// 	if (companyProfile) {
+		// 		initialUserState.companyName = companyProfile.companyName as string;
+		// 		initialUserState.avatarUrl = companyProfile.avatarUrl;
+		// 		initialUserState.fullName = companyProfile.contactPersonName;
+		// 	}
+		// }
 
-	console.log({pathname:!pathname},{pathname});
-	
-
-	const client = await createClient(); //server client
-
-	const {
-		data: { user },
-	} = await client.auth.getUser();
-
-	let initialUserState = null;
-
-	if (user && !pathname?.startsWith("/auth") && user.email) {
-		// let email: string = user.email
-		initialUserState = {
-			email: user.email,
-			id: user.id,
-			userType: user.user_metadata.userType,
-		} as User;
-
-		if (user.user_metadata.userType === "talent") {
-			const talentProfile = (await db.select().from(talentProfiles).where(eq(talentProfiles.userId, user.id)))[0];
-			// console.log({ talentProfile });
-			if (talentProfile) {
-				initialUserState.fullName = talentProfile.fullName as string;
-				initialUserState.avatarUrl = talentProfile.avatarUrl;
-				initialUserState.phoneNumber = talentProfile.phoneNumber;
-				initialUserState.dateOfBirth = talentProfile.dateOfBirth;
-			}
-		}
-		else if (user.user_metadata.userType === "employer") {
-			const companyProfile = (await db.select().from(companyProfiles).where(eq(companyProfiles.userId, user.id)))[0];
-			// console.log({ companyProfile });
-			if (companyProfile) {
-				initialUserState.companyName = companyProfile.companyName as string;
-				initialUserState.avatarUrl = companyProfile.avatarUrl;
-				initialUserState.fullName = companyProfile.contactPersonName;
-			}
-		}
-	}
 
 	return (
 		<html lang="en">
 			<body className="flex h-[100dvh] font-Roboto flex-col overflow-x-hidden bg-neutral-50 antialiased">
-				<Navbar />
-				<AuthProvider initialState={initialUserState} />
+				<Header />
+				<AuthProvider />
 				<div className="flex h-full flex-1 flex-col py-5">{children}</div>
 				{pathname == "/" || !pathname && <Footer />}
 				<Toaster richColors />

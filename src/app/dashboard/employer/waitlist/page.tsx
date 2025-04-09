@@ -1,9 +1,11 @@
-import { db } from "@/db";
-import { waitlist, talentProfiles, users } from "@/db/schema";
+import { headers } from "next/headers";
 
 import { eq } from "drizzle-orm";
 
-import { headers } from "next/headers";
+import { db } from "@/db";
+import { waitlist, talentProfiles, users } from "@/db/schema";
+
+import { createClient } from "@/lib/store.server";
 
 async function getWaitlistedTalents(employerId: string) {
 	const results = await db
@@ -29,12 +31,16 @@ async function getWaitlistedTalents(employerId: string) {
 // }
 
 export default async function Page() {
-	const headersList = await headers();
-	const uid = headersList.get("x-uid");
+	const client=await createClient();
 
-	if (!uid) {
+	const {
+		data: { user },
+	} = await client.auth.getUser();
+
+	if (!user) {
 		return <p>Unauthorized</p>;
 	}
+	const uid= user.id;
 
 	let waitlistedTalents = await getWaitlistedTalents(uid);
 

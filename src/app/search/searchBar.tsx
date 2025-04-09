@@ -12,24 +12,56 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { industries, companyTypes } from "@/lib/shared";
 
+function removeUndefinedValues(obj: any) {
+	return Object.fromEntries(Object.entries(obj).filter(([key, value]) => value !== undefined && value !== ""));
+}
+
 export default function SearchBar() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
-	const [q, setQ] = useState(searchParams.get("q") || "");
 	const [areSearchFiltersOpen, setSearchFilters] = useState(false);
-	const { register, handleSubmit, control } = useForm();
+	const {
+		register,
+		handleSubmit,
+		watch,
+		control,
+		setValue,
+		formState: { isDirty },
+	} = useForm<{ q?: string; sortBy?: string; industryInterests?: string[]; preferredCompanyTypes?: string[] | undefined; workTypePreference?: string | undefined }>({
+		defaultValues: {
+			q: searchParams.get("q") || "",
+			sortBy: searchParams.get("sortBy") || "",
+			industryInterests: searchParams.getAll("industryInterests").length > 0 ? searchParams.getAll("industryInterests") : undefined,
+			preferredCompanyTypes: searchParams.getAll("preferredCompanyTypes").length > 0 ? searchParams.getAll("preferredCompanyTypes") : undefined,
+			workTypePreference: searchParams.get("workTypePreference") || undefined,
+		},
+	});
+
+	const formValues = watch();
 
 	useEffect(() => {
-        if (q.length < 3) return;
-        // Debounce the search input
+		if (!isDirty) return;
+		console.log({ isDirty });
+		console.log(
+			{
+				q: searchParams.get("q") || "",
+				sortBy: searchParams.get("sortBy") || "",
+				industryInterests: searchParams.getAll("industryInterests").length > 0 ? searchParams.getAll("industryInterests") : undefined,
+				preferredCompanyTypes: searchParams.getAll("preferredCompanyTypes").length > 0 ? searchParams.getAll("preferredCompanyTypes") : undefined,
+				workTypePreference: searchParams.get("workTypePreference") || undefined,
+			},
+			{ formValues },
+		);
+
+		// Debounce the search input
 		let handler = setTimeout(() => {
-		router.replace(`/search?q=${q}`); // or push, choose what you like.
+			router.replace(`/search?${new URLSearchParams(removeUndefinedValues(formValues) as any).toString()}`); // or push, choose what you like.
 		}, 500);
 		return () => {
 			clearTimeout(handler);
 		};
-	}, [q]);
+	}, [formValues]);
 
 	return (
 		<div className="relative">
@@ -41,7 +73,7 @@ export default function SearchBar() {
 						</svg>
 						<span className="sr-only">Search icon</span>
 					</div>
-					<input value={q} onChange={(e)=>setQ(e.target.value)} type="text" className="peer block w-full rounded-lg border border-neutral-300 bg-neutral-50 p-2 pl-10 text-sm text-neutral-900 outline-none focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white dark:placeholder-neutral-500 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="Search by interest, company name, skills, location etc" />
+					<input {...register("q")} type="text" className="peer block w-full rounded-lg border border-neutral-300 bg-neutral-50 p-2 pl-10 text-sm text-neutral-900 outline-none focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white dark:placeholder-neutral-500 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="Search by interest, company name, skills, location etc" />
 				</div>
 				<div className="flex items-center justify-end gap-2">
 					<button
@@ -52,22 +84,28 @@ export default function SearchBar() {
 					>
 						<Sliders className="size-5 text-muted-foreground" />
 					</button>
-					<Select>
-						<SelectTrigger className="w-32">
-							<SelectValue placeholder="Sort By" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="newest">Newest</SelectItem>
-							<SelectItem value="oldest">Oldest</SelectItem>
-							<SelectItem value="popular">Popular</SelectItem>
-							<SelectItem value="relevance">Relevance</SelectItem>
-						</SelectContent>
-					</Select>
+					<Controller
+						name="sortBy"
+						control={control}
+						render={({ field }) => (
+							<Select value={field.value} onValueChange={field.onChange}>
+								<SelectTrigger className="w-32">
+									<SelectValue placeholder="Sort By" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="newest">Newest</SelectItem>
+									<SelectItem value="oldest">Oldest</SelectItem>
+									<SelectItem value="popular">Popular</SelectItem>
+									<SelectItem value="relevance">Relevance</SelectItem>
+								</SelectContent>
+							</Select>
+						)}
+					/>
 				</div>
 			</div>
 			<div className="relative w-full">
 				{areSearchFiltersOpen && (
-					<div className="absolute inset-x-0 top-5 flex flex-col gap-4 border bg-background p-5">
+					<div className="absolute inset-x-0 top-10 z-20 flex flex-col gap-4 rounded-xl border bg-background p-5">
 						<div className="text-lg font-semibold">Search Filters:</div>
 						<form className="grid grid-cols-2 gap-y-4 md:grid-cols-4">
 							<div>
@@ -76,7 +114,6 @@ export default function SearchBar() {
 									<Controller
 										name="industryInterests"
 										control={control}
-										defaultValue={[]}
 										rules={{
 											required: "Please select at least one industry",
 										}}

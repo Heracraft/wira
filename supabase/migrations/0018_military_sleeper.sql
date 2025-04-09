@@ -1,0 +1,1 @@
+ALTER TABLE "talentProfiles" ALTER COLUMN "profileCompletionStatus" SET DEFAULT '{"personalInfo":false,"educationExperience":false,"preferences":false,"overallComplete":false}'::jsonb;

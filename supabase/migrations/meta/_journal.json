@@ -127,6 +127,13 @@
       "when": 1743410944345,
       "tag": "0017_panoramic_lila_cheney",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1744179338529,
+      "tag": "0018_military_sleeper",
+      "breakpoints": true
     }
   ]
 }

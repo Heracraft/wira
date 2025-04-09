@@ -5,6 +5,8 @@ import { db } from "@/db/index";
 import { talentProfiles, workExperienceEntries, educationEntries } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
+import { createClient } from "@/lib/store.server";
+
 import TalentProfileProvider from "./profileProvider";
 import SidebarLayout from "../SideBarLayout";
 
@@ -38,6 +40,15 @@ export default async function Page({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const client = await createClient();
+	const {
+		data: { user },
+	} = await client.auth.getUser();
+	if (!user) {
+		redirect("/unauthorized");
+	}
+	const uid = user.id;
+
 	let talentProfile = null;
 	let workExperience = null;
 	let educationBackground = null;
@@ -45,9 +56,6 @@ export default async function Page({
 	let profile: null | TalentProfile = null;
 
 	try {
-		const headersList = await headers();
-		const uid = headersList.get("x-uid");
-
 		let profileId;
 
 		if (uid) {

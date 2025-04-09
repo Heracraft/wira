@@ -111,12 +111,12 @@ export default function SettingsPage() {
 						}
 					})()}
 					<AvatarImage src={avatarUrl || undefined} />
-					{/* <AvatarFallback className="text-2xl">
+					<AvatarFallback className="text-2xl">
 						{context?.fullName
 							?.split(" ")
 							.map((el) => el[0])
 							.join("") || ""}
-					</AvatarFallback> */}
+					</AvatarFallback>
 				</Avatar>
 			</div>
 			<div className="space-y-2">

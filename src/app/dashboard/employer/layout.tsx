@@ -5,6 +5,8 @@ import { db } from "@/db/index";
 import { companyProfiles, CompanyProfileRow } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
+import { createClient } from "@/lib/store.server";
+
 import CompanyProfileProvider from "./profileProvider";
 import SidebarLayout from "../SideBarLayout";
 
@@ -28,24 +30,27 @@ export default async function Page({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const client = await createClient();
+
+	const {
+		data: { user },
+	} = await client.auth.getUser();
+
+	if (!user) {
+		redirect("/unauthorized");
+	}
+
+	const uid = user.id;
+
 	let companyProfile = null;
-	
+
 	let profile: null | CompanyProfileRow = null;
 
 	try {
-		const headersList = await headers();
-		const uid = headersList.get("x-uid");
+		companyProfile = (await db.select().from(companyProfiles).where(eq(companyProfiles.userId, uid)))[0];
+		// profileId = companyProfile.profileId;
 
-		// let profileId;
-
-		if (uid) {
-			companyProfile = (await db.select().from(companyProfiles).where(eq(companyProfiles.userId, uid)))[0];
-			// profileId = companyProfile.profileId;
-
-			profile = companyProfile;
-		} else {
-			throw new Error("Unauthorized");
-		}
+		profile = companyProfile;
 	} catch (error) {
 		console.log(error);
 		redirect("/unauthorized");

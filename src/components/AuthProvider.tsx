@@ -6,35 +6,46 @@ import { createClient, userStore } from "@/lib/store";
 
 import { User } from "@/types/auth";
 
-export default function AuthProvider({ initialState }: { initialState: User | null }) {
-	// const client = createClient();
+export default function AuthProvider() {
+	const client = createClient();
 
 	const setUser = userStore((state) => state.setUser);
 	const logout = userStore((state) => state.logout);
 
-	useEffect(() => {
-		if (initialState) setUser(initialState);
-	}, []);
-
 	//  Unnecessary for now.
 
-	// useEffect(() => {
-	// 	const {
-	// 		data: { subscription },
-	// 	} = client.auth.onAuthStateChange((event, session) => {
-	// 		if (event === "SIGNED_IN") {
-	// 			console.log(session);
-	//             setUser({ name: session?.user?.email! });
-	// 		}
-	// 		if (event === "SIGNED_OUT") {
-	//             console.log("signed out");
-	//             logout();
-	// 		}
-	// 	});
+	useEffect(() => {
+		client.auth.getSession().then(({ data: { session } }) => {
+			if (session) {
+				setUser({
+					email: session.user.email,
+					id: session.user.id,
+					userType: session.user.user_metadata.userType,
+				} as User);
+			}
+		});
 
-	// 	return () => {
-	// 		subscription.unsubscribe();
-	// 	};
-	// }, []);
+		const {
+			data: { subscription },
+		} = client.auth.onAuthStateChange((event, session) => {
+			if (event === "SIGNED_IN") {
+				if (!session) return;
+				console.log({ event });
+				setUser({
+					email: session.user.email,
+					id: session.user.id,
+					userType: session.user.user_metadata.userType,
+				} as User);
+			}
+			if (event === "SIGNED_OUT") {
+				console.log("signed out");
+				logout();
+			}
+		});
+
+		return () => {
+			subscription.unsubscribe();
+		};
+	}, []);
 	return <></>;
 }

@@ -465,7 +465,7 @@ export default function page() {
 								key={index}
 								plan={plan as Plan}
 								user={user}
-								action={(planName, userType) => {
+								action={(planName) => {
 									if (planName != "Enteprise") {
 										router.push(`/subscription?plan=${planName}`);
 									} else {

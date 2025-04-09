@@ -59,7 +59,7 @@ export const talentProfiles = pgTable("talentProfiles", {
 			personalInfo: false,
 			educationExperience: false,
 			preferences: false,
-			overallComplete: true,
+			overallComplete: false,
 		})
 		.notNull(),
 	searchVector: tsvector("searchVector"), // not natively supported in drizzle-orm. Made a custom type for it

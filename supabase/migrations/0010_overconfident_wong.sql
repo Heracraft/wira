@@ -1,0 +1,3 @@
+ALTER TABLE "educationEntries" ALTER COLUMN "startDate" TYPE DATE USING ("startDate"::text::date);--> statement-breakpoint
+ALTER TABLE "educationEntries" ALTER COLUMN "endDate" TYPE DATE USING ("endDate"::text::date);--> statement-breakpoint
+ALTER TABLE "talentProfiles" ADD COLUMN "profileCompletionStatus" jsonb DEFAULT '{"personalInfo":false,"educationExperience":false,"preferences":false}'::jsonb NOT NULL;

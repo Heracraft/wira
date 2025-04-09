@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import type { FieldValues } from "react-hook-form";
@@ -10,6 +10,8 @@ import type { FieldValues } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ImagePlus, Loader2 } from "lucide-react";
 
 // import LocationInputs from "./LocationInputs";
 import { PhoneInput } from "@/components/auth/PhoneNumberInput";
@@ -19,13 +21,13 @@ import SubmitButton from "@/components/submitButton";
 import FormSnapshot from "../../FormSnapshots";
 
 import { TalentProfileContext } from "../context";
-import { userStore } from "@/lib/store";
+import { userStore, createClient } from "@/lib/store";
 
 import { updateTalentProfile } from "../../actions";
 
 import { toast } from "sonner";
 
-import type {ProfileCompletion} from "@/types/dashboard"
+import type { ProfileCompletion } from "@/types/dashboard";
 
 // Lazy load the LocationInputs component because all that location data is 22KB
 const LazyLocationInputs = dynamic(() => import("./LocationInputs"), {
@@ -34,12 +36,38 @@ const LazyLocationInputs = dynamic(() => import("./LocationInputs"), {
 
 const SNAPSHOT_NAME = "form-snapshot-personal-info";
 
+async function uploadAvatar(file: File, uid: string, fileName: string) {
+	try {
+		const supabase = createClient();
+		const avatrPath = `avatars/${uid}-${fileName}`;
+		const { error: uploadError } = await supabase.storage.from("static").upload(avatrPath, file, { upsert: true });
+
+		if (uploadError) {
+			throw new Error(uploadError.message);
+		}
+
+		// Generate the public URL for the uploaded file
+		const { data: publicUrlData } = supabase.storage.from("static").getPublicUrl(avatrPath);
+
+		if (publicUrlData) {
+			return publicUrlData.publicUrl;
+		}
+	} catch (error: any) {
+		console.log(error);
+
+		throw new Error(error.message);
+	}
+}
+
 export default function Page() {
 	const user = userStore((state) => state.user);
 
 	const context = useContext(TalentProfileContext);
 
-	const profileCompletionStatus = context?.profileCompletionStatus as ProfileCompletion
+	const [avatarUrl, setAvatarUrl] = useState(context?.avatarUrl);
+	const [uploadStatus, setUploadStatus] = useState<"uploading" | "idle">("idle");
+
+	const profileCompletionStatus = context?.profileCompletionStatus as ProfileCompletion;
 	const {
 		register,
 		handleSubmit,
@@ -89,7 +117,7 @@ export default function Page() {
 						personalInfo: true,
 						educationExperience: profileCompletionStatus.educationExperience,
 						preferences: profileCompletionStatus.preferences,
-						overallComplete:profileCompletionStatus.overallComplete
+						overallComplete: profileCompletionStatus.overallComplete,
 					},
 				},
 				user.id,
@@ -115,6 +143,84 @@ export default function Page() {
 
 			<div className="text-md font-semibold">Personal Info</div>
 			<div className="flex w-full max-w-md flex-col gap-5">
+				<div>
+					<Label>Avatar</Label>
+					<Controller
+						control={control}
+						name="avatarUrl"
+						rules={{ required: "Avatar is required" }}
+						render={({ field, fieldState }) => (
+							<>
+								<Avatar className="group relative size-28">
+									{(() => {
+										if (uploadStatus === "uploading") {
+											return (
+												<div className="absolute inset-0 flex items-center justify-center bg-black/10 backdrop-blur-[2px]">
+													<Loader2 size={20} className="animate-spin" />
+												</div>
+											);
+										} else {
+											return (
+												<>
+													<label htmlFor="avatar">
+														<div className="absolute inset-0 hidden place-content-center rounded-full bg-black/10 backdrop-blur-[2px] hover:cursor-pointer group-hover:grid">
+															<ImagePlus size={20} className="text-muted" />
+														</div>
+													</label>
+													<input
+														id="avatar"
+														type="file"
+														className="sr-only"
+														onChange={async (e) => {
+															try {
+																const avatar = e.target.files ? e.target.files[0] : null;
+																if (!avatar || !context?.userId) return;
+
+																if (avatar.size > 20 * 1024 * 1024) {
+																	toast.error("File size must be less than 20MB");
+																	return;
+																}
+
+																if (avatar.type !== "image/jpeg" && avatar.type !== "image/png") {
+																	toast.error("File must be a JPG or PNG");
+																	return;
+																}
+
+																const fileName = avatar.name;
+																setUploadStatus("uploading");
+
+																const avatarUrl = await uploadAvatar(avatar, context.userId, fileName);
+
+																if (!avatarUrl) throw new Error("Error uploading avatar.");
+
+																await updateTalentProfile({ avatarUrl }, context.userId);
+
+																field.onChange(avatarUrl);
+																setUploadStatus("idle");
+																// const uid
+															} catch (error) {
+																console.log(error);
+																toast.error("An error occurred, try again.");
+															}
+														}}
+													/>
+												</>
+											);
+										}
+									})()}
+									<AvatarImage src={avatarUrl || undefined} />
+									<AvatarFallback className="text-2xl">
+										{context?.fullName
+											?.split(" ")
+											.map((el) => el[0])
+											.join("") || ""}
+									</AvatarFallback>
+								</Avatar>
+								{fieldState.error && <p className="mt-2 text-xs text-destructive">{fieldState.error.message}</p>}
+							</>
+						)}
+					/>
+				</div>
 				<div>
 					<Label htmlFor="fullName">
 						Full Name <span className="text-red-500">*</span>

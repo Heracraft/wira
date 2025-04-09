@@ -27,8 +27,6 @@ export async function login(credentials: { email: string; password: string }) {
 	}
 
 	// TODO:  bug fixed in https://github.com/vercel/next.js/pull/70715. Update next.js.
-	// TODO: the redirect is caught as an error on the client. ingore the error.
-	revalidatePath("/", "layout");
 	redirect("/");
 }
 

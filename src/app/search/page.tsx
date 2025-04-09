@@ -15,6 +15,12 @@ export const metadata: Metadata = {
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
 	let q = ((await searchParams).q as string) || "";
+	let preferredCompanyTypes = ((await searchParams).preferredCompanyTypes as string) || "";
+	let workTypePreference = ((await searchParams).position as string) || "";
+	let industryInterests = ((await searchParams).industryInterests as string) || [];
+
+	console.log("searchParams", {q}, {preferredCompanyTypes}, {workTypePreference}, {industryInterests});
+	
 
 	return (
 		<div className="flex h-full flex-1 flex-col gap-5 bg-background p-5 md:px-20 xl:px-36">
@@ -34,7 +40,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ [
 					</div>
 				}
 			>
-				<SearchResults query={q} />
+				<SearchResults query={q} filters={{
+					preferredCompanyTypes,
+					workTypePreference,
+					industryInterests,
+				}}/>
 			</Suspense>
 		</div>
 	);

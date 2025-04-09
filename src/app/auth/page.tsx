@@ -15,11 +15,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import { createClient } from "@/lib/store";
+
 import { cn } from "@/lib/utils";
 
-import { login, revalidatePathFromClient } from "./actions";
+import { login } from "./actions";
+import { redirect } from "next/navigation";
 
 export default function page() {
+	const supabase = createClient();
+
 	const [error, setError] = useState({
 		status: false,
 		message: "",
@@ -34,17 +39,22 @@ export default function page() {
 		reset,
 	} = useForm();
 
-	const onSubmit: SubmitHandler<Record<string, any>> = async (data) => {
-		const email = data.email;
-		const password = data.password;
-		let res = await login({ email, password });
+	const onSubmit: SubmitHandler<Record<string, any>> = async (formData) => {
+		const email = formData.email;
+		const password = formData.password;
+		let {
+			data: { user },
+			error,
+		} = await supabase.auth.signInWithPassword({ email, password });
 		// TODO: fix: user state does not update after login
-		if (res.status == 400) {
+		if (error) {
 			setError({ status: true, message: error.message });
 			setTimeout(() => {
 				// reset();
 				setError({ status: false, message: "" });
 			}, 10000);
+		} else {
+			redirect("/");
 		}
 	};
 
