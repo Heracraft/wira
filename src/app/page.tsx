@@ -69,7 +69,7 @@ export default async function Home() {
 							<div className="flex w-full justify-center gap-5 px-5">
 								{accountTypes.map((accountType, index) => {
 									return (
-										<Link href={`/sign-up?account-type=${accountType.value}`} key={index} className="flex-1 flex flex-col justify-between gap-2 rounded-lg border p-4 shadow-sm hover:border-primary-300">
+										<Link href={`/auth/sign-up?account-type=${accountType.value}`} key={index} className="flex-1 flex flex-col justify-between gap-2 rounded-lg border p-4 shadow-sm hover:border-primary-300">
 											{/* <BriefcaseBusiness size={48} className="ring-foreground" /> */}
 											<span className="font-medium">{accountType.label}</span>
 											<p className="text-xs text-muted-foreground">{accountType.description}</p>
