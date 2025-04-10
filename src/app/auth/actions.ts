@@ -58,13 +58,9 @@ export async function signup(formData: { email: string; password: string }) {
  * Server action to revalidate a specific path.
  * @param path - The path to revalidate.
  */
-export async function revalidatePathFromClient(path: string, layout?: boolean) {
+export async function revalidatePathFromClient(path: string, type?: "layout" | "page") {
 	try {
-		if (layout) {
-			revalidatePath(path, "layout");
-		} else {
-			revalidatePath(path);
-		}
+		revalidatePath(path, type);
 		return { status: 200, message: `Path '${path}' revalidated successfully.` };
 	} catch (error) {
 		console.error("Failed to revalidate path:", error);

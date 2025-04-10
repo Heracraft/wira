@@ -19,7 +19,7 @@ import { createClient } from "@/lib/store";
 
 import { cn } from "@/lib/utils";
 
-import { login } from "./actions";
+import { revalidatePathFromClient } from "./actions";
 import { redirect } from "next/navigation";
 
 export default function page() {
@@ -46,6 +46,7 @@ export default function page() {
 			data: { user },
 			error,
 		} = await supabase.auth.signInWithPassword({ email, password });
+		await revalidatePathFromClient("/","layout")
 		// TODO: fix: user state does not update after login
 		if (error) {
 			setError({ status: true, message: error.message });
