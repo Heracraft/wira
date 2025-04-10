@@ -67,7 +67,7 @@ const calculateResultFromScore = (score: number): AssessmentResult => {
 	};
 };
 
-export default function Assessment() {
+export default function Page() {
 	const user = userStore((state) => state.user);
 	const context = useContext(TalentProfileContext);
 
@@ -277,6 +277,9 @@ export default function Assessment() {
 				</div>
 			</main>
 		);
+	}
+	else{
+		throw new Error("Invalid step");
 	}
 }
 
