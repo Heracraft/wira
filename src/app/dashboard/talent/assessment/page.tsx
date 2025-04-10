@@ -37,7 +37,7 @@ export interface AssessmentResult {
 //   import { questions } from '../data/questions';
 //   import { AssessmentResult, TalentProfile } from '../types';
 
-export const calculateResult = (answers: Record<number, string>): AssessmentResult => {
+const calculateResult = (answers: Record<number, string>): AssessmentResult => {
 	// Calculate total score
 	let totalScore = 0;
 
@@ -126,10 +126,9 @@ export default function Page() {
 						personalInfo: profileCompletionStatus.personalInfo,
 						educationExperience: profileCompletionStatus.educationExperience,
 						preferences: profileCompletionStatus.preferences,
-						assessment:true,
+						assessment: true,
 						overallComplete: profileCompletionStatus.overallComplete,
 					},
-					
 				},
 				user.id,
 			);
@@ -161,10 +160,6 @@ export default function Page() {
 	}, []);
 
 	const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-
-	if(step>2){
-		throw new Error("Invalid step");
-	}
 
 	if (step === 0) {
 		return (
@@ -281,9 +276,8 @@ export default function Page() {
 				</div>
 			</main>
 		);
-	}
-	else{
-		return <></>;
+	} else {
+		throw new Error("Invalid step");
 	}
 }
 
