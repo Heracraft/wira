@@ -26,9 +26,9 @@ import SubmitButton from "@/components/submitButton";
 import { signup } from "../actions";
 
 export default function page() {
-	const searchParams = useSearchParams();
+	// const searchParams = useSearchParams();
 
-	const continueUrl = searchParams.get("continueUrl") || "/auth";
+	// const continueUrl = searchParams.get("continueUrl") || "/auth";
 
 	// const plan = searchParams.get("plan") || "Essential"; // Do we need this?
 
