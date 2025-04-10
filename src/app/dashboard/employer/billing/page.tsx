@@ -1,10 +1,14 @@
-import { createKv, stripeAdmin as stripe } from "@/lib/store.server";
-
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import Link from "next/link";
+
+import { createKv, stripeAdmin as stripe } from "@/lib/store.server";
 
 import { isDev } from "@/lib/utils.server";
 
 import { Badge } from "@/components/ui/badge";
+import {Card,CardContent} from "@/components/ui/card"
+import { Button } from "@/components/ui/button";
 
 import { format } from "date-fns";
 
@@ -12,7 +16,7 @@ export default async function Page() {
 	const headersList = await headers();
 	const uid = headersList.get("x-uid");
 	if (!uid) {
-		return new Response(JSON.stringify({ error: "User not found" }), { status: 401 });
+		throw new Error("No UID found");
 	}
 
 	const kv = createKv();

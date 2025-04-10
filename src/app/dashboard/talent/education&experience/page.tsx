@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils";
 import { updateTalentProfile } from "../../actions";
 
 import { toast } from "sonner";
-import type { ProfileCompletion } from "@/types/dashboard";
+import type { ProfileCompletion } from "@/types";
 
 const SNAPSHOT_NAME = "form-snapshot-profile";
 
@@ -259,6 +259,7 @@ export default function Page() {
 						personalInfo: profileCompletionStatus.personalInfo,
 						educationExperience: true,
 						preferences: profileCompletionStatus.preferences,
+						assessment:profileCompletionStatus.assessment,
 						overallComplete: profileCompletionStatus.overallComplete,
 					},
 				},

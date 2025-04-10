@@ -1,0 +1,2 @@
+ALTER TABLE "talentProfiles" ALTER COLUMN "profileCompletionStatus" SET DEFAULT '{"personalInfo":false,"educationExperience":false,"preferences":false,"assessment":false,"overallComplete":false}'::jsonb;--> statement-breakpoint
+ALTER TABLE "talentProfiles" ADD COLUMN "assessmentScore" integer;

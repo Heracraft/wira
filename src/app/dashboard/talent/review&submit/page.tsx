@@ -25,7 +25,7 @@ import { updateTalentProfile, submitFeedback } from "../../actions";
 
 import { toast } from "sonner";
 
-import type { ProfileCompletion } from "@/types/dashboard";
+import type { ProfileCompletion } from "@/types";
 
 export default function Page() {
 	const user = userStore((state) => state.user);
@@ -59,6 +59,7 @@ export default function Page() {
 							personalInfo: profileCompletionStatus.personalInfo,
 							educationExperience: profileCompletionStatus.educationExperience,
 							preferences: profileCompletionStatus.preferences,
+							assessment: profileCompletionStatus.assessment,
 							overallComplete: true,
 						},
 					},
@@ -73,7 +74,7 @@ export default function Page() {
 				res = await submitFeedback({
 					hearAboutUs: data.hearAboutUs || "Not provided",
 					feedback: data.feedback || "No feedback provided",
-					uid: user.id
+					uid: user.id,
 				});
 				if (res.status === 500) {
 					throw new Error("Failed to submit feedback");

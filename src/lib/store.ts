@@ -4,7 +4,7 @@ import { createBrowserClient } from "@supabase/ssr";
 // import { createClient as createBrowserClient } from "@supabase/supabase-js";
 import { loadStripe } from "@stripe/stripe-js";
 
-import { User } from "@/types/auth";
+import { User } from "@/types";
 
 // Had to memoize this to prevent re-creating the client on every render/page. 
 // Otherwise auth events would not be fired to one client and not the other

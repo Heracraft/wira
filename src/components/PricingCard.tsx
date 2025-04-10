@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 import { Check, X } from "lucide-react";
 
-import type { Plan } from "@/types/stripe";
+import type { Plan } from "@/types";
 
 export function PricingCard({ plan, user, action }: { plan: Plan; user: any; action: (planName: string) => void }) {
 	return (

@@ -18,7 +18,7 @@ import { CompanyProfileContext } from "./employer/context";
 
 import { Settings } from "lucide-react";
 
-import type { ProfileCompletion } from "@/types/dashboard";
+import type { ProfileCompletion } from "@/types";
 
 export default function Sidebar({ sections, title, isForMobile }: { sections: { label: string; href: string; completionProperty?: string }[]; title?: string; isForMobile: boolean }) {
 	const pathname = usePathname();

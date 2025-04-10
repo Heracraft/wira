@@ -10,7 +10,7 @@ import { createClient } from "@/lib/store.server";
 import TalentProfileProvider from "./profileProvider";
 import SidebarLayout from "../SideBarLayout";
 
-import type { TalentProfile } from "@/types/dashboard";
+import type { TalentProfile } from "@/types";
 
 const sections = [
 	{
@@ -27,6 +27,11 @@ const sections = [
 		label: "Preferences",
 		href: "/dashboard/talent/preferences",
 		completionProperty: "preferences",
+	},
+	{
+		label:"Assessment",
+		href: "/dashboard/talent/assessment",
+		completionProperty: "assessment",
 	},
 	{
 		label: "Review & Submit",

@@ -54,11 +54,14 @@ export const talentProfiles = pgTable("talentProfiles", {
 
 	resume: varchar("resume", { length: 255 }),
 
+	assessmentScore: integer("assessmentScore"),
+
 	profileCompletionStatus: jsonb("profileCompletionStatus")
 		.default({
 			personalInfo: false,
 			educationExperience: false,
 			preferences: false,
+			assessment: false,
 			overallComplete: false,
 		})
 		.notNull(),

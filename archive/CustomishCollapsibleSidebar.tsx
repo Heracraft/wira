@@ -19,7 +19,7 @@ import { TalentProfileContext } from "./talent/context";
 
 import { Settings } from "lucide-react";
 
-import type { ProfileCompletion } from "@/types/dashboard";
+import type { ProfileCompletion } from "@/types";
 
 export default function Sidebar({ sections, title }: { sections: { label: string; href: string; completionProperty: string }[]; title?: string }) {
 	const pathname = usePathname();

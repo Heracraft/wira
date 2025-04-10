@@ -27,7 +27,7 @@ import { updateTalentProfile } from "../../actions";
 
 import { toast } from "sonner";
 
-import type { ProfileCompletion } from "@/types/dashboard";
+import type { ProfileCompletion } from "@/types";
 
 // Lazy load the LocationInputs component because all that location data is 22KB
 const LazyLocationInputs = dynamic(() => import("./LocationInputs"), {
@@ -117,6 +117,7 @@ export default function Page() {
 						personalInfo: true,
 						educationExperience: profileCompletionStatus.educationExperience,
 						preferences: profileCompletionStatus.preferences,
+						assessment:profileCompletionStatus.assessment,
 						overallComplete: profileCompletionStatus.overallComplete,
 					},
 				},

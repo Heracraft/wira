@@ -5,7 +5,7 @@ import { PricingCard } from "@/components/PricingCard";
 import { userStore } from "@/lib/store";
 import { plans } from "@/lib/shared";
 
-import type { Plan } from "@/types/stripe";
+import type { Plan } from "@/types";
 
 // TODO: buttons should react to userType and subscription states/status.
 

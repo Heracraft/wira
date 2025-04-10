@@ -28,7 +28,7 @@ import { onBoardCompany, onBoardTalent } from "./actions";
 import { userStore } from "@/lib/store";
 import { plans, accountTypes } from "@/lib/shared";
 
-import type { Plan } from "@/types/stripe";
+import type { Plan } from "@/types";
 
 function formatDate(date: Date, locale: string = "en-US"): string {
 	return new Intl.DateTimeFormat(locale, {

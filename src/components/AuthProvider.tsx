@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 import { createClient, userStore } from "@/lib/store";
 
-import { User } from "@/types/auth";
+import { User } from "@/types";
 
 export default function AuthProvider() {
 	const client = createClient();

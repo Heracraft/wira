@@ -2,6 +2,6 @@
 
 import { createContext } from "react";
 
-import type {TalentProfile} from "@/types/dashboard"
+import type {TalentProfile} from "@/types"
 
 export const TalentProfileContext = createContext<null | TalentProfile>(null);

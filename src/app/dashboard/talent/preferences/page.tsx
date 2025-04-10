@@ -25,7 +25,7 @@ import { industries, companyTypes } from "@/lib/shared";
 
 import { updateTalentProfile } from "../../actions";
 
-import type { ProfileCompletion } from "@/types/dashboard";
+import type { ProfileCompletion } from "@/types";
 
 const SNAPSHOT_NAME = "form-snapshot-prefernces";
 
@@ -57,6 +57,7 @@ export default function Page() {
 					personalInfo: profileCompletionStatus.personalInfo,
 					educationExperience: profileCompletionStatus.educationExperience,
 					preferences: true,
+					assessment:profileCompletionStatus.assessment,
 					overallComplete:profileCompletionStatus.overallComplete
 				},
 			}, user.id);

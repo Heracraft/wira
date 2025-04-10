@@ -14,7 +14,7 @@ import { Menu } from "lucide-react";
 
 import { createClient, userStore } from "@/lib/store";
 
-import type { User } from "@/types/auth";
+import type { User } from "@/types";
 
 type Route = {
 	label: string;
@@ -48,7 +48,7 @@ const routes: Route[] = [
 	},
 ];
 
-export default function Navbar({children}: {children: React.ReactNode}) {
+export default function Navbar({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname() || "/";
 
 	const user = userStore((state) => state.user);
@@ -58,8 +58,8 @@ export default function Navbar({children}: {children: React.ReactNode}) {
 		setIsMobileMenuOpen(!isMobileMenuOpen);
 	};
 
-	console.log({userType:user})
-	
+	// console.log({userType:user})
+
 	return (
 		<>
 			<div className="hidden h-full gap-10 md:flex">
@@ -115,17 +115,21 @@ export default function Navbar({children}: {children: React.ReactNode}) {
 				<div className="flex gap-2">
 					{/* <a href={`/auth?continueUrl=${$page.url.pathname}`}> */}
 					{user && user.userType ? (
-						<>
-						{children}
-						</>
+						<>{children}</>
 					) : (
-						<a href="/auth/sign-up">
-							{/* 2 different buttons of 2 different sizes for small vs large screens */}
-							<Button className="bg-primary text-white sm:hidden">Sign Up</Button>
-							<Button className="hidden bg-primary text-white sm:block" size={"lg"}>
-								Sign Up
-							</Button>
-						</a>
+						<>
+							<Link href="/auth/sign-up" prefetch={true}>
+								{/* 2 different buttons of 2 different sizes for small vs large screens */}
+								<Button className="hidden bg-primary text-white sm:block" size={"lg"}>
+									Sign Up
+								</Button>
+							</Link>
+							<Link href={"/auth/"} prefetch={true}>
+								<Button size={"lg"} variant={"outline"}>
+									Log in
+								</Button>
+							</Link>
+						</>
 					)}
 					<button className="block rounded p-2 hover:bg-accent md:hidden" onClick={() => toggleMobileMenu()}>
 						<Menu className="size-6 text-muted-foreground" />

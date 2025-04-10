@@ -1,5 +1,7 @@
 import Stripe from "stripe";
+import type { TalentProfileRow, WorkExperienceEntry, EducationEntry } from "@/db/schema";
 
+// --stripe
 export interface Plan {
 	planName: string;
 	amount?: string;
@@ -34,3 +36,34 @@ export type STRIPE_SUB_CACHE =
 	| {
 			status: "none";
 	  };
+
+// --auth
+export type User = {
+	id: string;
+	email: string;
+	userType: "talent" | "employer";
+} | null;
+
+//  --dashboard--
+export type TalentProfile = TalentProfileRow & { workExperience: WorkExperienceEntry[] } & { education: EducationEntry[] };
+
+export type ProfileCompletion = {
+	assessment: boolean;
+	personalInfo: boolean;
+	educationExperience: boolean;
+	preferences: boolean;
+	overallComplete: boolean; // this is used to determine if the profile is complete
+};
+
+// --dashboard/talent/assessment--
+export interface Question {
+	id: number;
+	text: string;
+	options: Option[];
+}
+
+export interface Option {
+	label: string;
+	value: string;
+	points: number;
+}

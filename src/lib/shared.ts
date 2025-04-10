@@ -212,3 +212,52 @@ export const accountTypes = [
 		value: "talent",
 	},
 ];
+
+export interface TalentProfile {
+	id: string;
+	title: string;
+	icon: string;
+	description: string;
+	minScore: number;
+	maxScore: number;
+	bestFit: string[];
+}
+
+export const talentProfiles: TalentProfile[] = [
+	{
+		id: "trailblazer",
+		title: "The Trailblazer",
+		icon: "💡",
+		description: "Natural leader, strategic thinker, and thrives under pressure. Excels in taking initiative, solving problems, and adapting to new challenges.",
+		minScore: 38,
+		maxScore: 45,
+		bestFit: ["Management", "Engineering", "Business Strategy", "Consulting", "Healthcare Administration"],
+	},
+	{
+		id: "bridge-builder",
+		title: "The Bridge Builder",
+		icon: "🤝",
+		description: "Strong team player with a balanced approach to leadership and collaboration. Works well in structured environments but values flexibility and people-oriented roles.",
+		minScore: 28,
+		maxScore: 37,
+		bestFit: ["Marketing", "HR", "Finance", "Product Development", "Nursing"],
+	},
+	{
+		id: "precision-specialist",
+		title: "The Precision Specialist",
+		icon: "🎯",
+		description: "Detail-oriented, analytical, and thrives in well-defined, operational roles. Values structure, efficiency, and problem-solving.",
+		minScore: 20,
+		maxScore: 27,
+		bestFit: ["Accounting", "Research", "Operations", "Nursing", "Customer Success"],
+	},
+	{
+		id: "visionary-thinker",
+		title: "The Visionary Thinker",
+		icon: "🚀",
+		description: "Independent and creative problem-solver who thrives in flexible roles. Prefers autonomy, innovation, and hands-on learning.",
+		minScore: 0,
+		maxScore: 19,
+		bestFit: ["Entrepreneurship", "Software Development", "Creative Design", "Freelance Consulting"],
+	},
+];
