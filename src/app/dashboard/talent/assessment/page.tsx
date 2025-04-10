@@ -162,6 +162,10 @@ export default function Page() {
 
 	const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
 
+	if(step>2){
+		throw new Error("Invalid step");
+	}
+
 	if (step === 0) {
 		return (
 			<div className="flex w-full max-w-xl flex-1 flex-col gap-5">
@@ -279,7 +283,7 @@ export default function Page() {
 		);
 	}
 	else{
-		throw new Error("Invalid step");
+		return <></>;
 	}
 }
 
