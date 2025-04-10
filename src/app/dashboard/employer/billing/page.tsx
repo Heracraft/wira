@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
-import { createKv, stripeAdmin as stripe } from "@/lib/store.server";
+import { createKv, stripeAdmin as stripe, createClient } from "@/lib/store.server";
 
 import { isDev } from "@/lib/utils.server";
 
@@ -13,12 +13,15 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 
 export default async function Page() {
-	const headersList = await headers();
-	const uid = headersList.get("x-uid");
-	if (!uid) {
-		throw new Error("No UID found");
+	const client = await createClient();
+	const {
+		data: { user },
+	} = await client.auth.getUser();
+	if (!user) {
+		redirect("/unauthorized");
 	}
-
+	const uid = user.id;
+	
 	const kv = createKv();
 
 	const customerId = await kv.get(`${isDev ? "test-" : ""}stripe:customer:${uid}`);
