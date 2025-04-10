@@ -3,6 +3,7 @@ import Link from "next/link";
 import imageUrlBuilder from "@sanity/image-url";
 
 import { sanityClient } from "@/lib/store.server";
+import { accountTypes } from "@/lib/shared";
 
 import MultiMediaPortableTextRenderer from "@/components/portableTextRenderer";
 
@@ -10,9 +11,18 @@ import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-import { TypedObject } from "@portabletext/types";
+import type { Metadata } from "next";
+import type { TypedObject } from "@portabletext/types";
 
-import { accountTypes } from "@/lib/shared";
+const query = `*[_type=="page" && slug.current=="/"]{description,body, "testimonials":*[_type=='testimonial']{title, testimonial, 'person':person->{title,image, name}}}`;
+
+const pageContent = (await sanityClient.fetch(query))[0] as PageContent;
+
+const testimonials = pageContent.testimonials;
+
+export const metadata: Metadata = {
+	description: pageContent.description,
+}
 
 export type Testimonial = {
 	title: string;
@@ -36,14 +46,9 @@ type PageContent = {
 	testimonials: Testimonial[];
 };
 
+
 export default async function Home() {
 	const builder = imageUrlBuilder(sanityClient);
-
-	const query = `*[_type=="page" && slug.current=="/"]{description,body, "testimonials":*[_type=='testimonial']{title, testimonial, 'person':person->{title,image, name}}}`;
-
-	const pageContent = (await sanityClient.fetch(query))[0] as PageContent;
-
-	const testimonials = pageContent.testimonials;
 
 	return (
 		<div className="flex flex-col gap-24 p-5 md:px-20 xl:px-36">
