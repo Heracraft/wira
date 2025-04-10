@@ -1,3 +1,7 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+
 import { Mail } from "lucide-react";
 
 const footerLinks = [
@@ -64,6 +68,10 @@ const footerLinks = [
 ];
 
 export default function Footer() {
+	const pathname = usePathname();
+
+	if (pathname!="/" && pathname!="/pricing") return
+
 	return (
 		<footer className="bg-white py-20 border-t p-3">
 			<div className="flex flex-col items-center gap-4 mb-10">

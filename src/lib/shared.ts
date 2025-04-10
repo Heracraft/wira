@@ -199,3 +199,16 @@ export const countriesWithPostalCodes = [
 	"Wales",
 	"Yap",
 ];
+
+export const accountTypes = [
+	{
+		label: "Employer account",
+		description: "For bussinesses/companies looking to hire",
+		value: "employer",
+	},
+	{
+		label: "Talent account",
+		description: "For aspiring talents looking for a job",
+		value: "talent",
+	},
+];

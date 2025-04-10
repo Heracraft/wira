@@ -5,8 +5,6 @@ import UserMenu from "./UserMenu";
 
 import { Skeleton } from "./ui/skeleton";
 
-import { createClient } from "@/lib/store.server";
-
 export default async function Header() {
 	// A static RSC wrapper that fetches the user data
 

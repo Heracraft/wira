@@ -58,6 +58,8 @@ export default function Navbar({children}: {children: React.ReactNode}) {
 		setIsMobileMenuOpen(!isMobileMenuOpen);
 	};
 
+	console.log({userType:user})
+	
 	return (
 		<>
 			<div className="hidden h-full gap-10 md:flex">
@@ -118,6 +120,7 @@ export default function Navbar({children}: {children: React.ReactNode}) {
 						</>
 					) : (
 						<a href="/auth/sign-up">
+							{/* 2 different buttons of 2 different sizes for small vs large screens */}
 							<Button className="bg-primary text-white sm:hidden">Sign Up</Button>
 							<Button className="hidden bg-primary text-white sm:block" size={"lg"}>
 								Sign Up

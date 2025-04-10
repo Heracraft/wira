@@ -26,22 +26,9 @@ import { cn } from "@/lib/utils";
 import { industries } from "@/lib/shared";
 import { onBoardCompany, onBoardTalent } from "./actions";
 import { userStore } from "@/lib/store";
-import { plans } from "@/lib/shared";
+import { plans, accountTypes } from "@/lib/shared";
 
 import type { Plan } from "@/types/stripe";
-
-const accountTypes = [
-	{
-		label: "Employer account",
-		description: "For bussinesses/companies looking to hire",
-		value: "employer",
-	},
-	{
-		label: "Talent account",
-		description: "For aspiring talents looking for a job",
-		value: "talent",
-	},
-];
 
 function formatDate(date: Date, locale: string = "en-US"): string {
 	return new Intl.DateTimeFormat(locale, {

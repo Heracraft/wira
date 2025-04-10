@@ -8,6 +8,9 @@ import { eq } from "drizzle-orm";
 
 // TODO: implement server side validation
 
+// TODO: don't just take the uid passed from the client, 
+// .getUser() should be used to get the uid of the logged in user
+
 const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL || "";
 
 export async function updateTalentProfile(data: Record<string, any>, userId: string) {
@@ -41,7 +44,7 @@ export async function updateTalentProfile(data: Record<string, any>, userId: str
 			await db.insert(educationEntries).values(education);
 		}
 
-		revalidatePath("/dashboard/talent","layout"); // revalidate the path to reflect the updated data
+		revalidatePath("/dashboard/talent", "layout"); // revalidate the path to reflect the updated data
 
 		return { status: 200, message: "Profile updated successfully" };
 	} catch (error) {
@@ -54,11 +57,10 @@ export async function updateCompanyProfile(data: Record<string, any>, userId: st
 	try {
 		await db.update(companyProfiles).set(data).where(eq(companyProfiles.userId, userId));
 
-		revalidatePath("/dashboard/employer/", "layout"); 
+		revalidatePath("/dashboard/employer/", "layout");
 
 		return { status: 200, message: "Profile updated successfully" };
-	}
-	catch (error) {
+	} catch (error) {
 		return { status: 400, message: "Something went wrong" };
 	}
 }

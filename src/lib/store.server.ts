@@ -6,6 +6,7 @@ import { createServerClient } from "@supabase/ssr";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import Redis from "ioredis";
 import Stripe from "stripe";
+import { createClient as createSanityClient } from "next-sanity";
 
 import {isDev} from "@/lib/utils.server"
 
@@ -45,6 +46,13 @@ export function createKv() {
 	const redis = new Redis(process.env.REDIS_URL!);
 	return redis;
 }
+
+export const sanityClient = createSanityClient({
+	projectId: process.env.SANITY_PROJECT_ID,
+	dataset: process.env.SANITY_DATASET,
+	apiVersion: "2021-03-25",
+	useCdn: process.env.NODE_ENV === "production",
+});
 
 //const isDev = process.env.NODE_ENV === 'development';
 const stripeSecretKey = isDev ? process.env.STRIPE_TEST_SECRET_KEY : process.env.STRIPE_SECRET_KEY;

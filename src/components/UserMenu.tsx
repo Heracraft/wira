@@ -1,5 +1,4 @@
 // Server component that fetches user profile data and displays a user menu with options
-import { headers } from "next/headers";
 import Link from "next/link";
 
 import { db } from "@/db/index";
@@ -26,8 +25,6 @@ export default async function UserMenu() {
 	// TODO: make this fetchcall not return null immediately after signing in
 	const userId = user.id;
 	const userType = user.user_metadata.userType as "talent" | "employer";
-	console.log({ userId, userType });
-
 	let profile: {
 		fullName: string;
 		avatarUrl: string;

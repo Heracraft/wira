@@ -5,23 +5,23 @@ export default {
 	content: ["./src/pages/**/*.{js,ts,jsx,tsx,mdx}", "./src/components/**/*.{js,ts,jsx,tsx,mdx}", "./src/app/**/*.{js,ts,jsx,tsx,mdx}"],
 	theme: {
 		extend: {
-			fontFamily:{
-				"Roboto": ['"Roboto", sans-serif;'],
+			fontFamily: {
+				Roboto: ['"Roboto", sans-serif;'],
 			},
 			colors: {
 				primary: {
 					DEFAULT: "#6169e7",
-					'50': '#eff4fe',
-					'100': '#e2e9fd',
-					'200': '#cad6fb',
-					'300': '#aabaf7',
-					'400': '#8896f1',
-					'500': '#6169e7',
-					'600': '#524fdc',
-					'700': '#4541c1',
-					'800': '#39379c',
-					'900': '#33337c',
-					'950': '#1e1e48',
+					"50": "#eff4fe",
+					"100": "#e2e9fd",
+					"200": "#cad6fb",
+					"300": "#aabaf7",
+					"400": "#8896f1",
+					"500": "#6169e7",
+					"600": "#524fdc",
+					"700": "#4541c1",
+					"800": "#39379c",
+					"900": "#33337c",
+					"950": "#1e1e48",
 				},
 
 				background: "hsl(var(--background))",
@@ -68,5 +68,5 @@ export default {
 			},
 		},
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 } satisfies Config;

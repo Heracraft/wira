@@ -28,6 +28,8 @@ import { signup } from "../actions";
 export default function page() {
 	const searchParams = useSearchParams();
 
+	const continueUrl = searchParams.get("continueUrl") || "/auth";
+
 	// const plan = searchParams.get("plan") || "Essential"; // Do we need this?
 
 	const [error, setError] = useState({

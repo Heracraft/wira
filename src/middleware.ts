@@ -41,9 +41,6 @@ export async function updateSession(request: NextRequest) {
 	} = await supabase.auth.getUser();
 
 
-	// Yeah, I know. This is a bit of a hack. But it works.
-	supabaseResponse.headers.set("x-pathname", request.nextUrl.pathname);
-
 	// TODO: introduce rate limitng
 	// TODO: allow users to access their own profile
 
