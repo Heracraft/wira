@@ -211,6 +211,11 @@ export const accountTypes = [
 		description: "For aspiring talents looking for a job",
 		value: "talent",
 	},
+	// {
+	// 	label:"Government account",
+	// 	description: "For government agencies looking to hire",
+	// 	value: "government",
+	// }
 ];
 
 export interface TalentProfile {

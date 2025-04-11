@@ -52,6 +52,7 @@ export type ProfileCompletion = {
 	personalInfo: boolean;
 	educationExperience: boolean;
 	preferences: boolean;
+	spotlight: boolean;
 	overallComplete: boolean; // this is used to determine if the profile is complete
 };
 

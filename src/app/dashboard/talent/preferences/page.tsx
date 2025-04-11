@@ -33,7 +33,7 @@ export default function Page() {
 	const context = useContext(TalentProfileContext);
 	const user = userStore((state) => state.user);
 
-	const profileCompletionStatus = context?.profileCompletionStatus as ProfileCompletion; 
+	const profileCompletionStatus = context?.profileCompletionStatus as ProfileCompletion;
 
 	const {
 		register,
@@ -51,16 +51,20 @@ export default function Page() {
 			if (!user) {
 				throw new Error("User not found");
 			}
-			const res = await updateTalentProfile({
-				...data,
-				profileCompletionStatus: {
-					personalInfo: profileCompletionStatus.personalInfo,
-					educationExperience: profileCompletionStatus.educationExperience,
-					preferences: true,
-					assessment:profileCompletionStatus.assessment,
-					overallComplete:profileCompletionStatus.overallComplete
+			const res = await updateTalentProfile(
+				{
+					...data,
+					profileCompletionStatus: {
+						personalInfo: profileCompletionStatus.personalInfo,
+						educationExperience: profileCompletionStatus.educationExperience,
+						preferences: true,
+						assessment: profileCompletionStatus.assessment,
+						spotlight: profileCompletionStatus.spotlight,
+						overallComplete: profileCompletionStatus.overallComplete,
+					},
 				},
-			}, user.id);
+				user.id,
+			);
 			if (res.status == 400) {
 				throw new Error(res.message);
 			}

@@ -56,12 +56,17 @@ export const talentProfiles = pgTable("talentProfiles", {
 
 	assessmentScore: integer("assessmentScore"),
 
+	bio:text("bio"),
+	highPotentialAnswer: text("highPotentialAnswer"),
+    challengeAnswer: text("challengeAnswer"),
+
 	profileCompletionStatus: jsonb("profileCompletionStatus")
 		.default({
 			personalInfo: false,
 			educationExperience: false,
 			preferences: false,
 			assessment: false,
+			spotlight: false,
 			overallComplete: false,
 		})
 		.notNull(),

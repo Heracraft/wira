@@ -118,6 +118,7 @@ export default function Page() {
 						educationExperience: profileCompletionStatus.educationExperience,
 						preferences: profileCompletionStatus.preferences,
 						assessment:profileCompletionStatus.assessment,
+						spotlight:profileCompletionStatus.spotlight,
 						overallComplete: profileCompletionStatus.overallComplete,
 					},
 				},

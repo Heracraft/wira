@@ -1,6 +1,8 @@
 // Server component that fetches user profile data and displays a user menu with options
 import Link from "next/link";
 
+import { Suspense } from "react";
+
 import { db } from "@/db/index";
 import { talentProfiles, companyProfiles } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -11,6 +13,9 @@ import { SignOutDropdownItem } from "./Navbar";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
+
+import ProfileCompletionBadge from "./ProfileCompletionBadge";
 
 import { AlertTriangle } from "lucide-react";
 
@@ -73,9 +78,16 @@ export default async function UserMenu() {
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem asChild>
-							<Link href={`/dashboard`}>Profile</Link>
+							<Link href={`/dashboard`}>
+							Profile
+							{userType === "talent" && (
+								<Suspense fallback={<Skeleton className="h-4 w-20" />}>
+									<ProfileCompletionBadge />
+								</Suspense>
+							)}
+							</Link>
 						</DropdownMenuItem>
-						<DropdownMenuItem>
+						<DropdownMenuItem>	
 							<Link href={`/dashboard/${userType}/settings`}>Settings</Link>
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />

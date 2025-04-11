@@ -141,6 +141,13 @@
       "when": 1744305057803,
       "tag": "0019_common_mentallo",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1744380117662,
+      "tag": "0020_unusual_celestials",
+      "breakpoints": true
     }
   ]
 }

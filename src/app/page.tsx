@@ -3,7 +3,6 @@ import Link from "next/link";
 import imageUrlBuilder from "@sanity/image-url";
 
 import { sanityClient } from "@/lib/store.server";
-import { accountTypes } from "@/lib/shared";
 
 import MultiMediaPortableTextRenderer from "@/components/portableTextRenderer";
 
@@ -46,6 +45,25 @@ type PageContent = {
 	testimonials: Testimonial[];
 };
 
+const accountTypes = [
+	{
+		label: "Employer account",
+		description: "For bussinesses looking to hire",
+		value: "employer",
+	},
+	{
+		label: "Talent account",
+		description: "For aspiring talents looking for a job",
+		value: "talent",
+	},
+	{
+		label:"Government account",
+		description: "For government agencies looking to hire",
+		value: "government",
+	}
+];
+
+
 
 export default async function Home() {
 	const builder = imageUrlBuilder(sanityClient);
@@ -66,8 +84,16 @@ export default async function Home() {
 							<DialogHeader>
 								<DialogTitle>What kind of account would you like to open??</DialogTitle>
 							</DialogHeader>
-							<div className="flex w-full justify-center gap-5 px-5">
+							<div className="grid grid-cols-2 w-full justify-center gap-5 px-5">
 								{accountTypes.map((accountType, index) => {
+									if (accountType.value === "government") {
+										return (
+											<Link href="mailto:admin@tu-fund.com" target="_blank" key={index} className="flex-1 flex flex-col justify-between gap-2 rounded-lg border p-4 shadow-sm hover:border-primary-300">
+												<span className="font-medium">{accountType.label}</span>
+												<p className="text-xs text-muted-foreground">{accountType.description}</p>
+											</Link>
+										);
+									}
 									return (
 										<Link href={`/auth/sign-up?account-type=${accountType.value}`} key={index} className="flex-1 flex flex-col justify-between gap-2 rounded-lg border p-4 shadow-sm hover:border-primary-300">
 											{/* <BriefcaseBusiness size={48} className="ring-foreground" /> */}
@@ -86,7 +112,6 @@ export default async function Home() {
 						</Button>
 					</Link> */}
 				</div>
-				<img src="/media/hr.jpg" alt="Hiring" className="rounded-xl" />
 			</div>
 			<div className="prose prose-neutral !max-w-none md:prose-xl">
 				<MultiMediaPortableTextRenderer body={pageContent.body} />

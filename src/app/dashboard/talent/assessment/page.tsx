@@ -117,8 +117,7 @@ export default function Page() {
 			}
 
 			const result = calculateResult(answers);
-			setResult(result);
-
+			
 			const res = await updateTalentProfile(
 				{
 					assessmentScore: result.score,
@@ -127,6 +126,7 @@ export default function Page() {
 						educationExperience: profileCompletionStatus.educationExperience,
 						preferences: profileCompletionStatus.preferences,
 						assessment: true,
+						spotlight:profileCompletionStatus.spotlight,
 						overallComplete: profileCompletionStatus.overallComplete,
 					},
 				},
@@ -136,6 +136,7 @@ export default function Page() {
 				throw new Error(res.message);
 			}
 			setStep(2);
+			setResult(result);
 			toast.success(res.message);
 		} catch (error: any) {
 			toast.error("An error occured", {
@@ -234,8 +235,8 @@ export default function Page() {
 		}
 		return (
 			<main className="my-8 w-full max-w-3xl rounded-lg md:p-8">
-				<div className="mb-8 text-center">
-					<h1 className="mb-2 text-3xl font-bold text-primary">Your Assessment Results</h1>
+				<div className="mb-8">
+					<h1 className="mb-2 text-3xl font-bold text-neutral-900">Your Assessment Results</h1>
 					<p className="text-neutral-600">Based on your responses, here's your talent profile:</p>
 				</div>
 
