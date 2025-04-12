@@ -1,13 +1,13 @@
 import Link from "next/link";
 
-import imageUrlBuilder from "@sanity/image-url";
+// import imageUrlBuilder from "@sanity/image-url";
 
 // import { sanityClient } from "@/lib/store.server";
 
 // import MultiMediaPortableTextRenderer from "@/components/portableTextRenderer";
 
 import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+// import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 import { cn } from "@/lib/utils";
@@ -148,7 +148,7 @@ export default async function Home() {
 	);
 }
 
-export function CTAButton({ children, variant }: { children?: React.ReactNode; variant?: "default" | "secondary" }) {
+function CTAButton({ children, variant }: { children?: React.ReactNode; variant?: "default" | "secondary" }) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
