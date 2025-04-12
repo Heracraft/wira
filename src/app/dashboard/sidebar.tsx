@@ -9,6 +9,8 @@ import { buttonVariants } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
+import { userStore } from "@/lib/store";
+
 import { cn } from "@/lib/utils";
 
 import { PanelLeftClose, PanelLeft, Check } from "lucide-react";
@@ -24,6 +26,8 @@ export default function Sidebar({ sections, title, isForMobile }: { sections: { 
 	const pathname = usePathname();
 
 	const context = useContext(TalentProfileContext) || useContext(CompanyProfileContext);
+
+	const user = userStore((state) => state.user);
 
 	const profileCompletionStatus = "profileCompletionStatus" in (context || {}) ? (context as { profileCompletionStatus: any }).profileCompletionStatus : undefined;
 
@@ -77,7 +81,11 @@ export default function Sidebar({ sections, title, isForMobile }: { sections: { 
 							{sections.map((section, index) => (
 								<Link key={index} prefetch={true} href={section.href} className={cn(buttonVariants({ variant: "ghost" }), "w-full justify-start rounded-none px-10 py-5 font-normal hover:[&>li]:underline", pathname?.includes(section.href) ? "bg-neutral-200" : "")}>
 									<li className="relative flex w-full items-center underline-offset-2">
-										{section.completionProperty && profileCompletionStatus[section.completionProperty] ? <Check className="absolute -left-6 text-emerald-700" />: <CircleDashed className="absolute -left-6 text-muted-foreground "/>}
+										{user?.userType === "talent" && section.completionProperty && profileCompletionStatus[section.completionProperty] ? (
+											<Check className="absolute -left-6 text-emerald-700" />
+										) : user?.userType === "talent" ? (
+											<CircleDashed className="absolute -left-6 text-muted-foreground" />
+										) : null}
 										{section.label}
 									</li>
 								</Link>

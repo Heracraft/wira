@@ -32,3 +32,12 @@ export function maskEmail(email: string) {
 export function formatToCurrency(amount: number, currency:string="TZS") {
 	return new Intl.NumberFormat("sw-IN", { style: "currency", currency }).format(amount);
 }
+
+export function isObjectEmpty(obj:any){
+    return Object.values(obj).length === 0 || Object.values(obj).every((value) => 
+        value === null || 
+        value === "" || 
+        value === undefined || 
+        (Array.isArray(value) && value.length === 0)
+    );
+}

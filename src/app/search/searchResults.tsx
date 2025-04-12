@@ -34,8 +34,41 @@ interface PreviewProfile {
 	highPotentialAnswer: string;
 }
 
-export default async function SearchResults({ query, filters }: { query: string; filters: { [key: string]: any } }) {
+const ArrayToPSQLFormat = (arr: string[]) => {
+	return arr.map((item) => `'${item}'`).join(",");
+};
+
+export default async function SearchResults({ query, filters }: { query: string; filters: { sortBy?: "newest" | "oldest" | "popular" | "relevance"; preferredCompanyTypes?: string[]; workTypePreference?: string; industryInterests?: string[] } }) {
 	let searchResults;
+	const { sortBy,preferredCompanyTypes, workTypePreference, industryInterests } = filters;
+
+	const filterConditions = [];
+	if (preferredCompanyTypes && preferredCompanyTypes.length > 0) {
+		// it gotta be sql.raw because otherwise drizzle will wrap the items around double quotes
+		// 'government' -> "'government'" ❌
+		filterConditions.push(sql.raw(`"preferredCompanyTypes" @> ARRAY[${ArrayToPSQLFormat(preferredCompanyTypes)}]::character varying[]`));
+	}
+	if (workTypePreference) {
+		filterConditions.push(sql`"workTypePreference" = ${workTypePreference}`);
+	}
+	if (industryInterests && industryInterests.length > 0) {
+		filterConditions.push(sql.raw(`"industryInterests" @> ARRAY[${ArrayToPSQLFormat(industryInterests)}]::character varying[]`));
+	}
+
+	// let orderByClause;
+    // switch (sortBy) {
+    //     case "newest":
+    //         orderByClause = sql`"createdAt" DESC`; // Assuming `createdAt` is a column in `talentProfiles`
+    //         break;
+    //     case "oldest":
+    //         orderByClause = sql`"createdAt" ASC`;
+    //         break;
+    //     case "relevance":
+    //     default:
+    //         orderByClause = sql`ts_rank("searchVector", plainto_tsquery(${query})) DESC`; // Relevance sorting
+    //         break;
+    // }
+
 	if (query) {
 		searchResults = await db
 			.select({
@@ -59,8 +92,10 @@ export default async function SearchResults({ query, filters }: { query: string;
 			})
 			.from(talentProfiles)
 			.leftJoin(educationEntries, eq(educationEntries.profileId, talentProfiles.profileId))
-			.where(and(sql`"searchVector" @@ plainto_tsquery(${query})`, sql.raw(`"profileCompletionStatus"->>'overallComplete' = 'true'`)))
+			.where(and(sql`"searchVector" @@ plainto_tsquery(${query})`, sql.raw(`"profileCompletionStatus"->>'overallComplete' = 'true'`), ...filterConditions))
+			// .orderBy(orderByClause)
 			.limit(30);
+
 		// since one applicant can have multiple education entries, the left join will return multiple rows for the same applicant.
 		// we need to order them by the end date and get their latest education entry
 		// this means education.endDate must be a number (year)
@@ -88,7 +123,8 @@ export default async function SearchResults({ query, filters }: { query: string;
 			})
 			.from(talentProfiles)
 			.leftJoin(educationEntries, eq(educationEntries.profileId, talentProfiles.profileId))
-			.where(sql.raw(`"profileCompletionStatus"->>'overallComplete' = 'true'`))
+			.where(and(sql.raw(`"profileCompletionStatus"->>'overallComplete' = 'true'`), ...filterConditions))
+			// .orderBy(orderByClause)
 			.limit(30);
 	}
 	// const searchResults = await new Promise((resolve) => setTimeout(() => resolve([]), 20000));
