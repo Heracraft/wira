@@ -20,29 +20,29 @@ export default function Footer() {
 				</div>
 			</div> */}
 			<div className="grid grid-cols-1 flex-wrap gap-y-5 justify-self-center sm:grid-cols-4 md:gap-20 md:px-20">
-				<div className="flex flex-col gap-5 sm:col-span-2">
-					<img src="/logo.svg" alt="Wira logo" className="size-20" />
-					<p className="">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laboriosam esse vero maxime nesciunt possimus at nisi molestias repellendus. Quas asperiores voluptate rerum porro doloremque quae ad ut nam unde nobis.</p>
+				<div className="flex flex-col items-start gap-3 sm:col-span-2">
+					<img src="/text-logo.svg" alt="Wira logo" className="h-12" />
+					<p className="text-muted-foreground">Discover and connect with top professionals worldwide through Wira. Explore personalized career insights, job opportunities, and candidate profiles. Join today to streamline hiring and career growth with smart filters and real-time updates.</p>
 				</div>
 				<div className="flex flex-col gap-5">
-					<h4 className=" font-semibold">Quick Links</h4>
-					<a href="/" className="font-medium">
+					<h4 className="font-semibold">Quick Links</h4>
+					<a href="/" className="font-medium underline-offset-2 hover:underline">
 						Home
 					</a>
-					<a href="/pricing" className="font-medium">
+					<a href="/pricing" className="font-medium underline-offset-2 hover:underline">
 						Pricing
 					</a>
-					<a href="/about" className="font-medium">
+					<a href="/#aboutUs" className="font-medium underline-offset-2 hover:underline">
 						About Us
 					</a>
 				</div>
 				<div className="flex flex-col gap-5">
-					<h4 className=" font-semibold">Contact us</h4>
-					<a href="mailto:admin@tu-fund.com" className="flex items-center hover:underline underline-offset-2">
+					<h4 className="font-semibold">Contact us</h4>
+					<a href="mailto:admin@tu-fund.com" className="flex items-center underline-offset-2 hover:underline">
 						<Mail className="mr-2 size-4" />
 						admin@tu-fund.com
 					</a>
-					<a href="tel:555-123-4567" className="flex items-center hover:underline underline-offset-2">
+					<a href="tel:555-123-4567" className="flex items-center underline-offset-2 hover:underline">
 						<Phone className="mr-2 size-4" />
 						555-123-4567
 					</a>

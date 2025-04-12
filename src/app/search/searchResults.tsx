@@ -29,6 +29,9 @@ interface PreviewProfile {
 	region: string;
 	skills: string[];
 	education: EducationEntry;
+	bio: string;
+	challengeAnswer: string;
+	highPotentialAnswer: string;
 }
 
 export default async function SearchResults({ query, filters }: { query: string; filters: { [key: string]: any } }) {
@@ -50,6 +53,9 @@ export default async function SearchResults({ query, filters }: { query: string;
 					institution: educationEntries.institution,
 					endDate: educationEntries.endDate,
 				},
+				bio: talentProfiles.bio,
+				challengeAnswer: talentProfiles.challengeAnswer,
+				highPotentialAnswer: talentProfiles.highPotentialAnswer,
 			})
 			.from(talentProfiles)
 			.leftJoin(educationEntries, eq(educationEntries.profileId, talentProfiles.profileId))
@@ -76,6 +82,9 @@ export default async function SearchResults({ query, filters }: { query: string;
 					institution: educationEntries.institution,
 					endDate: educationEntries.endDate,
 				},
+				bio: talentProfiles.bio,
+				challengeAnswer: talentProfiles.challengeAnswer,
+				highPotentialAnswer: talentProfiles.highPotentialAnswer,
 			})
 			.from(talentProfiles)
 			.leftJoin(educationEntries, eq(educationEntries.profileId, talentProfiles.profileId))
@@ -178,21 +187,39 @@ export default async function SearchResults({ query, filters }: { query: string;
 								<Suspense fallback={<Skeleton className="h-32 w-full" />}>
 									<ExperienceTable profileId={parseInt(result.profileId)} limit={1} />
 								</Suspense>
-
+								<div className="grid gap-3">
+									<h3 className="text-lg font-semibold">About</h3>
+									<div className="grid gap-2">
+										{/* <div className="flex flex-col gap-2">
+											<h6 className="text-md font-medium">Bio</h6>
+											<p className="text-muted-foreground">{result.bio}</p>
+										</div> */}
+										<div className="flex flex-col gap-2">
+											<h6 className="text-md font-medium">What makes you a high-potential candidate?</h6>
+											<p className="text-muted-foreground">{result.highPotentialAnswer}</p>
+										</div>
+										<div className="flex flex-col gap-2">
+											<h6 className="text-md font-medium">Describe a challenge you faced in an academic or professional setting and how you overcame it.</h6>
+											<p className="text-muted-foreground">{result.challengeAnswer}</p>
+										</div>
+									</div>
+								</div>
 								<Dialog>
 									<DialogTrigger asChild>
-										<Button size={"lg"} className="w-fit">View Full Profile</Button>
+										<Button size={"lg"} className="w-fit">
+											View Full Profile
+										</Button>
 									</DialogTrigger>
 									<DialogContent>
 										<DialogHeader>
 											<DialogTitle>View Full profile</DialogTitle>
-											<DialogDescription>
-												This will count as an engagement. Are you sure you want to proceed?
-											</DialogDescription>
+											<DialogDescription>This will count as an engagement. Are you sure you want to proceed?</DialogDescription>
 										</DialogHeader>
 										<div className="flex justify-end gap-2">
 											<DialogClose asChild>
-												<Button variant="outline" className="" size={"lg"}>Cancel</Button>
+												<Button variant="outline" className="" size={"lg"}>
+													Cancel
+												</Button>
 											</DialogClose>
 											<Link href={`/profile/${result.userId}`} className="">
 												<Button size={"lg"}>Proceed</Button>
