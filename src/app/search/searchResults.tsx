@@ -13,6 +13,7 @@ import ProfilePicture from "@/components/ProfilePicture";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogClose, DialogDescription, DialogHeader } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 import { Telescope, View } from "lucide-react";
@@ -178,16 +179,27 @@ export default async function SearchResults({ query, filters }: { query: string;
 									<ExperienceTable profileId={parseInt(result.profileId)} limit={1} />
 								</Suspense>
 
-								<TooltipProvider>
-									<Tooltip>
-										<Link href={`/profile/${result.userId}`} className="w-full">
-											<TooltipTrigger asChild>
-												<Button size={"lg"}>View Full Profile</Button>
-											</TooltipTrigger>
-										</Link>
-										<TooltipContent>This will count as a egagement</TooltipContent>
-									</Tooltip>
-								</TooltipProvider>
+								<Dialog>
+									<DialogTrigger asChild>
+										<Button size={"lg"} className="w-fit">View Full Profile</Button>
+									</DialogTrigger>
+									<DialogContent>
+										<DialogHeader>
+											<DialogTitle>View Full profile</DialogTitle>
+											<DialogDescription>
+												This will count as an engagement. Are you sure you want to proceed?
+											</DialogDescription>
+										</DialogHeader>
+										<div className="flex justify-end gap-2">
+											<DialogClose asChild>
+												<Button variant="outline" className="" size={"lg"}>Cancel</Button>
+											</DialogClose>
+											<Link href={`/profile/${result.userId}`} className="">
+												<Button size={"lg"}>Proceed</Button>
+											</Link>
+										</div>
+									</DialogContent>
+								</Dialog>
 							</div>
 						</SheetContent>
 					</Sheet>
@@ -197,32 +209,32 @@ export default async function SearchResults({ query, filters }: { query: string;
 	);
 }
 
-function Table({ title, headerItems, items }: { title: string; headerItems: string[]; items: string[] }) {
-	return (
-		<div className="flex flex-col gap-3">
-			<h3 className="text-lg font-semibold">{title}</h3>
-			<div className="relative overflow-x-auto">
-				<table className="w-full border text-left text-sm text-neutral-500 dark:text-neutral-400 rtl:text-right">
-					<thead className="bg-neutral-50 text-xs text-neutral-700 dark:bg-neutral-700 dark:text-neutral-400">
-						<tr className="">
-							{headerItems.map((item) => (
-								<th key={item} scope="col" className="border-b px-6 py-3">
-									{item}
-								</th>
-							))}
-						</tr>
-					</thead>
-					<tbody>
-						<tr className="border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
-							{items.map((item) => (
-								<td key={item} className="px-6 py-4">
-									{item}
-								</td>
-							))}
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	);
-}
+// function Table({ title, headerItems, items }: { title: string; headerItems: string[]; items: string[] }) {
+// 	return (
+// 		<div className="flex flex-col gap-3">
+// 			<h3 className="text-lg font-semibold">{title}</h3>
+// 			<div className="relative overflow-x-auto">
+// 				<table className="w-full border text-left text-sm text-neutral-500 dark:text-neutral-400 rtl:text-right">
+// 					<thead className="bg-neutral-50 text-xs text-neutral-700 dark:bg-neutral-700 dark:text-neutral-400">
+// 						<tr className="">
+// 							{headerItems.map((item) => (
+// 								<th key={item} scope="col" className="border-b px-6 py-3">
+// 									{item}
+// 								</th>
+// 							))}
+// 						</tr>
+// 					</thead>
+// 					<tbody>
+// 						<tr className="border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
+// 							{items.map((item) => (
+// 								<td key={item} className="px-6 py-4">
+// 									{item}
+// 								</td>
+// 							))}
+// 						</tr>
+// 					</tbody>
+// 				</table>
+// 			</div>
+// 		</div>
+// 	);
+// }

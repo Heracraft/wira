@@ -34,6 +34,11 @@ const sections = [
 		completionProperty: "assessment",
 	},
 	{
+		label: "Spotlight",
+		href: "/dashboard/talent/spotlight",
+		completionProperty: "spotlight",
+	},
+	{
 		label: "Review & Submit",
 		href: "/dashboard/talent/review&submit",
 		completionProperty: "overallComplete",

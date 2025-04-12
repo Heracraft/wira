@@ -9,9 +9,8 @@ import type { FieldValues } from "react-hook-form";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {Textarea} from "@/components/ui/textarea"
+import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
-
 
 // import LocationInputs from "./LocationInputs";
 import { PhoneInput } from "@/components/auth/PhoneNumberInput";
@@ -54,16 +53,9 @@ export default function Page() {
 			// did this instead of using the defaultValues prop to avoid funky type gymnastics.
 			// Try using defaultValues and you'll see what I mean
 			const dbValues: FieldValues = {
-				fullName: context.fullName,
-				email: user.email,
-				phoneNumber: context.phoneNumber,
-				dateOfBirth: context.dateOfBirth,
-
-				country: context.country,
-				region: context.region,
-				postalCode: context.postalCode,
-
-				linkedInProfile: context.linkedInProfile,
+				bio:context.bio,
+				highPotentialAnswer: context.highPotentialAnswer,
+				challengeAnswer: context.challengeAnswer,
 			};
 
 			Object.keys(dbValues).forEach((key) => {
@@ -87,7 +79,7 @@ export default function Page() {
 						educationExperience: profileCompletionStatus.educationExperience,
 						preferences: profileCompletionStatus.preferences,
 						assessment: profileCompletionStatus.assessment,
-                        spotlight: true,
+						spotlight: true,
 						overallComplete: profileCompletionStatus.overallComplete,
 					},
 				},
@@ -111,41 +103,41 @@ export default function Page() {
 	return (
 		<form className="flex w-full max-w-xl flex-1 flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
 			<FormSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName={SNAPSHOT_NAME} />
-
-			<div className="text-md font-semibold">Spotlight</div>
-			<p className="text-muted-foreground">
-				Questions that employers will definitely use to decide wether to engage with you or not
-			</p>
 			<div>
-				<Label htmlFor="bio">Bio</Label>
-				<Textarea
-					id="bio"
-					{...register("bio", { required: "Bio is required" })}
-					placeholder="Write a short bio about yourself"
-				/>
-				{errors.bio && <p className="text-red-500 text-sm">{errors.bio.message}</p>}
+				<h3 className="text-md font-semibold">Spotlight</h3>
+				<p className="text-sm text-muted-foreground">Use this section to introduce yourself and answer key questions that employers will use to decide whether to engage with you. Thoughtful responses can help you stand out and make a strong impression.</p>
+			</div>
+			<div className="grid gap-1.5">
+				<Label className="font-semibold" htmlFor="bio">Bio</Label>
+				<Textarea className="min-h-36" id="bio" {...register("bio", { required: "Bio is required" })} placeholder="Write a brief introduction about yourself, highlighting your background and key strengths." />
+				{errors.bio && <p className="text-xs text-red-500">{errors.bio.message as string}</p>}
 			</div>
 
-			<div>
-				<Label htmlFor="highPotentialAnswer">What makes you a high-potential candidate?</Label>
-				<Textarea
-					id="highPotentialAnswer"
-					{...register("highPotentialAnswer", { required: "This field is required" })}
-					placeholder="Describe why you are a high potential candidate"
-				/>
-				{errors.highPotentialAnswer && <p className="text-red-500 text-sm">{errors.highPotentialAnswer.message}</p>}
+			<div className="grid gap-1.5">
+				<Label className="font-semibold" htmlFor="highPotentialAnswer">What makes you a high-potential candidate?</Label>
+				<Textarea className="min-h-36" id="highPotentialAnswer" {...register("highPotentialAnswer", { required: "This field is required" })} placeholder="Describe why you are a high potential candidate" />
+				{errors.highPotentialAnswer && <p className="text-xs text-red-500">{errors.highPotentialAnswer.message as string}</p>}
 			</div>
 
-			<div>
-				<Label htmlFor="challengeAnswer">Describe a challenge you faced in an academic or professional  setting and how you overcame it.</Label>
-				<Textarea
-					id="challengeAnswer"
-					{...register("challengeAnswer", { required: "This field is required" })}
-					placeholder="Describe a challenge you overcame"
-				/>
-				{errors.challengeAnswer && <p className="text-red-500 text-sm">{errors.challengeAnswer.message}</p>}
+			<div className="grid gap-1.5">
+				<Label className="font-semibold" htmlFor="challengeAnswer">Describe a challenge you faced in an academic or professional setting and how you overcame it.</Label>
+				<Textarea className="min-h-36" id="challengeAnswer" {...register("challengeAnswer", { required: "This field is required" })} placeholder="Describe a challenge you overcame" />
+				{errors.challengeAnswer && <p className="text-xs text-red-500">{errors.challengeAnswer.message as string}</p>}
 			</div>
-
+			<div className="flex justify-end">
+				<SubmitButton
+					buttonState={{
+						isSubmitting,
+						isSubmitted,
+						isSubmitSuccessful,
+						isValid,
+						isDirty,
+					}}
+					loadingText="Saving"
+					children="Save"
+					className="w-fit"
+				/>
+			</div>
 		</form>
 	);
 }

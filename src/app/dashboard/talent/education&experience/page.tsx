@@ -259,8 +259,8 @@ export default function Page() {
 						personalInfo: profileCompletionStatus.personalInfo,
 						educationExperience: true,
 						preferences: profileCompletionStatus.preferences,
-						assessment:profileCompletionStatus.assessment,
-						spotlight:profileCompletionStatus.spotlight,
+						assessment: profileCompletionStatus.assessment,
+						spotlight: profileCompletionStatus.spotlight,
 						overallComplete: profileCompletionStatus.overallComplete,
 					},
 				},
@@ -285,11 +285,7 @@ export default function Page() {
 		<form className="flex w-full max-w-xl flex-1 flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
 			{/* TODO: change snapshot-name for this page to "education&experience" */}
 			<FromSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName="form-snapshot-profile" />
-			<div className="flex">
-				{/* An empty shell for the mobile sideBarTrigger button to portal into */}
-				<div id="mobileSideBarTrigger"></div>
-				<h3 className="text-base font-medium">Education & Experience</h3>
-			</div>
+			<h3 className="text-lg font-semibold">Education & Experience</h3>
 			<div>
 				<Label>Education Background</Label>
 				<Controller

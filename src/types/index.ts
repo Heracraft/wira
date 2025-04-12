@@ -68,3 +68,18 @@ export interface Option {
 	value: string;
 	points: number;
 }
+
+interface TalentEvaluationProfile {
+	id: string;
+	title: string;
+	icon: string;
+	description: string;
+	minScore: number;
+	maxScore: number;
+	bestFit: string[];
+}
+
+export interface AssessmentResult {
+	score: number;
+	profile: TalentEvaluationProfile;
+}

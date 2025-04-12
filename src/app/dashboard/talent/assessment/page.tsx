@@ -12,24 +12,9 @@ import { userStore } from "@/lib/store";
 
 import { updateTalentProfile } from "@/app/dashboard/actions";
 import { questions } from "@/lib/questions";
-import { talentProfiles } from "@/lib/shared";
+import { talentEvaluationProfiles } from "@/lib/shared";
 
-import { Question, ProfileCompletion } from "@/types";
-
-export interface TalentProfile {
-	id: string;
-	title: string;
-	icon: string;
-	description: string;
-	minScore: number;
-	maxScore: number;
-	bestFit: string[];
-}
-
-export interface AssessmentResult {
-	score: number;
-	profile: TalentProfile;
-}
+import { Question, ProfileCompletion,AssessmentResult } from "@/types";
 
 //   // src/utils/assessment.ts
 
@@ -50,7 +35,7 @@ const calculateResult = (answers: Record<number, string>): AssessmentResult => {
 	});
 
 	// Find matching profile
-	const profile = talentProfiles.find((profile) => totalScore >= profile.minScore && totalScore <= profile.maxScore) || talentProfiles[talentProfiles.length - 1]; // Default to the last profile if none matches
+	const profile = talentEvaluationProfiles.find((profile) => totalScore >= profile.minScore && totalScore <= profile.maxScore) || talentEvaluationProfiles[talentEvaluationProfiles.length - 1]; // Default to the last profile if none matches
 
 	return {
 		score: totalScore,
@@ -59,8 +44,7 @@ const calculateResult = (answers: Record<number, string>): AssessmentResult => {
 };
 
 const calculateResultFromScore = (score: number): AssessmentResult => {
-	const profile = talentProfiles.find((profile) => score >= profile.minScore && score <= profile.maxScore) || talentProfiles[talentProfiles.length - 1]; // Default to the last profile if none matches
-
+	const profile = talentEvaluationProfiles.find((profile) => score >= profile.minScore && score <= profile.maxScore) || talentEvaluationProfiles[talentEvaluationProfiles.length - 1]; // Default to the last profile if none matches
 	return {
 		score,
 		profile,
@@ -236,8 +220,8 @@ export default function Page() {
 		return (
 			<main className="my-8 w-full max-w-3xl rounded-lg md:p-8">
 				<div className="mb-8">
-					<h1 className="mb-2 text-3xl font-bold text-neutral-900">Your Assessment Results</h1>
-					<p className="text-neutral-600">Based on your responses, here's your talent profile:</p>
+					<h1 className="mb-2 text-lg font-bold text-neutral-900">Your Assessment Results</h1>
+					<p className="text-neutral-600 text-sm">Based on your responses, here's your talent profile:</p>
 				</div>
 
 				<div className="mb-8 rounded-lg bg-primary-50 p-6">

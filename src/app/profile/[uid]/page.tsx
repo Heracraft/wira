@@ -6,11 +6,16 @@ import type { TalentProfileRow, EducationEntry, WorkExperienceEntry } from "@/db
 import { format, parse } from "date-fns";
 
 import ProfilePicture from "@/components/ProfilePicture";
-import PersonalityTraitsChart from "./PersonalityTraits";
 import AddToWaitlist from "./addToWaitlist";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+
+import { Briefcase, Mail, MapPin, Calendar, Phone } from "lucide-react";
+
+import { talentEvaluationProfiles } from "@/lib/shared";
+
+import { AssessmentResult } from "@/types";
 
 export type FullTalentProfile = {
 	profileId: number;
@@ -39,15 +44,11 @@ export type FullTalentProfile = {
 	searchVector: string;
 	educationentries: EducationEntry[];
 	workexperienceentries: WorkExperienceEntry[];
+	highPotentialAnswer: string;
+	challengeAnswer: string;
+	bio: string;
+	assessmentScore: number;
 };
-
-const chartData = [
-	{ trait: "Openness", value: 0.8, fill: "var(--color-Openness)" },
-	{ trait: "Conscientiousness", value: 0.7, fill: "var(--color-Conscientiousness)" },
-	{ trait: "Extraversion", value: 0.6, fill: "var(--color-Extraversion)" },
-	{ trait: "Agreeableness", value: 0.5, fill: "var(--color-Agreeableness)" },
-	{ trait: "Neuroticism", value: 0.4, fill: "var(--color-Neuroticism)" },
-];
 
 export default async function Page({ params }: { params: Promise<{ uid: string }> }) {
 	// TODO: Increment engagement count
@@ -96,6 +97,8 @@ GROUP BY u."userId", tp."profileId";`,
 	// TODO: check if the user is already on the waitlist
 	// const isOnWaitlist = await db.select().from(waitlist).where(eq(waitlist.talentId, uid)).limit(1);
 
+	// console.log(profile);
+
 	return (
 		<div className="flex flex-col gap-10 bg-background p-5 pt-20 md:px-20 xl:px-36">
 			<div className="text-xl font-semibold">Personal Information</div>
@@ -103,7 +106,12 @@ GROUP BY u."userId", tp."profileId";`,
 				<ProfilePicture className="size-28" fullName={profile.fullName} avatarUrl={profile.avatarUrl} />
 				<div className="flex flex-col gap-3">
 					<h3 className="text-lg font-semibold">{profile.fullName}</h3>
-					<div className="grid gap-3 text-muted-foreground sm:grid-cols-2 sm:gap-x-20 md:gap-x-32">
+					<p className="text-muted-foreground">Member since {format(new Date(profile.createdAt), "do MMM, yyyy")}</p>
+					{/* <span className="flex items-center gap-2">
+							<p className="text-muted-foreground">Email:</p>
+							<p>{profile.email}</p>
+						</span> */}
+					{/* <div className="grid gap-3 text-muted-foreground sm:grid-cols-2 sm:gap-x-20 md:gap-x-32">
 						<p>Email: {profile.email}</p>
 						<p>Phone: {profile.phoneNumber}</p>
 						<p>
@@ -113,9 +121,89 @@ GROUP BY u."userId", tp."profileId";`,
 							Location: {profile.region}, {profile.country}
 						</p>
 						<p>Joined: {format(new Date(profile.createdAt), "do MMM, yyyy")}</p>
-						{/* <p>Age: {new Date().getFullYear() - new Date(profile.dateOfBirth).getFullYear()} years</p> */}
+					</div> */}
+					<div className="grid gap-4 grid-cols-2 md:grid-cols-3 md:gap-x-20">
+						<div className="flex items-center gap-3">
+							<div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+								<Mail className="h-5 w-5 text-primary" />
+							</div>
+							<div>
+								<p className="text-sm text-muted-foreground">Email</p>
+								<p className="font-medium">{profile.email}</p>
+							</div>
+						</div>
+
+						<div className="flex items-center gap-3">
+							<div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+								<Phone className="h-5 w-5 text-primary" />
+							</div>
+							<div>
+								<p className="text-sm text-muted-foreground">Phone</p>
+								<p className="font-medium">{profile.phoneNumber}</p>
+							</div>
+						</div>
+
+						<div className="flex items-center gap-3">
+							<div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+								<Briefcase className="h-5 w-5 text-primary" />
+							</div>
+							<div>
+								<p className="text-sm text-muted-foreground">Work Preference</p>
+								<p className="font-medium">{profile.workTypePreference}</p>
+							</div>
+						</div>
+
+						<div className="flex items-center gap-3">
+							<div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+								<MapPin className="h-5 w-5 text-primary" />
+							</div>
+							<div>
+								<p className="text-sm text-muted-foreground">Location</p>
+								<p className="font-medium">{profile.region}, {profile.country}</p>
+							</div>
+						</div>
+
+						<div className="flex items-center gap-3">
+							<div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+								<Calendar className="h-5 w-5 text-primary" />
+							</div>
+							<div>
+								<p className="text-sm text-muted-foreground">Joined</p>
+								<p className="font-medium">{profile.createdAt}</p>
+							</div>
+						</div>
 					</div>
 				</div>
+			</div>
+			<div className="grid gap-5">
+				<h3 className="text-xl font-semibold">Bio</h3>
+				<p className="text-muted-foreground">{profile.bio}</p>
+			</div>
+			<div className="flex flex-col gap-5">
+				<h3 className="text-xl font-semibold">Skills</h3>
+				<div className="flex flex-wrap gap-2">
+					{profile.skills.map((skill, index) => (
+						<span key={index} className="shrink-0 rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-800">
+							{skill}
+						</span>
+					))}
+				</div>
+			</div>
+			<div className="flex flex-col gap-5">
+				<h3 className="text-xl font-semibold">Questions Section</h3>
+				<div className="grid gap-2">
+					<div className="flex flex-col gap-2">
+						<h6 className="text-md font-medium">What makes you a high-potential candidate?</h6>
+						<p className="text-muted-foreground">{profile.highPotentialAnswer}</p>
+					</div>
+					<div className="flex flex-col gap-2">
+						<h6 className="text-md font-medium">Describe a challenge you faced in an academic or professional setting and how you overcame it.</h6>
+						<p className="text-muted-foreground">{profile.challengeAnswer}</p>
+					</div>
+				</div>
+			</div>
+			<div>
+				<TalentEvaluationResults score={profile.assessmentScore} />
 			</div>
 			<div className="flex flex-col gap-5">
 				<h3 className="text-xl font-semibold">Education</h3>
@@ -156,19 +244,6 @@ GROUP BY u."userId", tp."profileId";`,
 					))}
 				</div>
 			</div>
-			<div className="flex flex-col gap-5">
-				<h3 className="text-xl font-semibold">Skills</h3>
-				<div className="flex flex-wrap gap-2">
-					{profile.skills.map((skill, index) => (
-						<span key={index} className="shrink-0 rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-800">
-							{skill}
-						</span>
-					))}
-				</div>
-			</div>
-			<div className="flex flex-col gap-5">
-				<PersonalityTraitsChart chartData={chartData} />
-			</div>
 			{/* <div className="flex flex-col gap-5">
 				<h3 className="text-xl font-semibold">Questions Section</h3>
 				<div>
@@ -184,5 +259,49 @@ GROUP BY u."userId", tp."profileId";`,
 				<AddToWaitlist talentId={profile.profileId} />
 			</div>
 		</div>
+	);
+}
+
+function TalentEvaluationResults({ score }: { score: number }) {
+	const calculateResultFromScore = (score: number): AssessmentResult => {
+		const profile = talentEvaluationProfiles.find((profile) => score >= profile.minScore && score <= profile.maxScore) || talentEvaluationProfiles[talentEvaluationProfiles.length - 1]; // Default to the last profile if none matches
+		return {
+			score,
+			profile,
+		};
+	};
+
+	const result = calculateResultFromScore(score);
+
+	return (
+		<main className="w-full max-w-3xl rounded-lg">
+			<div className="mb-8">
+				<span className="mb-2 text-xl font-bold text-neutral-900">Assessment Results</span>
+				<p className="text-sm text-neutral-600">Based on talent's responses here is their talent evaluation profile:</p>
+			</div>
+
+			<div className="mb-8 rounded-lg bg-primary-50 p-6">
+				<div className="mb-4 flex items-center">
+					<span className="mr-4 text-4xl">{result.profile.icon}</span>
+					<div>
+						<h2 className="text-2xl font-bold text-primary-800">{result.profile.title}</h2>
+						<p className="text-neutral-500">Score: {result.score} points</p>
+					</div>
+				</div>
+
+				<p className="mb-4 text-neutral-700">{result.profile.description}</p>
+
+				<div>
+					<h3 className="mb-2 font-semibold text-primary-700">Best Career Fits:</h3>
+					<div className="flex flex-wrap gap-2">
+						{result.profile.bestFit.map((career, index) => (
+							<span key={index} className="rounded-full bg-primary-100 px-3 py-1 text-sm text-primary-800">
+								{career}
+							</span>
+						))}
+					</div>
+				</div>
+			</div>
+		</main>
 	);
 }

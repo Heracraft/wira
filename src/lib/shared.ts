@@ -228,7 +228,7 @@ export interface TalentProfile {
 	bestFit: string[];
 }
 
-export const talentProfiles: TalentProfile[] = [
+export const talentEvaluationProfiles: TalentProfile[] = [
 	{
 		id: "trailblazer",
 		title: "The Trailblazer",
