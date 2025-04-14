@@ -69,55 +69,61 @@ export default async function Home() {
 	// const builder = imageUrlBuilder(sanityClient);
 
 	return (
-		<div className="flex flex-col gap-24 p-5 md:px-20 xl:px-36">
-			<div className="mt-14 flex flex-col items-center justify-center space-y-10 md:px-20">
-				<h2 className="text-3xl font-semibold md:text-5xl">Connect with Talent</h2>
-				<p className="text-center text-muted-foreground">Discover and match with top professionals globally</p>
-				<div className="flex flex-wrap justify-center gap-5">
-					<CTAButton>Join us now</CTAButton>
-					{/* <Link href={"mailto:admin@tu-fund.com"} target="_blank">
+		<>
+			<div className="relative mb-14 flex min-h-full flex-1 flex-col items-center justify-center border-b md:px-20">
+				<div className="bg-dots z-0" />
+				<div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-neutral-50 [mask-image:radial-gradient(ellipse_at_center,transparent_10%,black)] dark:bg-black"></div>
+
+				<div className="relative z-20 space-y-10">
+					<h2 className="text-3xl font-semibold md:text-5xl">Connect with Talents</h2>
+					<p className="text-center text-muted-foreground">Discover and match with top professionals globally</p>
+					<div className="flex flex-wrap justify-center gap-5">
+						<CTAButton variant="default">Join us now</CTAButton>
+						{/* <Link href={"mailto:admin@tu-fund.com"} target="_blank">
 						<Button variant={"outline"} size={"lg"} className="border-primary text-primary">
 							Request demo
 						</Button>
 					</Link> */}
+					</div>
 				</div>
 			</div>
-			{/* <div className="prose prose-neutral !max-w-none md:prose-xl">
+			<div className="flex flex-col gap-24 p-5 md:px-20 xl:px-36">
+				{/* <div className="prose prose-neutral !max-w-none md:prose-xl">
 				<MultiMediaPortableTextRenderer body={pageContent.body} />
 			</div> */}
-			<div id="aboutUs" className="prose prose-neutral mt-14 flex !max-w-none flex-col items-center justify-center gap-14 md:prose-xl prose-headings:!m-0 prose-p:m-0">
-				<div className="flex flex-col items-center gap-5">
-					<h2 className="text-2xl font-semibold md:text-5xl">App Highlights</h2>
-					<p className="text-muted-foreground">Discover top talent and career opportunities with ease, tailored to your preferences.</p>
-				</div>
-				<div className="flex flex-col flex-wrap items-center sm:flex-row">
-					<div className="flex flex-1 flex-col gap-5">
-						<h2 className="text-lg font-semibold">Start Matching</h2>
-						<p className="max-w-sm">Our Al-driven algorithm connects you with the best candidates or jobs based on your unique profile.</p>
-						<div className="flex gap-5">
-							<CTAButton variant="secondary">Get started today</CTAButton>
-						</div>
+				<div id="aboutUs" className="prose prose-neutral mt-14 flex !max-w-none flex-col items-center justify-center gap-14 md:prose-xl prose-headings:!m-0 prose-p:m-0">
+					<div className="flex flex-col items-center gap-5">
+						<h2 className="text-2xl font-semibold md:text-5xl">App Highlights</h2>
+						<p className="text-muted-foreground">Discover top talent and career opportunities with ease, tailored to your preferences.</p>
 					</div>
-					<div className="mt-4 flex-1 sm:mt-0">
-						<img src="/media/hr.jpg" alt="Hiring" className="rounded-xl" />
-					</div>
-				</div>
-				<div className="flex flex-col flex-wrap items-center sm:flex-row-reverse">
-					<div className="flex flex-1 justify-end">
-						<div className="flex flex-col gap-5">
-							<h2 className="text-lg font-semibold">Career Insights</h2>
-							<p className="max-w-sm">Gain valuable career insights and industry trends to make informed decisions.</p>
+					<div className="flex flex-col flex-wrap items-center sm:flex-row">
+						<div className="flex flex-1 flex-col gap-5">
+							<h2 className="text-lg font-semibold">Start Matching</h2>
+							<p className="max-w-sm">Our Al-driven algorithm connects you with the best candidates or jobs based on your unique profile.</p>
 							<div className="flex gap-5">
-								<CTAButton variant="secondary">Join us</CTAButton>
+								<CTAButton variant="outline">Get started today</CTAButton>
 							</div>
 						</div>
+						<div className="mt-4 flex-1 sm:mt-0">
+							<img src="/media/hr.jpg" alt="Hiring" className="rounded-xl" />
+						</div>
 					</div>
-					<div className="mt-4 flex-1 sm:mt-0">
-						<img src="https://cdn.sanity.io/images/jsu955sa/production/c9ffba661b4690c6060d70a7c12d25ef0cda5e07-6016x4016.jpg" alt="Hiring" className="max-w-[80%]/ rounded-xl" />
+					<div className="flex flex-col flex-wrap items-center sm:flex-row-reverse">
+						<div className="flex flex-1 justify-end">
+							<div className="flex flex-col gap-5">
+								<h2 className="text-lg font-semibold">Career Insights</h2>
+								<p className="max-w-sm">Gain valuable career insights and industry trends to make informed decisions.</p>
+								<div className="flex gap-5">
+									<CTAButton variant="outline">Join us</CTAButton>
+								</div>
+							</div>
+						</div>
+						<div className="mt-4 flex-1 sm:mt-0">
+							<img src="https://cdn.sanity.io/images/jsu955sa/production/c9ffba661b4690c6060d70a7c12d25ef0cda5e07-6016x4016.jpg" alt="Hiring" className="max-w-[80%]/ rounded-xl" />
+						</div>
 					</div>
 				</div>
-			</div>
-			{/* <div className="mt-24 flex flex-col items-center gap-5">
+				{/* <div className="mt-24 flex flex-col items-center gap-5">
 				<h2 className="text-center text-3xl font-semibold md:text-4xl">Hear from our awsome users!</h2>
 				<div className="flex/ gap-5">
 					<Carousel opts={{ loop: true }} className="max-w-xs md:max-w-none">
@@ -144,15 +150,29 @@ export default async function Home() {
 					</Carousel>
 				</div>
 			</div> */}
-		</div>
+			</div>
+			<section className="relative h-full border border-dashed bg-neutral-100">
+				<div className="bg-grid-sm"></div>
+				<div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-neutral-100 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-black"></div>
+				<div className="relative z-10 mx-auto max-w-screen-xl px-4 py-8 sm:py-16 lg:px-6">
+					<div className="mx-auto max-w-screen-sm text-center">
+						<h2 className="mb-4 text-4xl font-extrabold leading-tight tracking-tight text-neutral-900 dark:text-white">Start your free trial today</h2>
+						<p className="mb-6 font-light text-muted-foreground md:text-lg">Try the Wira Platform for 30 days. Cancel anytime.</p>
+						<Link href="/auth/sign-up" prefetch={true}>
+							<Button size={"lg"}>Free trial for 30 days</Button>
+						</Link>
+					</div>
+				</div>
+			</section>
+		</>
 	);
 }
 
-function CTAButton({ children, variant }: { children?: React.ReactNode; variant?: "default" | "secondary" }) {
+function CTAButton({ children, variant }: { children?: React.ReactNode; variant?: "default" | "secondary" | "outline" }) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<Button className={cn("md:w-56",variant !== "secondary"?"text-white":"")} size={"lg"} variant={variant === "secondary" ? "secondary" : "default"}>
+				<Button className={cn("md:w-56", variant == "default" ? "text-white" : "")} size={"lg"} variant={variant}>
 					{children}
 				</Button>
 			</DialogTrigger>

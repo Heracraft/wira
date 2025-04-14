@@ -25,13 +25,13 @@ export default async function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className="flex h-[100dvh] flex-col overflow-y-auto overflow-x-hidden bg-neutral-50 font-Roboto antialiased">
-				<Header />
+			<body className="bg-neutral-50 font-Roboto antialiased">
 				<AuthProvider />
-				<div className="flex h-full flex-1 flex-col py-5">
+				<main className="flex flex-col overflow-x-hidden overflow-y-auto h-[100dvh]">
+					<Header />
 					{children}
 					<Footer />
-				</div>
+				</main>
 				<Toaster richColors />
 				<GoogleAnalytics gaId="G-CP8CREK62S" />
 			</body>

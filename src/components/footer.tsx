@@ -10,7 +10,7 @@ export default function Footer() {
 	if (pathname != "/" && pathname != "/pricing") return;
 
 	return (
-		<footer className="border-t bg-white p-3 py-20">
+		<footer className="border-t/ bg-white p-3 py-20  flex-grow-0">
 			{/* <div className="flex flex-col items-center gap-4 mb-10">
 				<h3 className="text-xl md:text-2xl font-semibold text-center">Subscribe to our news letter</h3>
 				<div className="flex w-full max-w-xs sm:max-w-sm border border-r-0 rounded-md text-sm md:">
