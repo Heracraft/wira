@@ -5,9 +5,9 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster } from "@/components/ui/sonner";
 import AuthProvider from "@/components/AuthProvider";
 
-import Footer from "@/components/footer";
+import Header from "@/components/Header";
 
-import "./globals.css";
+import "../globals.css";
 
 export const metadata: Metadata = {
 	title: {
@@ -26,8 +26,11 @@ export default async function RootLayout({
 		<html lang="en">
 			<body className="bg-neutral-50 font-Roboto antialiased">
 				<AuthProvider />
-				{children}
-				<Footer />
+				<main className="flex flex-col overflow-x-hidden overflow-y-auto h-[100dvh]">
+					<Header />
+					{children}
+					{/* <Footer /> -- Not needed in platform pages */}
+				</main>
 				<Toaster richColors />
 				<GoogleAnalytics gaId="G-CP8CREK62S" />
 			</body>

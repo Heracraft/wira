@@ -62,7 +62,7 @@ export default function Navbar({ children }: { children: React.ReactNode }) {
 
 	return (
 		<>
-			<div className="hidden h-full gap-10 md:flex flex-grow-0 ">
+			<div className="hidden gap-10 md:flex">
 				{routes.map((route, index) => {
 					if ((route.restricted && !user) || (route.for != user?.userType && route.for != "all")) {
 						// check if the route is restricted and the user is not logged in
