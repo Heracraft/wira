@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { TalentProfileContext } from "../context";
 import { userStore } from "@/lib/store";
 
-import { updateTalentProfile } from "@/app/dashboard/actions";
+import { updateTalentProfile } from "@/app/(platform)/dashboard/actions";
 import { questions } from "@/lib/questions";
 import { talentEvaluationProfiles } from "@/lib/shared";
 
