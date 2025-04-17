@@ -6,12 +6,22 @@ import { Check, X } from "lucide-react";
 
 import type { Plan } from "@/types";
 
-export function PricingCard({ plan, user, action }: { plan: Plan; user: any; action: (planName: string) => void }) {
+const defaultOnClickHandler = (planName: string) => {
+	if (planName === "Enterprise") {
+		window.open("mailto:admin@tu-fund.com", "_blank");
+	} else {
+		window.location.href = `/auth/sign-up?account-type=employer&plan=${planName}`;
+	}
+};
+
+export function PricingCard({ plan, user, onClickHandler = defaultOnClickHandler }: { plan: Plan; user?: any; onClickHandler?: (planName: string) => void }) {
 	return (
-		<div className="flex w-full max-w-xs flex-col rounded-xl border bg-background p-6">
+		<div className="flex w-full max-w-xs flex-col rounded-xl border bg-background p-6 relative">
 			<div className="flex w-full justify-end">
 				<h2 className="text-lg font-semibold">{plan.planName}</h2>
 			</div>
+
+			{plan.planName === "Pro" && <div className="absolute -top-2.5 right-6 text-white inline-block rounded-full bg-primary px-3 py-1 text-xs">Popular</div>}
 
 			{plan.planName === "Enterprise" ? (
 				<p className="text-3xl font-bold">Contact us</p>
@@ -56,7 +66,7 @@ export function PricingCard({ plan, user, action }: { plan: Plan; user: any; act
 			{/* TODO: change text to upgrade now if employer is logged in */}
 
 			{user && user?.userType === "talent" ? (
-				// If pricing tiers are not available for the user type, show a disabled button. 
+				// If pricing tiers are not available for the user type, show a disabled button.
 				// Unauthed users will not see this button.
 				<Button disabled className="w-full">
 					Unavailable for your account type
@@ -64,7 +74,7 @@ export function PricingCard({ plan, user, action }: { plan: Plan; user: any; act
 			) : (
 				<Button
 					onClick={() => {
-						action(plan.planName);
+						onClickHandler(plan.planName);
 					}}
 					variant={plan.actionButtonConfig.variant as "outline" | "default" | "link" | "destructive" | "secondary" | "ghost" | null | undefined}
 					className="mt-auto w-full"

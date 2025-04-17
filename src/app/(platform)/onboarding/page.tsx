@@ -467,7 +467,7 @@ export default function page() {
 								key={index}
 								plan={plan as Plan}
 								user={user}
-								action={(planName) => {
+								onClickHandler={(planName) => {
 									if (planName != "Enteprise") {
 										router.push(`/subscription?plan=${planName}`);
 									} else {
