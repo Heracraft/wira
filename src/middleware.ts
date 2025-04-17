@@ -1,7 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createServerClient } from "@supabase/ssr";
 
+import { createServerClient } from "@supabase/ssr";
 import type { User } from "@supabase/supabase-js";
+
+import { createKv } from "@/lib/store.server";
+
+// const kv=createKv();
 
 function redirectTo(path: string, request: NextRequest) {
 	const url = request.nextUrl.clone();
@@ -77,6 +81,8 @@ export async function updateSession(request: NextRequest) {
 
 	if (user && user?.user_metadata.isOnboarded) {
 		// user is logged in and onboarding is completed
+		// let userType = user.user_metadata.userType;
+
 		if (request.nextUrl.pathname.startsWith("/auth")) {
 			// redirect to dashboard if user is logged in and trying to access auth pages
 			return toDashBoard(user);
@@ -86,6 +92,8 @@ export async function updateSession(request: NextRequest) {
 			// redirect to role-specific dashboard if user is logged in and trying to access dashboard using /dashboard
 			return toDashBoard(user);
 		}
+
+		
 	}
 
 	// IMPORTANT: You *must* return the supabaseResponse object as it is.

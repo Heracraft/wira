@@ -7,7 +7,7 @@ import AuthProvider from "@/components/AuthProvider";
 
 import Footer from "@/components/footer";
 
-import "./globals.css";
+import "../globals.css";
 
 export const metadata: Metadata = {
 	title: {

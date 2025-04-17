@@ -26,11 +26,13 @@ import SubmitButton from "@/components/submitButton";
 import { signup } from "../actions";
 
 export default function page() {
-	// const searchParams = useSearchParams();
+	const searchParams = useSearchParams();
 
-	// const continueUrl = searchParams.get("continueUrl") || "/auth";
-
-	// const plan = searchParams.get("plan") || "Essential"; // Do we need this?
+	let continueUrl = `/onboarding`; // the url to redirect to after email verification
+	const accountType = searchParams.get("account-type");
+	if (accountType) {
+		continueUrl += `?account-type=${accountType}`;
+	}
 
 	const [error, setError] = useState({
 		status: false,
@@ -64,15 +66,18 @@ export default function page() {
 		// 	setErrorOccured(true);
 		// }
 
-		let res = await signup({
-			email: data.email,
-			password: data.password,
-		});
+		let res = await signup(
+			{
+				email: data.email,
+				password: data.password,
+			},
+			``,
+		);
 
 		if (res.status == 200) {
 			setIsVerificationCodeSent(true);
 		} else {
-			setError({ status: true, message: res.message as string});
+			setError({ status: true, message: res.message as string });
 			setTimeout(() => {
 				reset();
 				setError({ status: false, message: "" });

@@ -30,7 +30,7 @@ export async function login(credentials: { email: string; password: string }) {
 	redirect("/");
 }
 
-export async function signup(formData: { email: string; password: string }) {
+export async function signup(formData: { email: string; password: string }, continueUrl?: string) {
 	const supabase = await createClient();
 
 	const { email, password } = formData;
@@ -42,7 +42,7 @@ export async function signup(formData: { email: string; password: string }) {
 			data: {
 				isOnboarded: false,
 			},
-			// emailRedirectTo: `/onboarding`,
+			emailRedirectTo: continueUrl,
 		},
 	});
 

@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { useForm, SubmitHandler, Controller, useWatch } from "react-hook-form";
 
@@ -85,6 +84,8 @@ export default function page() {
 	// console.log(user);
 	const router = useRouter();
 
+	const searchParams = useSearchParams();
+
 	const [error, setError] = useState({
 		status: false,
 		message: "",
@@ -155,6 +156,19 @@ export default function page() {
 			}, 10000);
 		}
 	};
+
+	useEffect(() => {
+		const step = searchParams.get("step");
+		if (step && parseInt(step)) {
+			setCurrentStep(parseInt(step));
+		}
+
+		const accountType = searchParams.get("account-type");
+		if (accountType == "talent" || accountType == "employer") {
+			setValue("accountType", accountType);
+			setCurrentStep(1);
+		}
+	}, []);
 
 	if (currentStep == 0) {
 		return (
@@ -446,6 +460,7 @@ export default function page() {
 			<div className="h-full. flex w-full flex-1 items-center justify-center">
 				<div className="flex w-full flex-col items-center gap-4">
 					<h2 className="text-3xl">Choose your plan</h2>
+					<p className="text-muted-foreground text-center">Start your 1-month free trial today and explore all the features!</p>
 					<div className="grid w-full max-w-2xl grid-cols-1 place-items-center gap-2 sm:grid-cols-2">
 						{plans.slice(0, 2).map((plan, index) => (
 							<PricingCard

@@ -32,7 +32,7 @@ export default async function Page() {
 				</TableHeader>
 				<TableBody>
 					{usersList.map((user) => (
-						<TableRow>
+						<TableRow key={user.id}>
 							<TableCell>{user.email}</TableCell>
 							<TableCell>{user.user_metadata.userType || null}</TableCell>
 							<TableCell>{user.created_at}</TableCell>

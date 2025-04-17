@@ -1,10 +1,10 @@
 // update auth metadata
 // update db
 import Link from "next/link";
-
 import { headers } from "next/headers";
+import {redirect} from "next/navigation";
 
-import { createKv } from "@/lib/store.server";
+import { createKv, createClient } from "@/lib/store.server";
 
 import { syncStripeDataToKV } from "@/app/api/stripe/helpers";
 
@@ -16,8 +16,18 @@ import {isDev} from "@/lib/utils.server"
 
 
 export default async function Page() {
-	const headersList = await headers();
-	const uid = headersList.get("x-uid");
+const client = await createClient();
+	const {
+		data: { user },
+	} = await client.auth.getUser();
+	if (!user) {
+		redirect("/unauthorized");
+	}
+
+	// old implementation
+	// const headersList = await headers();
+	// const uid = headersList.get("x-uid");
+	const uid= user.id;
 
 	const kv = createKv();
 

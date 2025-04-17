@@ -24,9 +24,9 @@ export default function SplitLandingPage() {
 				<div className="relative flex h-full flex-col items-center justify-center p-8 text-center">
 					<Users className="animate-float mb-6 h-16 w-16 rounded-lg bg-neutral-50 p-3 text-neutral-700 shadow" />
 					<h2 className={cn("mb-4 text-3xl font-bold transition-all duration-500 md:text-4xl lg:text-5xl", hoveredSide === "talent" ? "scale-110" : "scale-100")}>For Talents</h2>
-					<p className={cn("mb-8 max-w-md text-lg transition-all duration-500 md:text-xl text-muted-foreground", hoveredSide === "talent" ? "opacity-100" : "opacity-70")}>Showcase your skills and find your dream job. Create a free profile and get discovered by top employers.</p>
-					<Link href="/auth/sign-up?account-type=talent">
-						<Button size="lg" className={cn("shadow-lg transition-all duration-500 ", hoveredSide === "talent" ? "scale-110" : "scale-100")}>
+					<p className={cn("mb-8 max-w-md text-lg text-muted-foreground transition-all duration-500 md:text-xl", hoveredSide === "talent" ? "opacity-100" : "opacity-70")}>Showcase your skills and find your dream job. Create a free profile and get discovered by top employers.</p>
+					<Link href="/?type=talent">
+						<Button size="lg" className={cn("shadow-lg transition-all duration-500", hoveredSide === "talent" ? "scale-110" : "scale-100")}>
 							Join as Talent
 							<ArrowRight className="ml-2 h-4 w-4" />
 						</Button>
@@ -45,10 +45,10 @@ export default function SplitLandingPage() {
 				{/* Content */}
 				<div className="relative flex h-full flex-col items-center justify-center p-8 text-center">
 					<Building className="animate-float mb-6 h-16 w-16 rounded-lg bg-white p-3 text-primary shadow-lg" />
-					<h2 className={cn("mb-4 text-3xl font-bold transition-all duration-500 md:text-4xl lg:text-5xl text-primary-950", hoveredSide === "employer" ? "scale-110" : "scale-100")}>For Employers</h2>
-					<p className={cn("mb-8 max-w-md text-white text-lg transition-all duration-500 md:text-xl", hoveredSide === "employer" ? "opacity-100" : "opacity-70")}>Find the perfect candidates for your company. Search, engage, and hire top talent with our powerful platform.</p>
-					<Link href="/auth/sign-up?account-type=employer">
-						<Button size="lg" variant="outline" className={cn("shadow-lg transition-all duration-500 ", hoveredSide === "employer" ? "scale-110" : "scale-100")}>
+					<h2 className={cn("mb-4 text-3xl font-bold text-primary-950 transition-all duration-500 md:text-4xl lg:text-5xl", hoveredSide === "employer" ? "scale-110" : "scale-100")}>For Employers</h2>
+					<p className={cn("mb-8 max-w-md text-lg text-white transition-all duration-500 md:text-xl", hoveredSide === "employer" ? "opacity-100" : "opacity-70")}>Find the perfect candidates for your company. Search, engage, and hire top talent with our powerful platform.</p>
+					<Link href="/?type=employer">
+						<Button size="lg" variant="outline" className={cn("shadow-lg transition-all duration-500", hoveredSide === "employer" ? "scale-110" : "scale-100")}>
 							Hire Talent
 							<Building className="ml-2 h-4 w-4" />
 						</Button>

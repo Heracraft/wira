@@ -16,7 +16,7 @@ export async function resetUser(userId: string, userType: string) {
 		},
 	});
 
-	await db.delete(users).where(eq(users.userId, userId));
+	// await db.delete(users).where(eq(users.userId, userId));
 
     revalidatePath("/admin");
 }
