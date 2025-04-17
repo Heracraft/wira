@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 import { Mail, Phone } from "lucide-react";
 
@@ -9,8 +9,11 @@ export default function Footer() {
 
 	if (pathname != "/" && pathname != "/pricing") return;
 
+	const searchParams = useSearchParams();
+	const type = searchParams.get("type");
+
 	return (
-		<footer className="border-t/ bg-white p-3 py-20  flex-grow-0">
+		<footer className="border-t/ flex-grow-0 bg-white p-3 py-20">
 			{/* <div className="flex flex-col items-center gap-4 mb-10">
 				<h3 className="text-xl md:text-2xl font-semibold text-center">Subscribe to our news letter</h3>
 				<div className="flex w-full max-w-xs sm:max-w-sm border border-r-0 rounded-md text-sm md:">
@@ -32,9 +35,11 @@ export default function Footer() {
 					<a href="/pricing" className="font-medium underline-offset-2 hover:underline">
 						Pricing
 					</a>
-					<a href="/#aboutUs" className="font-medium underline-offset-2 hover:underline">
-						About Us
-					</a>
+					{type === "employer" && (
+						<a href="/#aboutUs" className="font-medium underline-offset-2 hover:underline">
+							About Us
+						</a>
+					)}
 				</div>
 				<div className="flex flex-col gap-5">
 					<h4 className="font-semibold">Contact us</h4>
