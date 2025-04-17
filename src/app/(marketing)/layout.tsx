@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { Suspense } from "react";
+
 import { GoogleAnalytics } from "@next/third-parties/google";
 
 import { Toaster } from "@/components/ui/sonner";
@@ -27,7 +29,9 @@ export default async function RootLayout({
 			<body className="bg-neutral-50 font-Roboto antialiased">
 				<AuthProvider />
 				{children}
-				<Footer />
+				<Suspense fallback={<div className="flex h-screen items-center justify-center">Loading...</div>}>
+					<Footer />
+				</Suspense>
 				<Toaster richColors />
 				<GoogleAnalytics gaId="G-CP8CREK62S" />
 			</body>

@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { Suspense } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
@@ -342,7 +344,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
 
 							<div className="mt-8 grid w-full grid-cols-1 place-items-center gap-2 sm:grid-cols-2 md:grid-cols-3">
 								{plans.map((plan, index) => (
-									<PricingCard key={index} plan={plan as Plan} />
+									<Suspense fallback={<div className="flex h-96 items-center justify-center">Loading...</div>}>
+										<PricingCard key={index} plan={plan as Plan} />
+									</Suspense>
 								))}
 							</div>
 						</div>
