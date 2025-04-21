@@ -119,7 +119,7 @@ export default function page() {
 			if (res.status == 200) {
 				setCurrentStep(2);
 				setTimeout(() => {
-					router.push("/dashboard");
+					router.push("/dashboard/talent/personal-info");
 				}, 5000);
 			}
 		} catch (error: any) {

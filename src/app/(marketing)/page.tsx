@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import Header from "@/components/Header";
 import Hero from "./Hero";
 import { PricingCard } from "@/components/PricingCard";
+import PricingSection from "@/components/PricingSection";
 
 import { CheckCircle, Star, Shield, Users, Search, Building, ArrowRight } from "lucide-react";
 
@@ -341,14 +342,16 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
 									<p className="max-w-[900px] text-muted-foreground md:text-xl">Flexible pricing options designed to scale with your recruitment requirements.</p>
 								</div>
 							</div>
-
-							<div className="mt-8 grid w-full grid-cols-1 place-items-center gap-2 sm:grid-cols-2 md:grid-cols-3">
+							<Suspense fallback={<div className="flex h-96 items-center justify-center">Loading...</div>}>
+								<PricingSection />
+							</Suspense>
+							{/* <div className="mt-8 grid w-full grid-cols-1 place-items-center gap-2 sm:grid-cols-2 md:grid-cols-3">
 								{plans.map((plan, index) => (
-									<Suspense fallback={<div className="flex h-96 items-center justify-center">Loading...</div>}>
+									<Suspense key={index} fallback={<div className="flex h-96 items-center justify-center">Loading...</div>}>
 										<PricingCard key={index} plan={plan as Plan} />
 									</Suspense>
 								))}
-							</div>
+							</div> */}
 						</div>
 					</section>
 					<section id="faq" className="w-full bg-white py-12 md:py-24 lg:py-32">

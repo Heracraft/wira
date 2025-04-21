@@ -47,8 +47,16 @@ export async function updateSession(request: NextRequest) {
 
 	// TODO: introduce rate limitng
 	// TODO: allow users to access their own profile
+	if (request.nextUrl.pathname === "/"){
+		const url = request.nextUrl.clone();
+		if (!url.searchParams.get("type") && user?.user_metadata.userType) {
+			url.searchParams.set("type", user?.user_metadata.userType);
+			supabaseResponse = NextResponse.rewrite(url);
+		}
+		return supabaseResponse
+	}
 
-	if (request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/auth" || request.nextUrl.pathname === "/pricing") {
+	if (request.nextUrl.pathname === "/auth" || request.nextUrl.pathname === "/pricing") {
 		return supabaseResponse;
 	}
 

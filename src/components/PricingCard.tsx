@@ -14,14 +14,14 @@ const defaultOnClickHandler = (planName: string) => {
 	}
 };
 
-export function PricingCard({ plan, user, onClickHandler = defaultOnClickHandler }: { plan: Plan; user?: any; onClickHandler?: (planName: string) => void }) {
+export function PricingCard({ plan, user, currentPlanName, onClickHandler = defaultOnClickHandler }: { plan: Plan; user?: any; currentPlanName?: string | null; onClickHandler?: (planName: string) => void }) {
 	return (
-		<div className="flex w-full max-w-xs flex-col rounded-xl border bg-background p-6 relative">
+		<div className="relative flex w-full max-w-xs flex-col rounded-xl border bg-background p-6">
 			<div className="flex w-full justify-end">
 				<h2 className="text-lg font-semibold">{plan.planName}</h2>
 			</div>
 
-			{plan.planName === "Pro" && <div className="absolute -top-2.5 right-6 text-white inline-block rounded-full bg-primary px-3 py-1 text-xs">Popular</div>}
+			{plan.planName === "Pro" && <div className="absolute -top-2.5 right-6 inline-block rounded-full bg-primary px-3 py-1 text-xs text-white">Popular</div>}
 
 			{plan.planName === "Enterprise" ? (
 				<p className="text-3xl font-bold">Contact us</p>
@@ -72,15 +72,23 @@ export function PricingCard({ plan, user, onClickHandler = defaultOnClickHandler
 					Unavailable for your account type
 				</Button>
 			) : (
-				<Button
-					onClick={() => {
-						onClickHandler(plan.planName);
-					}}
-					variant={plan.actionButtonConfig.variant as "outline" | "default" | "link" | "destructive" | "secondary" | "ghost" | null | undefined}
-					className="mt-auto w-full"
-				>
-					{plan.actionButtonConfig.label}
-				</Button>
+				<>
+					{currentPlanName === (`${plan.planName} Plan`) ? (
+						<Button disabled className="w-full">
+							Current plan
+						</Button>
+					) : (
+						<Button
+							onClick={() => {
+								onClickHandler(plan.planName);
+							}}
+							variant={plan.actionButtonConfig.variant as "outline" | "default" | "link" | "destructive" | "secondary" | "ghost" | null | undefined}
+							className="mt-auto w-full"
+						>
+							{plan.actionButtonConfig.label}
+						</Button>
+					)}
+				</>
 			)}
 		</div>
 	);

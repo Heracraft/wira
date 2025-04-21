@@ -29,6 +29,10 @@ export default async function RootLayout({
 			<body className="bg-neutral-50 font-Roboto antialiased">
 				<AuthProvider />
 				{children}
+				{/* You might be thinking... why tf does a footer need a suspense boundary? */}
+				{/* Good question. No fucking idea */}
+				{/* Jk, jk. Because footer.tsx uses the useSearchParams hook*/}
+				{/* which requires components using it to be wrapped in suspense */}
 				<Suspense fallback={<div className="flex h-screen items-center justify-center">Loading...</div>}>
 					<Footer />
 				</Suspense>
