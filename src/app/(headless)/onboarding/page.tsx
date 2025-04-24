@@ -468,7 +468,7 @@ export default function page() {
 								user={user}
 								onClickHandler={(planName) => {
 									if (planName != "Enteprise") {
-										router.push(`/subscription?plan=${planName}`);
+										window.location.href = `/subscription?plan=${planName}`;
 									} else {
 										window.open("mailto:admin@tu-fund.com", "_blank");
 									}

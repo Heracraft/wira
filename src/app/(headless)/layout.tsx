@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import AuthProvider from "@/components/AuthProvider";
 
 import { GoogleAnalytics } from "@next/third-parties/google";
 
@@ -19,7 +20,8 @@ export default async function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className="bg-neutral-50 font-Roboto antialiased">
+			<body className="bg-neutral-50 font-Roboto antialiased min-h-[100dvh] flex items-center">
+				<AuthProvider />
 				{children}
 				{/* <Toaster richColors />  */}
 				{/* Not expecting to create toasts in this route segment */}

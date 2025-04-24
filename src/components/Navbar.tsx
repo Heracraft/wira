@@ -52,6 +52,9 @@ export default function Navbar({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname() || "/";
 
 	const user = userStore((state) => state.user);
+	
+	console.log({user});
+	
 
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 	const toggleMobileMenu = () => {

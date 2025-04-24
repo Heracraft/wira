@@ -28,6 +28,6 @@ On top of it all. The generated migration file ("when the tsvector column is add
 | `/auth/callback/someAccountType`          | `{ next: ['someAccountType'] }`             |
 | `/auth/callback/someAccountType/somePlan` | `{ next: ['someAccountType', 'somePlan'] }` |
 
-Solution from https://github.com/orgs/supabase/discussions/21110#discussioncomment-11020419
+Solution from [https://github.com/orgs/supabase/discussions/21110#discussioncomment-11020419](https://github.com/orgs/supabase/discussions/21110#discussioncomment-11020419)
 
 4. **Using kv in middleware**: ioredis does not work in middleware. [link to issue](https://github.com/vercel/next.js/issues/73424#issuecomment-2520244687). We use redis (a kv db) to store subscription and usage data. So we need to use kv in middleware for acess control. I considered pollyfilling `process.version` which is missing in the edge runtime using an env variable. But that would be a hacky solution. So I decided to use the `@upstash/redis` client which is compatible with the edge runtime. The only downside is that it does not support all the features of ioredis and it is slower. But it works for our use case.

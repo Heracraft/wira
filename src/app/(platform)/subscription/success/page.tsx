@@ -31,7 +31,7 @@ const client = await createClient();
 
 	const kv = createKv();
 
-	const customerId = await kv.get(`${isDev ? "test-" : ""}stripe:customer:${uid}`);
+	const customerId = await kv.get(`${isDev ? "test-" : ""}stripe:customer:${uid}`) as string;
 	if (!customerId) {
 		return new Response(JSON.stringify({ error: "Customer not found" }), { status: 404 });
 	}

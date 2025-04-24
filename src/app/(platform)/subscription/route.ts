@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
 	// const selectedProduct
 
 	const checkout = await stripe.checkout.sessions.create({
-		customer: customer,
+		customer: customer as string,
 		mode: "subscription",
 		line_items: [
 			{

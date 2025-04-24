@@ -9,7 +9,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 
-export default function page() {
+export default async function page({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+	let limit=((await searchParams).limit as string) || 5;
 	return (
 		<div className="flex w-full justify-center py-5">
 			<Card className="max-w-6xl border-primary-200 shadow-lg">
@@ -27,7 +28,7 @@ export default function page() {
 						<div className="space-y-2">
 							<div className="flex justify-between text-sm">
 								<span>Talent Engagements</span>
-								<span className="font-medium">5 / 5</span>
+								<span className="font-medium">{limit} / {limit}</span>
 							</div>
 							<Progress value={100} className="h-2 bg-primary-100" />
 						</div>

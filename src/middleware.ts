@@ -155,22 +155,21 @@ export async function updateSession(request: NextRequest) {
 
 				// get the current view limit for the user's subscription
 				// TODO: look into when can priceId be null? Maybe if it is cancelled?
-				
-				const plan = isDev ? plans.find(plan=>plan.testPriceId === subscription.priceId): plans.find(plan=>plan.priceId === subscription.priceId);
+
+				const plan = isDev ? plans.find((plan) => plan.testPriceId === subscription.priceId) : plans.find((plan) => plan.priceId === subscription.priceId);
 				if (!plan) {
 					return redirectTo("/errors/500", request);
 				}
-				const engagementLimit=plan.talentEngagementLimit
+				const engagementLimit = plan.talentEngagementLimit;
 				if (!engagementLimit) {
 					// the user has an enterprise plan, so they can view any number of profiles
 					return supabaseResponse;
 				}
 				if (profilesViewedCount >= engagementLimit) {
-					// the user has reached their limit, redirect to the pricing page
-					return redirectTo("/pricing", request);
+					// the user has reached their limit, redirect to the usage limit reached page
+					return redirectTo("/limit-reached", request, new URLSearchParams([["limit", engagementLimit.toString()]]));
 				}
 				console.log("plan", engagementLimit);
-
 			}
 		}
 	}

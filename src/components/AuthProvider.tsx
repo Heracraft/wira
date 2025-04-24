@@ -15,12 +15,12 @@ export default function AuthProvider() {
 	//  Unnecessary for now.
 
 	useEffect(() => {
-		client.auth.getSession().then(({ data: { session } }) => {
-			if (session) {
+		client.auth.getUser().then(({ data: { user } }) => {
+			if (user) {
 				setUser({
-					email: session.user.email,
-					id: session.user.id,
-					userType: session.user.user_metadata.userType,
+					email: user.email,
+					id: user.id,
+					userType: user.user_metadata.userType,
 				} as User);
 			}
 		});
@@ -30,7 +30,7 @@ export default function AuthProvider() {
 		} = client.auth.onAuthStateChange((event, session) => {
 			if (event === "SIGNED_IN") {
 				if (!session) return;
-				console.log({ event });
+				console.log(session.user.user_metadata);
 				setUser({
 					email: session.user.email,
 					id: session.user.id,
