@@ -19,7 +19,10 @@ export async function login(credentials: { email: string; password: string }) {
 
 	console.log({ data });
 
-	const { error } = await supabase.auth.signInWithPassword(data);
+	const {
+		error,
+		data: { user },
+	} = await supabase.auth.signInWithPassword(data);
 
 	if (error) {
 		// redirect("/error");
@@ -27,7 +30,21 @@ export async function login(credentials: { email: string; password: string }) {
 	}
 
 	// TODO:  bug fixed in https://github.com/vercel/next.js/pull/70715. Update next.js.
-	redirect("/");
+	if (user) {
+		if (!user?.user_metadata?.isOnboarded) {
+			redirect("/onboarding");
+		}
+		if (user.user_metadata?.userType) {
+			let userType = user.user_metadata.userType;
+			if (userType === "talent") {
+				return redirect(`/dashboard/talent/personal-info`);
+			} else if (userType === "employer") {
+				return redirect(`/dashboard/employer/company-profile`);
+			}
+		}
+	} else {
+		return { status: 400, message: "User not found" };
+	}
 }
 
 export async function signup(formData: { email: string; password: string }, continueUrl?: string) {
@@ -35,8 +52,7 @@ export async function signup(formData: { email: string; password: string }, cont
 
 	const { email, password } = formData;
 
-	console.log({continueUrl});
-	
+	console.log({ continueUrl });
 
 	const { error } = await supabase.auth.signUp({
 		email,

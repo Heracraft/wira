@@ -59,6 +59,11 @@ export async function updateSession(request: NextRequest) {
 	// TODO: introduce rate limitng
 	// TODO: allow users to access their own profile
 
+	if (user && !user?.user_metadata.isOnboarded && !request.nextUrl.pathname.startsWith("/onboarding") && !request.nextUrl.pathname.startsWith("/auth") && !request.nextUrl.pathname.startsWith("/errors")) {
+		// user is verified but onboarding is not completed, redirect to the onboarding
+		return redirectTo("/onboarding", request);
+	}
+
 	if (request.nextUrl.pathname === "/") {
 		const url = request.nextUrl.clone();
 		if (!url.searchParams.get("type") && user?.user_metadata.userType) {
@@ -77,12 +82,8 @@ export async function updateSession(request: NextRequest) {
 		return redirectTo("/auth", request);
 	}
 
-	// [x]: Reach metadata to check if onboarding is completed, else redirect to onboarding page
 	// [ ]: Redirect to the verify email page if the user is not verified
-	else if (!user?.user_metadata.isOnboarded && !request.nextUrl.pathname.startsWith("/onboarding") && !request.nextUrl.pathname.startsWith("/auth") && !request.nextUrl.pathname.startsWith("/admin")) {
-		// user is verified but onboarding is not completed, redirect to the onboarding
-		return redirectTo("/onboarding", request);
-	}
+
 	// if (user?.email_confirmed_at === null && !request.nextUrl.pathname.startsWith("/auth")) {
 	// 	// user is not verified, redirect to the verify email page
 	// 	const url = request.nextUrl.clone();
@@ -126,15 +127,13 @@ export async function updateSession(request: NextRequest) {
 
 			const kv = createKv();
 			const customerId = await kv.get(`${isDev ? "test-" : ""}stripe:customer:${user.id}`);
-			// TODO: confirm subscription is real
-			// in the future, when customers can cancel their subscription,
 			if (!customerId) {
 				return redirectToChoosePlan();
 			}
 
 			const subscription = (await kv.get(`${isDev ? "test-" : ""}stripe:subscription:${customerId}`)) as STRIPE_SUB_CACHE; // used to get from the stripe api but redis is faster
 
-			if (!subscription || subscription.status == "none") {
+			if (!subscription || subscription.status == "none" || subscription.status == "canceled" || subscription.status == "incomplete") {
 				return redirectToChoosePlan();
 			}
 
@@ -149,7 +148,7 @@ export async function updateSession(request: NextRequest) {
 				if (profilesViewedCount < 5 && false) {
 					// TODO: remove 'false'
 					// the minimum number of profiles that can be viewed is 5 in the lowest tier
-					// so allow the user to view the profile
+					// so allow the user to view the profile as long as they have a subscription
 					return supabaseResponse;
 				}
 
@@ -163,6 +162,7 @@ export async function updateSession(request: NextRequest) {
 				const engagementLimit = plan.talentEngagementLimit;
 				if (!engagementLimit) {
 					// the user has an enterprise plan, so they can view any number of profiles
+					// FUTURE: revise this for when we have a custom plan (enterprise)
 					return supabaseResponse;
 				}
 				if (profilesViewedCount >= engagementLimit) {
@@ -170,6 +170,7 @@ export async function updateSession(request: NextRequest) {
 					return redirectTo("/limit-reached", request, new URLSearchParams([["limit", engagementLimit.toString()]]));
 				}
 				console.log("plan", engagementLimit);
+				
 			}
 		}
 	}
