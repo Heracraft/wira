@@ -3,13 +3,25 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import type { User } from "@supabase/supabase-js";
 
-import { createKv } from "@/lib/store.server";
+import { createKv, stripeAdmin as stripe } from "@/lib/store.server";
+
+import { isDev } from "@/lib/utils.server";
 
 // const kv=createKv();
+import { plans } from "@/lib/shared";
 
-function redirectTo(path: string, request: NextRequest) {
+import { STRIPE_SUB_CACHE } from "@/types";
+
+function redirectTo(path: string, request: NextRequest, searchParams?: URLSearchParams) {
 	const url = request.nextUrl.clone();
 	url.pathname = path;
+	if (searchParams) {
+		console.log("searchParams", searchParams.get("step"));
+		searchParams.forEach((value, key) => {
+			console.log(key, value);
+			url.searchParams.set(key, value);
+		});
+	}
 	return NextResponse.redirect(url);
 }
 
@@ -44,16 +56,16 @@ export async function updateSession(request: NextRequest) {
 		data: { user },
 	} = await supabase.auth.getUser();
 
-
 	// TODO: introduce rate limitng
 	// TODO: allow users to access their own profile
-	if (request.nextUrl.pathname === "/"){
+
+	if (request.nextUrl.pathname === "/") {
 		const url = request.nextUrl.clone();
 		if (!url.searchParams.get("type") && user?.user_metadata.userType) {
 			url.searchParams.set("type", user?.user_metadata.userType);
 			supabaseResponse = NextResponse.rewrite(url);
 		}
-		return supabaseResponse
+		return supabaseResponse;
 	}
 
 	if (request.nextUrl.pathname === "/auth" || request.nextUrl.pathname === "/pricing") {
@@ -101,7 +113,66 @@ export async function updateSession(request: NextRequest) {
 			return toDashBoard(user);
 		}
 
-		
+		if (user?.user_metadata.userType == "employer" && (request.nextUrl.pathname.startsWith("/profile") || request.nextUrl.pathname == "/search")) {
+			const redirectToChoosePlan = () =>
+				redirectTo(
+					"/onboarding",
+					request,
+					new URLSearchParams([
+						["accountType", "employer"],
+						["step", "2"],
+					]),
+				);
+
+			const kv = createKv();
+			const customerId = await kv.get(`${isDev ? "test-" : ""}stripe:customer:${user.id}`);
+			// TODO: confirm subscription is real
+			// in the future, when customers can cancel their subscription,
+			if (!customerId) {
+				return redirectToChoosePlan();
+			}
+
+			const subscription = (await kv.get(`${isDev ? "test-" : ""}stripe:subscription:${customerId}`)) as STRIPE_SUB_CACHE; // used to get from the stripe api but redis is faster
+
+			if (!subscription || subscription.status == "none") {
+				return redirectToChoosePlan();
+			}
+
+			if (request.nextUrl.pathname.startsWith("/profile")) {
+				// the user is an employer, has a subscription and is trying to access a talent's full profile
+				// confirm that they are within their subscription limits
+				const currentMonth = new Date().getMonth() + "-" + new Date().getFullYear();
+
+				const profilesViewedCountKey = `${isDev ? "test-" : ""}profile-views:${user.id}:${currentMonth}`;
+				const profilesViewedCount = parseInt((await kv.get(profilesViewedCountKey)) || "0");
+
+				if (profilesViewedCount < 5 && false) {
+					// TODO: remove 'false'
+					// the minimum number of profiles that can be viewed is 5 in the lowest tier
+					// so allow the user to view the profile
+					return supabaseResponse;
+				}
+
+				// get the current view limit for the user's subscription
+				// TODO: look into when can priceId be null? Maybe if it is cancelled?
+				
+				const plan = isDev ? plans.find(plan=>plan.testPriceId === subscription.priceId): plans.find(plan=>plan.priceId === subscription.priceId);
+				if (!plan) {
+					return redirectTo("/errors/500", request);
+				}
+				const engagementLimit=plan.talentEngagementLimit
+				if (!engagementLimit) {
+					// the user has an enterprise plan, so they can view any number of profiles
+					return supabaseResponse;
+				}
+				if (profilesViewedCount >= engagementLimit) {
+					// the user has reached their limit, redirect to the pricing page
+					return redirectTo("/pricing", request);
+				}
+				console.log("plan", engagementLimit);
+
+			}
+		}
 	}
 
 	// IMPORTANT: You *must* return the supabaseResponse object as it is.

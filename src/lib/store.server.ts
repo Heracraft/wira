@@ -4,11 +4,12 @@ import { cookies } from "next/headers";
 
 import { createServerClient } from "@supabase/ssr";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
-import Redis from "ioredis";
+// import Redis from "ioredis";
+import { Redis } from "@upstash/redis";
 import Stripe from "stripe";
 import { createClient as createSanityClient } from "next-sanity";
 
-import {isDev} from "@/lib/utils.server"
+import { isDev } from "@/lib/utils.server";
 
 // exports server only clients
 
@@ -43,8 +44,14 @@ export function adminClient() {
 }
 
 export function createKv() {
-	const redis = new Redis(process.env.REDIS_URL!);
-	return redis;
+	// return new Redis(process.env.REDIS_URL!); //old: ioredis.
+	
+	return new Redis({
+		url: process.env.REDIS_HOST!,
+		token: process.env.REDIS_TOKEN!,
+		// REDIS_CONNECTION_URL="https://just-killdeer-50042.upstash.io"
+		// REDIS_TOKEN="AcN6AAIjcDEwN2IyZTUyNDNhYjk0YmZmYTIzOTMzNGFjNmVlZTY0ZHAxMA"
+	});
 }
 
 export const sanityClient = createSanityClient({

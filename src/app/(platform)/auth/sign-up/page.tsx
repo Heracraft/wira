@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { revalidatePath } from "next/cache";
 import { useSearchParams } from "next/navigation";
 
 // import { useRouter } from "next/navigation";
@@ -28,10 +27,10 @@ import { signup } from "../actions";
 export default function page() {
 	const searchParams = useSearchParams();
 
-	let continueUrl = `/onboarding`; // the url to redirect to after email verification
+	let continueUrl = `/auth/callback`; // the url to redirect to after email verification
 	const accountType = searchParams.get("account-type");
 	if (accountType) {
-		continueUrl += `?account-type=${accountType}`;
+		continueUrl += `/${accountType}`;
 	}
 
 	const [error, setError] = useState({
@@ -71,7 +70,7 @@ export default function page() {
 				email: data.email,
 				password: data.password,
 			},
-			``,
+			`${window.location.origin}${continueUrl}`,
 		);
 
 		if (res.status == 200) {

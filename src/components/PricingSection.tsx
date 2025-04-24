@@ -5,18 +5,19 @@ import { createKv, stripeAdmin as stripe, createClient } from "@/lib/store.serve
 import { isDev } from "@/lib/utils.server";
 
 import { PricingCard } from "./PricingCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { plans } from "@/lib/shared";
 
 import type { Plan } from "@/types";
 
-async function getCurrentPlanName(): Promise<string| null> {
+async function getCurrentPlanName(): Promise<string | null> {
 	const client = await createClient();
 	const {
 		data: { user },
 	} = await client.auth.getUser();
 	if (!user) {
-		redirect("/unauthorized");
+		return null;
 	}
 	const uid = user.id;
 
@@ -25,7 +26,7 @@ async function getCurrentPlanName(): Promise<string| null> {
 	const customerId = await kv.get(`${isDev ? "test-" : ""}stripe:customer:${uid}`);
 
 	if (!customerId) {
-		return null
+		return null;
 	}
 
 	const subscriptions = await stripe.subscriptions.list({
@@ -42,7 +43,7 @@ async function getCurrentPlanName(): Promise<string| null> {
 	const productId = subscription.items.data[0].price.product as string;
 	const product = await stripe.products.retrieve(productId);
 
-	return product.name
+	return product.name;
 }
 
 export default async function PricingSection() {
@@ -51,9 +52,7 @@ export default async function PricingSection() {
 	return (
 		<div className="mt-8 grid w-full grid-cols-1 place-items-center gap-2 sm:grid-cols-2 md:grid-cols-3">
 			{plans.map((plan, index) => (
-				<Suspense key={index} fallback={<div className="flex h-96 items-center justify-center">Loading...</div>}>
-					<PricingCard key={index} plan={plan as Plan} currentPlanName={currentPlanName}/>
-				</Suspense>
+				<PricingCard key={index} plan={plan as Plan} currentPlanName={currentPlanName} />
 			))}
 		</div>
 	);

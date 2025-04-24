@@ -4,6 +4,8 @@ import type { TalentProfileRow, WorkExperienceEntry, EducationEntry } from "@/db
 // --stripe
 export interface Plan {
 	planName: string;
+	priceId: string;
+	testPriceId: string;
 	amount?: string;
 	billingPeriod?: string;
 	description: string;

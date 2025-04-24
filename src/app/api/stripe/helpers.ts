@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createKv } from "@/lib/store.server";
+import { createKv, createClient } from "@/lib/store.server";
 import { stripeAdmin as stripe } from "@/lib/store.server";
 
 import {isDev} from "@/lib/utils.server"
@@ -49,4 +49,40 @@ export async function syncStripeDataToKV(customerId: string) {
 	// Store the data in your KV
 	await kv.set(`${isDev?"test-":""}stripe:subscription:${customerId}`, JSON.stringify(subData));
 	return subData;
+}
+
+
+async function getCurrentPlan() {
+	const client = await createClient();
+	const {
+		data: { user },
+	} = await client.auth.getUser();
+	if (!user) {
+		throw new Error("User not found");
+	}
+	const uid = user.id;
+
+	const kv = createKv();
+
+	const customerId = await kv.get(`${isDev ? "test-" : ""}stripe:customer:${uid}`);
+
+	if (!customerId) {
+		throw new Error("Customer not found");
+	}
+
+	const subscriptions = await stripe.subscriptions.list({
+		customer: customerId as string, // Pass the customer ID
+		limit: 1, // Fetch only the most recent subscription
+	});
+
+	if (!subscriptions.data.length) {
+		throw new Error("No subscriptions found for this customer");
+	}
+
+	const subscription = subscriptions.data[0];
+
+	const productId = subscription.items.data[0].price.product as string;
+	const product = await stripe.products.retrieve(productId);
+
+	return product
 }

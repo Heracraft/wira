@@ -145,9 +145,6 @@ export default function page() {
 				email: user.email,
 			});
 			setCurrentStep(2);
-			if (res.status == 200) {
-				router.push("/dashboard");
-			}
 		} catch (error: any) {
 			console.error(error);
 			setError({ status: true, message: error.message });
@@ -158,15 +155,17 @@ export default function page() {
 	};
 
 	useEffect(() => {
-		const step = searchParams.get("step");
-		if (step && parseInt(step)) {
-			setCurrentStep(parseInt(step));
-		}
-
 		const accountType = searchParams.get("account-type");
 		if (accountType == "talent" || accountType == "employer") {
 			setValue("accountType", accountType);
 			setCurrentStep(1);
+		}
+
+		const step = searchParams.get("step");
+		// TODO: enforce that step can only be 1
+		// TODO: enforce that only account-type=employer can have step
+		if (step && parseInt(step)) {
+			setCurrentStep(parseInt(step));
 		}
 	}, []);
 

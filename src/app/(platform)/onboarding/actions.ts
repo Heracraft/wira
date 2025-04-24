@@ -32,6 +32,8 @@ export async function onBoardTalent(userId: string, profileData: { email: string
 			dateOfBirth,
 		});
 
+		revalidatePath("/", "layout");
+
 		return { status: 200 };
 	} catch (error: any) {
 		console.log("errorrrr",error);

@@ -1,9 +1,13 @@
+import test from "node:test";
+
 export const companyTypes = ["Start-ups", "Mid-sized Companies", "Large Enterprises"];
 
 export const plans = [
 	{
 		planName: "Essential",
 		amount: "999",
+		priceId:"price_1R8579P0t6oCyVUf61JtdpR1",
+		testPriceId:"price_1R8UQoP0t6oCyVUfSfUkBVH9",
 		billingPeriod: "yearly",
 		talentEngagementLimit: 5,
 		description: "For small companies/startups.",
@@ -21,6 +25,8 @@ export const plans = [
 	{
 		planName: "Pro",
 		amount: "9,999",
+		priceId:"price_1R8582P0t6oCyVUfa3cNhglM",
+		testPriceId:"price_1R8URbP0t6oCyVUfqbBhfBMG",
 		billingPeriod: "yearly",
 		talentEngagementLimit: 50,
 		description: "For midsize companies.",

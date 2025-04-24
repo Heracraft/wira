@@ -47,7 +47,6 @@ export default function page() {
 			error,
 		} = await supabase.auth.signInWithPassword({ email, password });
 		await revalidatePathFromClient("/","layout")
-		// TODO: fix: user state does not update after login
 		if (error) {
 			setError({ status: true, message: error.message });
 			setTimeout(() => {
