@@ -7,7 +7,7 @@ import { Skeleton } from "./ui/skeleton";
 
 import {cn} from "@/lib/utils";
 
-export default async function Header({className}: {className?: string}) {
+export default async function Header({className, hidePricing}: {className?: string, hidePricing?: boolean}) {
 	return (
 		<nav className={cn("relative z-20 flex justify-between border-neutral-200 bg-white px-2 shadow sm:px-4",className)}>
 			{/* <div className="w-full flex flex-wrap items-center justify-between mx-auto md:mx-0"> */}
@@ -15,7 +15,7 @@ export default async function Header({className}: {className?: string}) {
 				<img src="/logo.svg" className="!my-0 mr-2 size-16" />
 			</a>
 
-			<Navbar>
+			<Navbar hidePricing={hidePricing} >
 				<Suspense fallback={<Skeleton className="size-10 rounded-lg" />}>
 					<UserMenu />
 				</Suspense>

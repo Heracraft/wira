@@ -48,13 +48,12 @@ const routes: Route[] = [
 	},
 ];
 
-export default function Navbar({ children }: { children: React.ReactNode }) {
+export default function Navbar({ children, hidePricing }: { children: React.ReactNode; hidePricing?: boolean }) {
 	const pathname = usePathname() || "/";
 
 	const user = userStore((state) => state.user);
-	
-	console.log({user});
-	
+
+	console.log({ user });
 
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 	const toggleMobileMenu = () => {
@@ -72,7 +71,7 @@ export default function Navbar({ children }: { children: React.ReactNode }) {
 						// or if the route is for a specific user type and the current user type does not match
 						// in this case, we return null to not render the route
 						return null;
-					} else if (route.label == "Pricing" && user?.userType == "talent") return null;
+					} else if ((route.label == "Pricing" && user?.userType == "talent") || (route.label == "Pricing" && hidePricing == true)) return null;
 
 					if (pathname == route.href || (route.href != "/" && pathname.startsWith(route.href))) {
 						return (

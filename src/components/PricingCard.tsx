@@ -73,7 +73,7 @@ export function PricingCard({ plan, user, currentPlanName, onClickHandler = defa
 				</Button>
 			) : (
 				<>
-					{currentPlanName === (`${plan.planName} Plan`) ? (
+					{currentPlanName === `${plan.planName} Plan` ? (
 						<Button disabled className="w-full">
 							Current plan
 						</Button>
@@ -85,7 +85,7 @@ export function PricingCard({ plan, user, currentPlanName, onClickHandler = defa
 							variant={plan.actionButtonConfig.variant as "outline" | "default" | "link" | "destructive" | "secondary" | "ghost" | null | undefined}
 							className="mt-auto w-full"
 						>
-							{plan.actionButtonConfig.label}
+							{!currentPlanName ? <>{plan.actionButtonConfig.label}</> : <>Upgrade to {plan.planName} Plan</>}
 						</Button>
 					)}
 				</>

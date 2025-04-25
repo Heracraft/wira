@@ -31,7 +31,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
 	if (currentLandingPage === "talent") {
 		return (
 			<main className="relative flex flex-1 flex-col overflow-x-hidden">
-				<Header />
+				<Header hidePricing={true} />
 				<div className="relative flex h-[100dvh] flex-col items-center justify-center border-b md:px-10 xl:px-20">
 					<div className="bg-dots z-0" />
 					<div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-neutral-50 [mask-image:radial-gradient(ellipse_at_center,transparent_10%,black)] dark:bg-black"></div>
