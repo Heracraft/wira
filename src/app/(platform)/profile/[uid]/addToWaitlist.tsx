@@ -6,7 +6,7 @@ import { addToWaitlist } from "./actions";
 import { toast } from "sonner";
 import { userStore } from "@/lib/store";
 
-export default function AddToWaitlist({ talentId }: { talentId: number }) {
+export default function AddToWaitlist({ talentId, isOnWaitlist }: { talentId: number; isOnWaitlist: boolean }) {
 	const user = userStore((state) => state.user); //the employer
 
 	const handleAddToWaitlist = async () => {
@@ -21,10 +21,17 @@ export default function AddToWaitlist({ talentId }: { talentId: number }) {
 			toast.error("Error adding to waitlist");
 		}
 	};
-
-	return (
-		<Button onClick={handleAddToWaitlist} size={"lg"}>
-			Add to Waitlist
-		</Button>
-	);
+	if (isOnWaitlist) {
+		return (
+			<Button disabled size={"lg"}>
+				Waitlisted
+			</Button>
+		);
+	} else {
+		return (
+			<Button onClick={handleAddToWaitlist} size={"lg"}>
+				Add to Waitlist
+			</Button>
+		);
+	}
 }

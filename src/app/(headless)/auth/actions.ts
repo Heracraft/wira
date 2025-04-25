@@ -39,7 +39,7 @@ export async function login(credentials: { email: string; password: string }) {
 			if (userType === "talent") {
 				return redirect(`/dashboard/talent/personal-info`);
 			} else if (userType === "employer") {
-				return redirect(`/dashboard/employer/company-profile`);
+				return redirect(`/search`);
 			}
 		}
 	} else {

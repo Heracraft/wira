@@ -1,7 +1,8 @@
-import { sql, eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
+
 import { db } from "@/db";
-import { waitlist } from "@/db/schema";
 import type { TalentProfileRow, EducationEntry, WorkExperienceEntry } from "@/db/schema";
+import { createKv, stripeAdmin as stripe, createClient } from "@/lib/store.server";
 
 import { format, parse } from "date-fns";
 
@@ -11,11 +12,15 @@ import AddToWaitlist from "./addToWaitlist";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+import AddToWaitlistRSCwrapper from "./addToWaitlistRSCwrapper";
+
 import { Briefcase, Mail, MapPin, Calendar, Phone } from "lucide-react";
 
 import { talentEvaluationProfiles } from "@/lib/shared";
 
 import { AssessmentResult } from "@/types";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export type FullTalentProfile = {
 	profileId: number;
@@ -53,6 +58,14 @@ export type FullTalentProfile = {
 export default async function Page({ params }: { params: Promise<{ uid: string }> }) {
 	// TODO: Increment engagement count
 	const { uid } = await params;
+
+	const client = await createClient();
+	const {
+		data: { user },
+	} = await client.auth.getUser();
+	if (!user) {
+		redirect("/errors/401");
+	}
 
 	const profile = (
 		await db.execute(
@@ -94,9 +107,6 @@ GROUP BY u."userId", tp."profileId";`,
 		)
 	)[0] as FullTalentProfile;
 
-	// TODO: check if the user is already on the waitlist
-	// const isOnWaitlist = await db.select().from(waitlist).where(eq(waitlist.talentId, uid)).limit(1);
-
 	// console.log(profile);
 
 	return (
@@ -122,7 +132,7 @@ GROUP BY u."userId", tp."profileId";`,
 						</p>
 						<p>Joined: {format(new Date(profile.createdAt), "do MMM, yyyy")}</p>
 					</div> */}
-					<div className="grid gap-4 grid-cols-2 md:grid-cols-3 md:gap-x-20">
+					<div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-x-20">
 						<div className="flex items-center gap-3">
 							<div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
 								<Mail className="h-5 w-5 text-primary" />
@@ -159,7 +169,9 @@ GROUP BY u."userId", tp."profileId";`,
 							</div>
 							<div>
 								<p className="text-sm text-muted-foreground">Location</p>
-								<p className="font-medium">{profile.region}, {profile.country}</p>
+								<p className="font-medium">
+									{profile.region}, {profile.country}
+								</p>
 							</div>
 						</div>
 
@@ -256,7 +268,9 @@ GROUP BY u."userId", tp."profileId";`,
 				</div>
 			</div> */}
 			<div className="flex flex-1">
-				<AddToWaitlist talentId={profile.profileId} />
+				<Suspense fallback={<Skeleton className="h-10 w-40" />}>
+					<AddToWaitlistRSCwrapper employerUid={user.id} talentId={profile.profileId} />
+				</Suspense>
 			</div>
 		</div>
 	);

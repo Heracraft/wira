@@ -1,18 +1,29 @@
-import { headers } from "next/headers";
-
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
 import { waitlist, talentProfiles, users } from "@/db/schema";
 
+import ActionMenu from "./ActionMenu";
+
+import { DropdownMenu, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+
+import { EllipsisVertical } from "lucide-react";
+
 import { createClient } from "@/lib/store.server";
 
 async function getWaitlistedTalents(employerId: string) {
-	const results = await db
+	const results: {
+		name: string | null;
+		phoneNumber: string | null;
+		email: string;
+		waitlistId?: number;
+	}[] = await db
 		.select({
 			name: talentProfiles.fullName,
 			phoneNumber: talentProfiles.phoneNumber,
 			email: users.email,
+			waitlistId: waitlist.waitlistId,
 		})
 		.from(waitlist)
 		.innerJoin(talentProfiles, eq(waitlist.talentId, talentProfiles.profileId))
@@ -31,7 +42,7 @@ async function getWaitlistedTalents(employerId: string) {
 // }
 
 export default async function Page() {
-	const client=await createClient();
+	const client = await createClient();
 
 	const {
 		data: { user },
@@ -40,7 +51,7 @@ export default async function Page() {
 	if (!user) {
 		return <p>Unauthorized</p>;
 	}
-	const uid= user.id;
+	const uid = user.id;
 
 	let waitlistedTalents = await getWaitlistedTalents(uid);
 
@@ -69,10 +80,14 @@ export default async function Page() {
 										{item}
 									</th>
 								))}
+								<th scope="col" className="border-b px-6 py-3">Actions</th>
 							</tr>
 						</thead>
 						<tbody>
 							{waitlistedTalents.map((entry, index) => {
+								const { waitlistId } = entry;
+								delete entry.waitlistId;
+								if (!waitlistId) return null; // only here to satisfy typescript
 								return (
 									<tr key={index} className="border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
 										{Object.values(entry).map((item, index) => {
@@ -82,6 +97,16 @@ export default async function Page() {
 												</td>
 											);
 										})}
+										<td className="px-6 py-4">
+											<DropdownMenu>
+												<DropdownMenuTrigger asChild>
+													<Button variant={"ghost"} size={"icon"}>
+														<EllipsisVertical />
+													</Button>
+												</DropdownMenuTrigger>
+												<ActionMenu waitlistId={waitlistId} employerId={user.id} />
+											</DropdownMenu>
+										</td>
 									</tr>
 								);
 							})}
