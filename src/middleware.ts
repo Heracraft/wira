@@ -96,6 +96,7 @@ export async function updateSession(request: NextRequest) {
 		if (userType === "talent") {
 			return redirectTo(`/dashboard/talent/personal-info`, request);
 		} else if (userType === "employer") {
+			// return redirectTo(`/dashboard/employer/company-profile`, request);
 			return redirectTo(`/dashboard/employer/company-profile`, request);
 		}
 	};
@@ -106,7 +107,11 @@ export async function updateSession(request: NextRequest) {
 
 		if (request.nextUrl.pathname.startsWith("/auth")) {
 			// redirect to dashboard if user is logged in and trying to access auth pages
-			return toDashBoard(user);
+			if (user.user_metadata.userType === "talent") {
+				return redirectTo(`/dashboard/talent/personal-info`, request);
+			} else if (user.user_metadata.userType === "employer") {
+				return redirectTo(`/search`, request);
+			}
 		}
 
 		if (request.nextUrl.pathname === "/dashboard") {
@@ -170,7 +175,6 @@ export async function updateSession(request: NextRequest) {
 					return redirectTo("/limit-reached", request, new URLSearchParams([["limit", engagementLimit.toString()]]));
 				}
 				console.log("plan", engagementLimit);
-				
 			}
 		}
 	}

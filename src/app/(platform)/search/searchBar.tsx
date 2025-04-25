@@ -48,7 +48,7 @@ export default function SearchBar() {
 
 		let handler = setTimeout(() => {
 			router.replace(`/search?${new URLSearchParams(removeUndefinedValues(formValues) as any).toString()}`);
-		}, 500);
+		}, 250);
 		return () => {
 			clearTimeout(handler);
 		};
