@@ -89,6 +89,8 @@ export default function Page() {
 				phoneNumber: context.phoneNumber,
 				dateOfBirth: context.dateOfBirth,
 
+				avatarUrl:context.avatarUrl,
+
 				country: context.country,
 				region: context.region,
 				postalCode: context.postalCode,
