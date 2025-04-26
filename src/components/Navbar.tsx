@@ -89,7 +89,7 @@ export default function Navbar({ children, hidePricing }: { children: React.Reac
 				})}
 			</div>
 			{isMobileMenuOpen && (
-				<div className="absolute inset-x-0 top-full z-20 bg-background px-2 pb-4 md:hidden">
+				<div className="absolute inset-x-0 top-full z-40 bg-background px-2 pb-4 md:hidden">
 					<div className="flex flex-col gap-3 rounded-lg border p-2">
 						{routes.map((route, index) => {
 							if ((route.restricted && !user) || (route.for != user?.userType && route.for != "all")) {
