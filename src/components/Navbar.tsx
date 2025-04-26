@@ -97,13 +97,13 @@ export default function Navbar({ children, hidePricing }: { children: React.Reac
 							}
 							if (pathname == route.href || (route.href != "/" && pathname.startsWith(route.href))) {
 								return (
-									<Link key={index} href={route.href} className="flex w-full items-center rounded bg-primary px-3 py-2 text-white">
+									<Link onClick={()=>setIsMobileMenuOpen(false)} key={index} href={route.href} className="flex w-full items-center rounded bg-primary px-3 py-2 text-white">
 										{route.label}
 									</Link>
 								);
 							} else {
 								return (
-									<Link key={index} href={route.href} className="flex w-full items-center rounded px-3 py-2 hover:bg-primary-200">
+									<Link onClick={()=>setIsMobileMenuOpen(false)} key={index} href={route.href} className="flex w-full items-center rounded px-3 py-2 hover:bg-primary-200">
 										{route.label}
 									</Link>
 								);
