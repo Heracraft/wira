@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 
 import { Controller } from "react-hook-form";
 import type { Control, UseFormRegister, UseFormWatch, FieldValues, UseFormSetValue, FieldErrors } from "react-hook-form";
@@ -22,6 +23,9 @@ interface LocationInputsProps {
 }
 
 export default function LocationInputs({ watch, register, control, setValue, errors }: LocationInputsProps) {
+	const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
+	const [isRegionDropdownOpen, setIsRegionDropdownOpen] = useState(false);
+
 	return (
 		<>
 			<div>
@@ -41,7 +45,7 @@ export default function LocationInputs({ watch, register, control, setValue, err
 									onChange={(val) => field.onChange(val)}
 									customRender={({ options, ...selectProps }) => {
 										return (
-											<Popover>
+											<Popover open={isCountryDropdownOpen} onOpenChange={setIsCountryDropdownOpen}>
 												<PopoverTrigger asChild>
 													<Button variant={"outline"} className="w-full justify-start font-normal">
 														{field.value || "Select a country"}
@@ -58,6 +62,7 @@ export default function LocationInputs({ watch, register, control, setValue, err
 																		onSelect={() => {
 																			field.onChange(option.label);
 																			setValue("region", "");
+																			setIsCountryDropdownOpen(false);
 																		}}
 																	>
 																		{option.label}
@@ -97,7 +102,7 @@ export default function LocationInputs({ watch, register, control, setValue, err
 									onChange={(val) => field.onChange(val)}
 									customRender={({ options, ...selectProps }) => {
 										return (
-											<Popover>
+											<Popover open={isRegionDropdownOpen} onOpenChange={setIsRegionDropdownOpen}>
 												<PopoverTrigger asChild>
 													<Button variant={"outline"} className="w-full justify-start font-normal">
 														{field.value || "Select a region"}
@@ -109,7 +114,13 @@ export default function LocationInputs({ watch, register, control, setValue, err
 														<CommandList>
 															<CommandGroup>
 																{options.map((option) => (
-																	<CommandItem key={option.key} onSelect={() => field.onChange(option.label)}>
+																	<CommandItem
+																		key={option.key}
+																		onSelect={() => {
+																			field.onChange(option.label);
+																			setIsRegionDropdownOpen(false);
+																		}}
+																	>
 																		{option.label}
 																	</CommandItem>
 																))}

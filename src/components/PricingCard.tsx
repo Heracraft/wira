@@ -63,7 +63,6 @@ export function PricingCard({ plan, user, currentPlanName, onClickHandler = defa
 					<span className="text-sm text-muted-foreground">Legal support</span>
 				</li>
 			</ul>
-			{/* TODO: change text to upgrade now if employer is logged in */}
 
 			{user && user?.userType === "talent" ? (
 				// If pricing tiers are not available for the user type, show a disabled button.

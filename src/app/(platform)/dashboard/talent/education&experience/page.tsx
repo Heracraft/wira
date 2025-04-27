@@ -32,7 +32,7 @@ import { updateTalentProfile } from "../../actions";
 import { toast } from "sonner";
 import type { ProfileCompletion } from "@/types";
 
-const SNAPSHOT_NAME = "form-snapshot-profile";
+const SNAPSHOT_NAME = "form-snapshot-education&experience";
 
 type EducationEntry = {
 	degree: string;
@@ -283,7 +283,6 @@ export default function Page() {
 
 	return (
 		<form className="flex w-full max-w-xl flex-1 flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
-			{/* TODO: change snapshot-name for this page to "education&experience" */}
 			<FromSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName="form-snapshot-profile" />
 			<h3 className="text-lg font-semibold">Education & Experience</h3>
 			<div>

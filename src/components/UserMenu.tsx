@@ -27,7 +27,6 @@ export default async function UserMenu() {
 
 	if (!user) return null;
 
-	// TODO: make this fetchcall not return null immediately after signing in
 	const userId = user.id;
 	const userType = user.user_metadata.userType as "talent" | "employer";
 	let profile: {

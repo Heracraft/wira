@@ -5,8 +5,6 @@ import PricingSection from "@/components/PricingSection";
 
 // import PricingSection from "@/components/PricingSection";
 
-// TODO: buttons should react to userType and subscription states/status.
-
 export default function Page() {
 	return (
 		<div className="flex flex-1 flex-col items-center gap-5 bg-background p-5 md:px-20 xl:px-32">

@@ -24,7 +24,7 @@ export default function Rating({ rating }: { rating: number }) {
 					))}
 				</>
 			) : null}
-			{/* TODO: add half stars */}
+			{/* -[x]: add half stars  --  rating no longer used*/}
 		</div>
 	);
 }

@@ -70,7 +70,6 @@ export default async function Page() {
 		return (
 			<div className="flex flex-col gap-3">
 				<h3 className="text-lg font-semibold">Waiting List</h3>
-				{/* TODO: add actions (remove)*/}
 				<div className="relative overflow-x-auto">
 					<table className="w-full border text-left text-sm text-neutral-500 dark:text-neutral-400 rtl:text-right">
 						<thead className="bg-neutral-50 text-xs text-neutral-700 dark:bg-neutral-700 dark:text-neutral-400">

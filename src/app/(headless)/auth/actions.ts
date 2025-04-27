@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/store.server";
 
-// TODO: Integrate zod for validation
+// FUTURE: Integrate zod for validation
 
 export async function login(credentials: { email: string; password: string }) {
 	const { email, password } = credentials;
@@ -28,7 +28,6 @@ export async function login(credentials: { email: string; password: string }) {
 		return { status: 400, message: error.message };
 	}
 
-	// TODO:  bug fixed in https://github.com/vercel/next.js/pull/70715. Update next.js.
 	if (user) {
 		if (!user?.user_metadata?.isOnboarded) {
 			redirect("/onboarding");

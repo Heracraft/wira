@@ -56,8 +56,8 @@ export async function updateSession(request: NextRequest) {
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	// TODO: introduce rate limitng
-	// TODO: allow users to access their own profile
+	// -[x]: introduce rate limitng
+	// -[x]: allow users to access their own profile
 
 	if (user && !user?.user_metadata.isOnboarded && !request.nextUrl.pathname.startsWith("/onboarding") && !request.nextUrl.pathname.startsWith("/auth") && !request.nextUrl.pathname.startsWith("/errors")) {
 		// user is verified but onboarding is not completed, redirect to the onboarding
@@ -120,7 +120,21 @@ export async function updateSession(request: NextRequest) {
 			return toDashBoard(user);
 		}
 
-		if (user?.user_metadata.userType == "employer" && (request.nextUrl.pathname.startsWith("/profile") || request.nextUrl.pathname == "/search")) {
+		if ((request.nextUrl.pathname.startsWith("/profile") || request.nextUrl.pathname == "/search")) {
+		// the user is trying to access either /search or a talent's full profile
+
+			if (user?.user_metadata.userType !== "employer") {
+				// the user is not an employer, redirect to the dashboard
+				// unless they are trying to access their own profile
+
+				if (request.nextUrl.pathname.startsWith("/profile") && request.nextUrl.pathname.split("/").pop() === user.id) {
+					// the user is trying to access their own profile, allow it
+					return supabaseResponse;
+				}
+
+				return toDashBoard(user);
+			}
+
 			// the user is an employer and is trying to access either /search or talent's full profile
 			// First check if the user has a subscription
 

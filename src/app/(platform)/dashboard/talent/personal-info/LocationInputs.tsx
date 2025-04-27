@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 
 import { Controller } from "react-hook-form";
 import type { Control, UseFormRegister, UseFormWatch, FieldValues, UseFormSetValue, FieldErrors } from "react-hook-form";
@@ -22,6 +23,9 @@ interface LocationInputsProps {
 }
 
 export default function LocationInputs({ watch, register, control, setValue, errors }: LocationInputsProps) {
+	const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
+	const [isRegionDropdownOpen, setIsRegionDropdownOpen] = useState(false);
+
 	return (
 		<>
 			<div>
@@ -34,43 +38,51 @@ export default function LocationInputs({ watch, register, control, setValue, err
 						name="country"
 						control={control}
 						rules={{ required: "Country is required" }}
-						render={({ field }) => (
-							<CountryDropdown
-								value={field.value}
-								onChange={(val) => field.onChange(val)}
-								customRender={({ options, ...selectProps }) => {
-									return (
-										<Popover>
-											<PopoverTrigger asChild>
-												<Button variant={"outline"} className="w-full justify-start font-normal">
-													{field.value || "Select a country"}
-												</Button>
-											</PopoverTrigger>
-											<PopoverContent className="p-0 max-w-md">
-												<Command>
-													<CommandInput placeholder="Search country..." />
-													<CommandList>
-														<CommandGroup>
-															{options.map((option) => (
-																<CommandItem
-																	key={option.key}
-																	onSelect={() => {
-																		field.onChange(option.label);
-																		setValue("region", "");
-																	}}
-																>
-																	{option.label}
-																</CommandItem>
-															))}
-														</CommandGroup>
-													</CommandList>
-													<CommandEmpty>No results found.</CommandEmpty>
-												</Command>
-											</PopoverContent>
-										</Popover>
-									);
-								}}
-							/>
+						render={({ field, fieldState }) => (
+							<>
+								<CountryDropdown
+									value={field.value}
+									onChange={(val) => field.onChange(val)}
+									customRender={({ options, ...selectProps }) => {
+										return (
+											<Popover open={isCountryDropdownOpen} onOpenChange={setIsCountryDropdownOpen}>
+												<PopoverTrigger asChild>
+													<Button variant={"outline"} className="w-full justify-start font-normal">
+														{field.value || "Select a country"}
+													</Button>
+												</PopoverTrigger>
+												<PopoverContent className="max-w-md p-0">
+													<Command>
+														<CommandInput placeholder="Search country..." />
+														<CommandList>
+															<CommandGroup>
+																{options.map((option) => (
+																	<CommandItem
+																		key={option.key}
+																		onSelect={() => {
+																			field.onChange(option.label);
+																			setValue("region", "");
+																			setIsCountryDropdownOpen(false);
+																		}}
+																	>
+																		{option.label}
+																	</CommandItem>
+																))}
+															</CommandGroup>
+														</CommandList>
+														<CommandEmpty>No results found.</CommandEmpty>
+													</Command>
+												</PopoverContent>
+											</Popover>
+										);
+									}}
+								/>
+								{fieldState.error && (
+									<span role="alert" className="text-xs text-destructive">
+										{fieldState.error.message}
+									</span>
+								)}
+							</>
 						)}
 					/>
 				</div>
@@ -82,38 +94,51 @@ export default function LocationInputs({ watch, register, control, setValue, err
 						name="region"
 						control={control}
 						rules={{ required: "Region is required" }}
-						render={({ field }) => (
-							<RegionDropdown
-								country={watch("country")}
-								value={field.value}
-								onChange={(val) => field.onChange(val)}
-								customRender={({ options, ...selectProps }) => {
-									return (
-										<Popover>
-											<PopoverTrigger asChild>
-												<Button variant={"outline"} className="w-full justify-start font-normal">
-													{field.value || "Select a region"}
-												</Button>
-											</PopoverTrigger>
-											<PopoverContent className="p-0 max-w-md">
-												<Command>
-													<CommandInput placeholder="Search region..." />
-													<CommandList>
-														<CommandGroup>
-															{options.map((option) => (
-																<CommandItem key={option.key} onSelect={() => field.onChange(option.label)}>
-																	{option.label}
-																</CommandItem>
-															))}
-														</CommandGroup>
-													</CommandList>
-													<CommandEmpty>No results found.</CommandEmpty>
-												</Command>
-											</PopoverContent>
-										</Popover>
-									);
-								}}
-							/>
+						render={({ field, fieldState }) => (
+							<>
+								<RegionDropdown
+									country={watch("country")}
+									value={field.value}
+									onChange={(val) => field.onChange(val)}
+									customRender={({ options, ...selectProps }) => {
+										return (
+											<Popover open={isRegionDropdownOpen} onOpenChange={setIsRegionDropdownOpen}>
+												<PopoverTrigger asChild>
+													<Button variant={"outline"} className="w-full justify-start font-normal">
+														{field.value || "Select a region"}
+													</Button>
+												</PopoverTrigger>
+												<PopoverContent className="max-w-md p-0">
+													<Command>
+														<CommandInput placeholder="Search region..." />
+														<CommandList>
+															<CommandGroup>
+																{options.map((option) => (
+																	<CommandItem
+																		key={option.key}
+																		onSelect={() => {
+																			field.onChange(option.label);
+																			setIsRegionDropdownOpen(false);
+																		}}
+																	>
+																		{option.label}
+																	</CommandItem>
+																))}
+															</CommandGroup>
+														</CommandList>
+														<CommandEmpty>No results found.</CommandEmpty>
+													</Command>
+												</PopoverContent>
+											</Popover>
+										);
+									}}
+								/>
+								{fieldState.error && (
+									<span role="alert" className="text-xs text-destructive">
+										{fieldState.error.message}
+									</span>
+								)}
+							</>
 						)}
 					/>
 				</div>
@@ -126,7 +151,7 @@ export default function LocationInputs({ watch, register, control, setValue, err
 					</Label>
 					<Input id="postalCode" {...register("postalCode", { required: "Postal code is required" })} />
 					{errors.postalCode && (
-						<p role="alert" className="text-xs text-destructive mt-1">
+						<p role="alert" className="mt-1 text-xs text-destructive">
 							{errors.postalCode.message as string}
 						</p>
 					)}

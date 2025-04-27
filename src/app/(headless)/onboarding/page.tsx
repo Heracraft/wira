@@ -155,16 +155,17 @@ export default function page() {
 	};
 
 	useEffect(() => {
-		const accountType = searchParams.get("account-type");
+		const accountType = searchParams.get("account-type"); // only employer can have this. It wont have any effect on the talent
 		if (accountType == "talent" || accountType == "employer") {
 			setValue("accountType", accountType);
 			setCurrentStep(1);
 		}
 
 		const step = searchParams.get("step");
-		// TODO: enforce that step can only be 1
-		// TODO: enforce that only account-type=employer can have step
-		if (step && parseInt(step)) {
+		if (!step) return;
+		if (parseInt(step) > 2) return; //outside of the range
+
+		if (parseInt(step) && accountType == "employer") {
 			setCurrentStep(parseInt(step));
 		}
 	}, []);
@@ -409,31 +410,6 @@ export default function page() {
 											/>
 										</div>
 
-										{/* TODO: move phone number to profile */}
-										{/* <div className="grid gap-2">
-											<Label htmlFor="confirmPassword">Phone Number</Label>
-											<Controller
-												name="phoneNumber"
-												control={control}
-												defaultValue=""
-												rules={{ required: "A Phone number is required" }}
-												render={({ field }) => (
-													<>
-														<PhoneInput
-															value={field.value}
-															onChange={field.onChange}
-															defaultCountry="US"
-															// {...register("phoneNumber", { required: true, maxLength: 15 })}
-														/>
-														{errors.phoneNumber && (
-															<span role="alert" className="text-muted-foreground text-xs">
-																{errors.phoneNumber.message as string}
-															</span>
-														)}
-													</>
-												)}
-											/>
-										</div> */}
 									</div>
 									<SubmitButton
 										buttonState={{
@@ -459,7 +435,7 @@ export default function page() {
 			<div className="h-full. flex w-full flex-1 items-center justify-center">
 				<div className="flex w-full flex-col items-center gap-4">
 					<h2 className="text-3xl">Choose your plan</h2>
-					<p className="text-muted-foreground text-center">Start your 1-month free trial today and explore all the features!</p>
+					<p className="text-center text-muted-foreground">Start your 1-month free trial today and explore all the features!</p>
 					<div className="grid w-full max-w-2xl grid-cols-1 place-items-center gap-2 sm:grid-cols-2">
 						{plans.slice(0, 2).map((plan, index) => (
 							<PricingCard

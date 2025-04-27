@@ -11,7 +11,6 @@ export const metadata: Metadata = {
 	title: "Candidate search results",
 };
 
-// TODO:
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
 	let q = ((await searchParams).q as string) || "";
