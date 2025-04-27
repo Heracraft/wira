@@ -36,7 +36,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
 					<div className="bg-dots z-0" />
 					<div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-neutral-50 [mask-image:radial-gradient(ellipse_at_center,transparent_10%,black)] dark:bg-black"></div>
 
-					<div className="relative z-20 flex w-full flex-col-reverse gap-5 px-5 md:flex-row md:items-center md:justify-between md:gap-0 md:px-0">
+					<div className="relative z-10 flex w-full flex-col-reverse gap-5 px-5 md:flex-row md:items-center md:justify-between md:gap-0 md:px-0">
 						<div className="mr-2 flex flex-col gap-4 md:max-w-sm xl:max-w-xl">
 							<h2 className="text-3xl font-semibold md:text-5xl">Showcase Your Skills, Find Your Dream Job</h2>
 							<p className="max-w-prose text-muted-foreground">Create a free profile on Wira and get discovered by top employers looking for talent like you.</p>
@@ -215,7 +215,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
 					<div className="bg-dots z-0" />
 					<div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-neutral-50 [mask-image:radial-gradient(ellipse_at_center,transparent_10%,black)] dark:bg-black"></div>
 
-					<div className="relative z-20 flex w-full items-center justify-between">
+					<div className="relative z-10 flex w-full flex-col-reverse gap-5 px-5 md:flex-row md:items-center md:justify-between md:gap-0 md:px-0">
 						<div className="flex max-w-xl flex-col gap-4 px-2 sm:px-0">
 							<h2 className="text-3xl font-semibold md:text-5xl">Find Exceptional Talent For Your Team</h2>
 							<p className="max-w-prose text-muted-foreground">Discover pre-screened candidates with comprehensive profiles that go beyond just skills and experience.</p>
