@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 
 import AddToWaitlistRSCwrapper from "./addToWaitlistRSCwrapper";
 
-import { Briefcase, Mail, MapPin, Calendar, Phone } from "lucide-react";
+import { Briefcase, Mail, MapPin, Calendar, Phone, FileText } from "lucide-react";
 
 import { talentEvaluationProfiles } from "@/lib/shared";
 
@@ -139,7 +139,7 @@ GROUP BY u."userId", tp."profileId";`,
 							</div>
 							<div>
 								<p className="text-sm text-muted-foreground">Email</p>
-								<p className="font-medium">{profile.email}</p>
+								<p className="font-medium overflow-hidden text-ellipsis whitespace-nowrap max-w-[13ch] sm:max-w-none">{profile.email}</p>
 							</div>
 						</div>
 
@@ -182,6 +182,15 @@ GROUP BY u."userId", tp."profileId";`,
 							<div>
 								<p className="text-sm text-muted-foreground">Joined</p>
 								<p className="font-medium">{profile.createdAt}</p>
+							</div>
+						</div>
+						<div className="flex items-center gap-3">
+							<div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+								<FileText className="h-5 w-5 text-primary" />
+							</div>
+							<div>
+								<p className="text-sm text-muted-foreground">Resume</p>
+								<a href={profile.resume} target="_blank" className="text-primary hover:underline underline-offset-2">View resume</a>
 							</div>
 						</div>
 					</div>
