@@ -484,17 +484,19 @@ export default function Page() {
 								</div>
 
 								{/* ADD dialog */}
-								<DialogContent className="flex flex-col gap-2">
-									<DialogHeader>
-										<DialogTitle>Add Work Experience</DialogTitle>
-										<DialogDescription>Provide details about your work experience.</DialogDescription>
-									</DialogHeader>
-									<WorkExperienceForm
-										onSubmitHandler={(item: WorkExperienceEntry) => {
-											field.onChange([...field.value, item]);
-										}}
-									/>
-								</DialogContent>
+								{!editingStatus.isEditing && (
+									<DialogContent className="flex flex-col gap-2">
+										<DialogHeader>
+											<DialogTitle>Add Work Experience</DialogTitle>
+											<DialogDescription>Provide details about your work experience.</DialogDescription>
+										</DialogHeader>
+										<WorkExperienceForm
+											onSubmitHandler={(item: WorkExperienceEntry) => {
+												field.onChange([...field.value, item]);
+											}}
+										/>
+									</DialogContent>
+								)}
 
 								{/* EDIT dialog */}
 								{editingStatus.isEditing && (

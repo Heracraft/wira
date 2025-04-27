@@ -147,7 +147,6 @@ export default function page() {
 												{errors.confirmPassword.message as string}
 											</span>
 										)}
-										{/* <p className="text-xs text-muted-foreground">Passwords do not match</p> */}
 									</div>
 									<SubmitButton
 										buttonState={{

@@ -53,8 +53,6 @@ export default function Navbar({ children, hidePricing }: { children: React.Reac
 
 	const user = userStore((state) => state.user);
 
-	console.log({ user });
-
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 	const toggleMobileMenu = () => {
 		setIsMobileMenuOpen(!isMobileMenuOpen);

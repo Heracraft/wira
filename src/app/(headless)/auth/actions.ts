@@ -25,7 +25,6 @@ export async function login(credentials: { email: string; password: string }) {
 	} = await supabase.auth.signInWithPassword(data);
 
 	if (error) {
-		// redirect("/error");
 		return { status: 400, message: error.message };
 	}
 

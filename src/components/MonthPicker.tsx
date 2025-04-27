@@ -19,7 +19,7 @@ function getStartOfCurrentMonth() {
 interface MonthPickerProps {
 	currentMonth: Date;
 	date: Date;
-	setMonth: (newMonth: Date | undefined) => void;
+	setMonth: (newMonth: Date | string | undefined) => void;
 }
 
 export default function DatePickerInput({ date, setMonth, currentMonth/*, onMonthChange*/ }: MonthPickerProps) {
@@ -50,14 +50,14 @@ export default function DatePickerInput({ date, setMonth, currentMonth/*, onMont
 		setInputValue(e.currentTarget.value);
 		const date = parse(e.currentTarget.value, "MMM-y", new Date());
 		if (isValid(date)) {
-			setMonth(date);
+			setMonth(date.toISOString());
 		} else {
 			setMonth(undefined);
 		}
 	};
 
 	const onMonthChange = useCallback((month: Date) => {
-		setMonth(month);
+		setMonth(month.toISOString());
 		if (month) {
 			setOpen(false);
 			setInputValue(format(month, "MMM-y"));
@@ -70,7 +70,9 @@ export default function DatePickerInput({ date, setMonth, currentMonth/*, onMont
 		console.log({ date });
 
 		if (date && !inputValue) {
-			const rawDate = parse(date as any, "MMM-y", new Date());
+			const rawDate = parse(date as any, "yyyy-MM-dd", new Date());
+			console.log({ rawDate });
+			
 			setInputValue(format(rawDate, "MMM-y"));
 		}
 	}, [date]);

@@ -105,8 +105,9 @@ export async function updateSession(request: NextRequest) {
 		// user is logged in and onboarding is completed
 		// let userType = user.user_metadata.userType;
 
-		if (request.nextUrl.pathname.startsWith("/auth")) {
+		if (request.nextUrl.pathname.startsWith("/auth") && !request.nextUrl.pathname.startsWith("/auth/reset-password")) {
 			// redirect to dashboard if user is logged in and trying to access auth pages
+			// except for reset password pages
 			if (user.user_metadata.userType === "talent") {
 				return redirectTo(`/dashboard/talent/personal-info`, request);
 			} else if (user.user_metadata.userType === "employer") {
@@ -120,6 +121,9 @@ export async function updateSession(request: NextRequest) {
 		}
 
 		if (user?.user_metadata.userType == "employer" && (request.nextUrl.pathname.startsWith("/profile") || request.nextUrl.pathname == "/search")) {
+			// the user is an employer and is trying to access either /search or talent's full profile
+			// First check if the user has a subscription
+
 			const redirectToChoosePlan = () =>
 				redirectTo(
 					"/onboarding",
@@ -141,6 +145,9 @@ export async function updateSession(request: NextRequest) {
 			if (!subscription || subscription.status == "none" || subscription.status == "canceled" || subscription.status == "incomplete") {
 				return redirectToChoosePlan();
 			}
+
+
+			// If their destination is the full profile, check if they are within their usage limits
 
 			if (request.nextUrl.pathname.startsWith("/profile")) {
 				// the user is an employer, has a subscription and is trying to access a talent's full profile

@@ -1,4 +1,6 @@
 "use client";
+
+import { redirect } from "next/navigation";
 // import { useRouter } from "next/navigation";
 // import { revalidatePath } from "next/cache";
 
@@ -20,7 +22,6 @@ import { createClient } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 import { revalidatePathFromClient } from "./actions";
-import { redirect } from "next/navigation";
 
 export default function page() {
 	const supabase = createClient();
@@ -94,11 +95,10 @@ export default function page() {
 									<div className="grid gap-2">
 										<div className="flex items-center">
 											<Label htmlFor="password">Password</Label>
-											<a href="#" className="ml-auto text-xs underline-offset-4 hover:underline">
+											<a href="/auth/reset-password" className="ml-auto text-xs underline-offset-4 hover:underline">
 												Forgot your password?
 											</a>
 										</div>
-										{/* TODO: make sure both /auth & /auth/register require an 8+ password */}
 										<PasswordInput id="password" hideRequirements hideStrength value={watch("password") || ""} {...register("password", { required: "A password is required", pattern: { value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/, message: "Password must have 8+ characters, including a number, an uppercase letter, a lowercase letter, and a special character (!@#$)." } })} autoComplete="current-password" />
 										{errors.password && (
 											<span role="alert" className="text-xs text-muted-foreground">
