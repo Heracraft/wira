@@ -91,7 +91,7 @@ export default function page() {
 		message: "",
 	});
 
-	// turn back
+	const [isIndustryComboOpen, setIsIndustryComboOpen] = useState(false);
 	const [currentStep, setCurrentStep] = useState(0);
 
 	const {
@@ -378,7 +378,7 @@ export default function page() {
 												defaultValue="Select an Industry"
 												rules={{ required: "An Industry is required" }}
 												render={({ field, fieldState }) => (
-													<Popover>
+													<Popover open={isIndustryComboOpen} onOpenChange={setIsIndustryComboOpen}>
 														<PopoverTrigger asChild>
 															<Button variant="outline" className="flex justify-between font-normal">
 																{field.value}
@@ -392,7 +392,13 @@ export default function page() {
 																	<CommandEmpty>No Industry found</CommandEmpty>
 																	<CommandGroup>
 																		{industries.map((industry, index) => (
-																			<CommandItem key={index} onSelect={() => field.onChange(industry.value)}>
+																			<CommandItem
+																				key={index}
+																				onSelect={() => {
+																					field.onChange(industry.value);
+																					setIsIndustryComboOpen(false);
+																				}}
+																			>
 																				{industry.label}
 																			</CommandItem>
 																		))}
@@ -409,7 +415,6 @@ export default function page() {
 												)}
 											/>
 										</div>
-
 									</div>
 									<SubmitButton
 										buttonState={{

@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 
-import { useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import type { FieldValues } from "react-hook-form";
@@ -42,6 +42,8 @@ export default function Page() {
 	const user = userStore((state) => state.user);
 
 	const context = useContext(CompanyProfileContext);
+
+	const [isIndustryComboOpen, setIsIndustryComboOpen] = useState(false);
 
 	const {
 		register,
@@ -182,7 +184,7 @@ export default function Page() {
 						defaultValue="Select an Industry"
 						rules={{ required: "An Industry is required" }}
 						render={({ field, fieldState }) => (
-							<Popover>
+							<Popover open={isIndustryComboOpen} onOpenChange={setIsIndustryComboOpen}>
 								<PopoverTrigger asChild>
 									<Button variant="outline" className="flex justify-between font-normal">
 										{field.value}
@@ -196,7 +198,10 @@ export default function Page() {
 											<CommandEmpty>No Industry found</CommandEmpty>
 											<CommandGroup>
 												{industries.map((industry, index) => (
-													<CommandItem key={index} onSelect={() => field.onChange(industry.value)}>
+													<CommandItem key={index} onSelect={() => {
+														field.onChange(industry.value)
+														setIsIndustryComboOpen(false);
+													}}>
 														{industry.label}
 													</CommandItem>
 												))}
