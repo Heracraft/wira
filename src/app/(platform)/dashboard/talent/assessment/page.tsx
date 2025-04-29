@@ -265,7 +265,9 @@ export default function Page() {
 					<Button
 						className="ml-4"
 						onClick={() => {
-							router.push("/dashboard/talent/spotlight");
+							router.push("/dashboard/talent/spotlight",{
+								scroll:false
+							});
 						}}
 					>
 						Continue
