@@ -1,6 +1,6 @@
 "use client";
-
-import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+// import dynamic from "next/dynamic";
 
 import { useEffect, useContext, useState } from "react";
 
@@ -31,6 +31,8 @@ import type { ProfileCompletion } from "@/types";
 const SNAPSHOT_NAME = "form-snapshot-spotlight";
 
 export default function Page() {
+	const router = useRouter();
+
 	const user = userStore((state) => state.user);
 
 	const context = useContext(TalentProfileContext);
@@ -89,6 +91,8 @@ export default function Page() {
 				throw new Error(res.message);
 			}
 			toast.success(res.message);
+			router.push("/dashboard/talent/review&submit");
+
 			setTimeout(() => {
 				// just in case some snapshot has already been debounced to be saved (5 secs)
 				localStorage.removeItem(SNAPSHOT_NAME);

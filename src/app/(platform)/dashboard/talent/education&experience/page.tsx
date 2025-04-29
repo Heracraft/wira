@@ -1,6 +1,4 @@
 "use client";
-
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { useState, useEffect, useContext } from "react";
@@ -220,6 +218,8 @@ async function uploadResume(file: File, uid: string, fileName: string) {
 }
 
 export default function Page() {
+	const router = useRouter();
+
 	const context = useContext(TalentProfileContext);
 	const user = userStore((state) => state.user);
 
@@ -269,7 +269,9 @@ export default function Page() {
 			if (res.status == 400) {
 				throw new Error(res.message);
 			}
+
 			toast.success(res.message);
+			router.push("/dashboard/talent/preferences");
 			setTimeout(() => {
 				// just in case some snapshot has already been debounced to be saved (5 secs)
 				localStorage.removeItem(SNAPSHOT_NAME);
@@ -548,7 +550,7 @@ export default function Page() {
 									<div className="flex flex-wrap gap-2">
 										{field.value.map((skill: string, index: number) => (
 											<Badge key={index} className="flex cursor-pointer" variant="outline">
-												<span className="w-20 flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-normal">{skill}</span>
+												<span className="w-24 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm font-normal">{skill}</span>
 												<X
 													size={12}
 													className="ml-1"
@@ -563,20 +565,36 @@ export default function Page() {
 									</div>
 								)}
 								{field.value.length < 10 && (
-									<input
-										className="rounded border px-4 py-0.5 text-sm !outline-none"
-										placeholder="Add a skill"
-										value={skillsInput}
-										onChange={(e) => setSkillsInput(e.target.value)}
-										onKeyDown={(e) => {
-											if (e.key === "Enter" && skillsInput.trim() !== "") {
-												e.preventDefault(); // otherwise the form will submit
-												// e.stopPropagation();
-												field.onChange([...field.value, skillsInput.trim()]);
-												setSkillsInput("");
-											}
-										}}
-									/>
+									<div className="flex items-center gap-2">
+										<input
+											className="rounded border px-4 py-0.5 text-sm !outline-none"
+											placeholder="Add a skill"
+											value={skillsInput}
+											onChange={(e) => setSkillsInput(e.target.value)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter" && skillsInput.trim() !== "") {
+													e.preventDefault(); // otherwise the form will submit
+													// e.stopPropagation();
+													field.onChange([...field.value, skillsInput.trim()]);
+													setSkillsInput("");
+												}
+											}}
+										/>
+										<Button
+											type="button"
+											variant="secondary"
+											onClick={() => {
+												if (skillsInput.trim() !== "") {
+													field.onChange([...field.value, skillsInput.trim()]);
+													setSkillsInput("");
+												}
+											}}
+											className="flex items-center gap-2 px-4 py-0.5 text-sm h-fit"
+										>
+											<Plus size={12} />
+											Add
+										</Button>
+									</div>
 								)}
 							</div>
 							{fieldState.error && <p className="mt-2 text-xs text-destructive">{fieldState.error.message}</p>}

@@ -14,7 +14,7 @@ import { updateTalentProfile } from "@/app/(platform)/dashboard/actions";
 import { questions } from "@/lib/questions";
 import { talentEvaluationProfiles } from "@/lib/shared";
 
-import { Question, ProfileCompletion,AssessmentResult } from "@/types";
+import { Question, ProfileCompletion, AssessmentResult } from "@/types";
 
 //   // src/utils/assessment.ts
 
@@ -52,6 +52,8 @@ const calculateResultFromScore = (score: number): AssessmentResult => {
 };
 
 export default function Page() {
+	const router = useRouter();
+
 	const user = userStore((state) => state.user);
 	const context = useContext(TalentProfileContext);
 
@@ -78,10 +80,11 @@ export default function Page() {
 		// Move to next question after selecting an option
 		if (currentQuestionIndex < questions.length - 1) {
 			setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-		} else {
-			// If all questions are answered, proceed to results
-			handleSubmit();
-		}
+		} 
+		// else {
+		// 	// If all questions are answered, proceed to results
+		// 	handleSubmit();
+		// }
 	};
 
 	const handlePrevious = () => {
@@ -101,7 +104,7 @@ export default function Page() {
 			}
 
 			const result = calculateResult(answers);
-			
+
 			const res = await updateTalentProfile(
 				{
 					assessmentScore: result.score,
@@ -110,7 +113,7 @@ export default function Page() {
 						educationExperience: profileCompletionStatus.educationExperience,
 						preferences: profileCompletionStatus.preferences,
 						assessment: true,
-						spotlight:profileCompletionStatus.spotlight,
+						spotlight: profileCompletionStatus.spotlight,
 						overallComplete: profileCompletionStatus.overallComplete,
 					},
 				},
@@ -121,6 +124,7 @@ export default function Page() {
 			}
 			setStep(2);
 			setResult(result);
+
 			toast.success(res.message);
 		} catch (error: any) {
 			toast.error("An error occured", {
@@ -221,7 +225,7 @@ export default function Page() {
 			<main className="my-8 w-full max-w-3xl rounded-lg md:p-8">
 				<div className="mb-8">
 					<h1 className="mb-2 text-lg font-bold text-neutral-900">Your Assessment Results</h1>
-					<p className="text-neutral-600 text-sm">Based on your responses, here's your talent profile:</p>
+					<p className="text-sm text-neutral-600">Based on your responses, here's your talent profile:</p>
 				</div>
 
 				<div className="mb-8 rounded-lg bg-primary-50 p-6">
@@ -247,17 +251,25 @@ export default function Page() {
 					</div>
 				</div>
 
-				<div className="text-center">
-					<button
+				<div className="flex items-center justify-between">
+					<Button
+						variant={"secondary"}
 						onClick={() => {
 							setStep(1);
 							setResult(null);
 							setCurrentQuestionIndex(0);
 						}}
-						className="rounded-md bg-primary-600 px-6 py-3 text-white hover:bg-primary-700"
 					>
 						Take Assessment Again
-					</button>
+					</Button>
+					<Button
+						className="ml-4"
+						onClick={() => {
+							router.push("/dashboard/talent/spotlight");
+						}}
+					>
+						Continue
+					</Button>
 				</div>
 			</main>
 		);

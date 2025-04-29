@@ -1,5 +1,5 @@
 "use client";
-
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
 import { useEffect, useContext, useState } from "react";
@@ -60,6 +60,8 @@ async function uploadAvatar(file: File, uid: string, fileName: string) {
 }
 
 export default function Page() {
+	const router = useRouter();
+
 	const user = userStore((state) => state.user);
 
 	const context = useContext(TalentProfileContext);
@@ -130,6 +132,7 @@ export default function Page() {
 				throw new Error(res.message);
 			}
 			toast.success(res.message);
+			router.push("/dashboard/talent/education&experience");
 			setTimeout(() => {
 				// just in case some snapshot has already been debounced to be saved (5 secs)
 				localStorage.removeItem(SNAPSHOT_NAME);
@@ -148,7 +151,7 @@ export default function Page() {
 			<div className="text-lg font-semibold">Personal Info</div>
 			<div className="flex w-full max-w-md flex-col gap-5">
 				<div>
-					<Label>Avatar</Label>
+					<Label>Avatar <span className="text-red-500">*</span></Label>
 					<Controller
 						control={control}
 						name="avatarUrl"

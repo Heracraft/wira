@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 
 import { useContext, useEffect } from "react";
 
@@ -30,6 +31,8 @@ import type { ProfileCompletion } from "@/types";
 const SNAPSHOT_NAME = "form-snapshot-prefernces";
 
 export default function Page() {
+	const router = useRouter();
+
 	const context = useContext(TalentProfileContext);
 	const user = userStore((state) => state.user);
 
@@ -69,6 +72,8 @@ export default function Page() {
 				throw new Error(res.message);
 			}
 			toast.success(res.message);
+			router.push("/dashboard/talent/assessment");
+			
 			setTimeout(() => {
 				// just in case some snapshot has already been debounced to be saved (5 secs)
 				localStorage.removeItem(SNAPSHOT_NAME);
