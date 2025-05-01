@@ -112,7 +112,7 @@ GROUP BY u."userId", tp."profileId";`,
 		<div className="flex flex-col gap-10 bg-background p-5 pt-20 md:px-20 xl:px-36">
 			<div className="text-xl font-semibold">Personal Information</div>
 			<div className="flex flex-wrap gap-10">
-				<ProfilePicture className="size-28 object-cover" fullName={profile.fullName} avatarUrl={profile.avatarUrl} />
+				<ProfilePicture className="size-28" fullName={profile.fullName} avatarUrl={profile.avatarUrl} />
 				<div className="flex flex-col gap-3">
 					<h3 className="text-lg font-semibold">{profile.fullName}</h3>
 					<p className="text-muted-foreground">Member since {format(new Date(profile.createdAt), "do MMM, yyyy")}</p>
