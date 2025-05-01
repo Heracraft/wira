@@ -55,7 +55,7 @@ export async function syncStripeDataToKV(customerId: string) {
 	return subData;
 }
 
-export wasync function getPlanAndEngagementCount(user: User): Promise<{
+export async function getPlanAndEngagementCount(user: User): Promise<{
 	plan: (typeof plans)[number];
 	profilesViewedCount: number;
 }> {
