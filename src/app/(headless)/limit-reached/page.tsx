@@ -13,7 +13,7 @@ export default async function page({ searchParams }: { searchParams: Promise<{ [
 	let limit=((await searchParams).limit as string) || 5;
 	return (
 		<div className="flex w-full justify-center py-5">
-			<Card className="max-w-6xl border-primary-200 shadow-lg">
+			<Card className="max-w-7xl border-primary-200 shadow-lg">
 				<CardHeader className="border-b pb-3">
 					<div className="flex items-start justify-between">
 						<div>

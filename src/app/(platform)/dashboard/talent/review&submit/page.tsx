@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 import { useForm, Controller } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 import SubmitButton from "@/components/submitButton";
 
@@ -33,6 +34,8 @@ export default function Page() {
 	const context = useContext(TalentProfileContext);
 
 	const profileCompletionStatus = context?.profileCompletionStatus as ProfileCompletion;
+
+	const [isProfileCompletedModalOpen, setIsProfileCompleteModalOpen] = useState(false);
 
 	// console.log("profileCompletionStatus", profileCompletionStatus);
 
@@ -81,7 +84,8 @@ export default function Page() {
 					if (res.status == 400) {
 						throw new Error(res.message);
 					}
-					toast.success("Thank you for completing your profile! You are now visible to employers.");
+					toast.success("Thank you for completing your profile!");
+					setIsProfileCompleteModalOpen(true);
 				}
 			} else {
 				// They have not completed all sections of the profile
@@ -262,6 +266,19 @@ export default function Page() {
 					</TooltipProvider>
 				)}
 			</div>
+			<Dialog open={isProfileCompletedModalOpen} onOpenChange={setIsProfileCompleteModalOpen}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Profile Completed</DialogTitle>
+						<DialogDescription>
+							Thank you for successfully completing your profile! You are now visible to employers. We wish you the best in your job search!
+						</DialogDescription>
+					</DialogHeader>
+					<div className="flex justify-end">
+						<Button size={"lg"} onClick={() => setIsProfileCompleteModalOpen(false)}>Close</Button>
+					</div>
+				</DialogContent>
+			</Dialog>
 		</form>
 	);
 }

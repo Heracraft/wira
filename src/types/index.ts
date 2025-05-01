@@ -85,3 +85,36 @@ export interface AssessmentResult {
 	score: number;
 	profile: TalentEvaluationProfile;
 }
+
+export type FullTalentProfile = {
+	profileId: number;
+	userId: string;
+	email: string;
+	createdAt: string;
+	fullName: string;
+	phoneNumber: string;
+	dateOfBirth: string;
+	avatarUrl: string;
+	country: string;
+	region: string;
+	linkedInProfile: string;
+	postalCode: string;
+	skills: string[];
+	industryInterests: string[];
+	preferredCompanyTypes: string[];
+	workTypePreference: "full-time" | "part-time" | "both";
+	resume: string;
+	profileCompletionStatus: {
+		preferences: boolean;
+		personalInfo: boolean;
+		overallComplete: boolean;
+		educationExperience: boolean;
+	};
+	searchVector: string;
+	educationentries: EducationEntry[];
+	workexperienceentries: WorkExperienceEntry[];
+	highPotentialAnswer: string;
+	challengeAnswer: string;
+	bio: string;
+	assessmentScore: number;
+};

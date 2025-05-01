@@ -1,59 +1,56 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 import { db } from "@/db";
-import type { TalentProfileRow, EducationEntry, WorkExperienceEntry } from "@/db/schema";
-import { createKv, stripeAdmin as stripe, createClient } from "@/lib/store.server";
 
 import { format, parse } from "date-fns";
 
 import ProfilePicture from "@/components/ProfilePicture";
-import AddToWaitlist from "./addToWaitlist";
+import AddToWaitlistRSCwrapper from "./addToWaitlistRSCwrapper";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-import AddToWaitlistRSCwrapper from "./addToWaitlistRSCwrapper";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { Briefcase, Mail, MapPin, Calendar, Phone, FileText } from "lucide-react";
 
+import { createKv, stripeAdmin as stripe, createClient } from "@/lib/store.server";
+
+import { isDev } from "@/lib/utils.server";
 import { talentEvaluationProfiles } from "@/lib/shared";
 
-import { AssessmentResult } from "@/types";
-import { Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { AssessmentResult, FullTalentProfile } from "@/types";
 
-export type FullTalentProfile = {
-	profileId: number;
-	userId: string;
-	email: string;
-	createdAt: string;
-	fullName: string;
-	phoneNumber: string;
-	dateOfBirth: string;
-	avatarUrl: string;
-	country: string;
-	region: string;
-	linkedInProfile: string;
-	postalCode: string;
-	skills: string[];
-	industryInterests: string[];
-	preferredCompanyTypes: string[];
-	workTypePreference: "full-time" | "part-time" | "both";
-	resume: string;
-	profileCompletionStatus: {
-		preferences: boolean;
-		personalInfo: boolean;
-		overallComplete: boolean;
-		educationExperience: boolean;
-	};
-	searchVector: string;
-	educationentries: EducationEntry[];
-	workexperienceentries: WorkExperienceEntry[];
-	highPotentialAnswer: string;
-	challengeAnswer: string;
-	bio: string;
-	assessmentScore: number;
-};
+async function incrementEngagementCount(uid: string) {
+	const kv = createKv();
+	const currentMonth = new Date().getMonth() + "-" + new Date().getFullYear();
+	const profilesViewedCountKey = `${isDev ? "test-" : ""}profile-views:${uid}:${currentMonth}`;
+
+	kv.incr(profilesViewedCountKey);
+
+	// You might be thinking, why are we simply incrementing the count?
+	// Do we know if the user has reached their plan's limit?
+	// Wouldn't it be better to check the plan and then increment?
+	// Well, the answer is that we don't need to check the plan here.
+
+	// Middleware baby!.
+	// The middleware will check the plan and redirect the user if they have reached their limit.
+	// So we can just increment the count here and let the middleware handle the rest.
+
+	// Middleware: access control, this RSC page: increment count (this function)
+
+	// But hey, what if the user is on a trial?
+	// Well, the middleware will check if the user is on a trial and allow them to view the profile.
+	// We will still increment the count though, because we need to keep track of how many profiles the user has viewed.
+	// When the trial ends, it will be a new month and the count will reset. 🤞
+
+	// Now that I think about it, there might be an edge case for this
+	// Even with a "30-day trial", someone signing up on February 1st in a non-leap year would see their trial end on March 3rd, 
+	// but if they sign up on January 1st, it would end on January 31st (same month).
+	// Immediate cancellations: If a user cancels their trial shortly after starting it, 
+	// the trial may end in the same month it began.
+	// I leave this to you to figure out. 😅
+}
 
 export default async function Page({ params }: { params: Promise<{ uid: string }> }) {
 	// TODO: Increment engagement count
@@ -66,6 +63,8 @@ export default async function Page({ params }: { params: Promise<{ uid: string }
 	if (!user) {
 		redirect("/errors/401");
 	}
+
+	await incrementEngagementCount(user.id);
 
 	const profile = (
 		await db.execute(
@@ -139,7 +138,7 @@ GROUP BY u."userId", tp."profileId";`,
 							</div>
 							<div>
 								<p className="text-sm text-muted-foreground">Email</p>
-								<p className="font-medium overflow-hidden text-ellipsis whitespace-nowrap max-w-[13ch] sm:max-w-none">{profile.email}</p>
+								<p className="max-w-[13ch] overflow-hidden text-ellipsis whitespace-nowrap font-medium sm:max-w-none">{profile.email}</p>
 							</div>
 						</div>
 
@@ -190,7 +189,9 @@ GROUP BY u."userId", tp."profileId";`,
 							</div>
 							<div>
 								<p className="text-sm text-muted-foreground">Resume</p>
-								<a href={profile.resume} target="_blank" className="text-primary hover:underline underline-offset-2">View resume</a>
+								<a href={profile.resume} target="_blank" className="text-primary underline-offset-2 hover:underline">
+									View resume
+								</a>
 							</div>
 						</div>
 					</div>

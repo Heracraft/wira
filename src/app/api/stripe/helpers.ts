@@ -3,8 +3,12 @@ import "server-only";
 import { createKv, createClient } from "@/lib/store.server";
 import { stripeAdmin as stripe } from "@/lib/store.server";
 
-import {isDev} from "@/lib/utils.server"
+import { isDev } from "@/lib/utils.server";
 
+import { plans } from "@/lib/shared";
+
+import type { User } from "@supabase/supabase-js";
+import type { STRIPE_SUB_CACHE } from "@/types";
 
 //const isDev = process.env.NODE_ENV === 'development';
 // const isDev=true
@@ -23,7 +27,7 @@ export async function syncStripeDataToKV(customerId: string) {
 
 	if (subscriptions.data.length === 0) {
 		const subData = { status: "none" };
-		await kv.set(`${isDev?"test-":""}stripe:subscription:${customerId}`, JSON.stringify(subData));
+		await kv.set(`${isDev ? "test-" : ""}stripe:subscription:${customerId}`, JSON.stringify(subData));
 		return subData;
 	}
 
@@ -47,18 +51,21 @@ export async function syncStripeDataToKV(customerId: string) {
 	};
 
 	// Store the data in your KV
-	await kv.set(`${isDev?"test-":""}stripe:subscription:${customerId}`, JSON.stringify(subData));
+	await kv.set(`${isDev ? "test-" : ""}stripe:subscription:${customerId}`, JSON.stringify(subData));
 	return subData;
 }
 
+export wasync function getPlanAndEngagementCount(user: User): Promise<{
+	plan: (typeof plans)[number];
+	profilesViewedCount: number;
+}> {
+	// returns the current plan and their engagement limit
 
-async function getCurrentPlan() {
-	const client = await createClient();
-	const {
-		data: { user },
-	} = await client.auth.getUser();
 	if (!user) {
 		throw new Error("User not found");
+	}
+	if (user.user_metadata.userType !== "employer") {
+		throw new Error("User is not an employer");
 	}
 	const uid = user.id;
 
@@ -69,20 +76,27 @@ async function getCurrentPlan() {
 	if (!customerId) {
 		throw new Error("Customer not found");
 	}
+	const currentMonth = new Date().getMonth() + "-" + new Date().getFullYear();
 
-	const subscriptions = await stripe.subscriptions.list({
-		customer: customerId as string, // Pass the customer ID
-		limit: 1, // Fetch only the most recent subscription
-	});
+	const profilesViewedCountKey = `${isDev ? "test-" : ""}profile-views:${uid}:${currentMonth}`;
+	const subscriptionKey = `${isDev ? "test-" : ""}stripe:subscription:${customerId}`;
 
-	if (!subscriptions.data.length) {
-		throw new Error("No subscriptions found for this customer");
+	const result = await kv.mget(subscriptionKey, profilesViewedCountKey);
+	const subscription = result[0] as STRIPE_SUB_CACHE;
+	const profilesViewedCount = parseInt((result[1] as string) || "0");
+
+	// subscription as STRIPE_SUB_CACHE;
+
+	if (!subscription || subscription.status == "none" || subscription.status == "canceled" || subscription.status == "incomplete") {
+		throw new Error("Subscription not found");
 	}
 
-	const subscription = subscriptions.data[0];
-
-	const productId = subscription.items.data[0].price.product as string;
-	const product = await stripe.products.retrieve(productId);
-
-	return product
+	const plan = isDev ? plans.find((plan) => plan.testPriceId === subscription.priceId) : plans.find((plan) => plan.priceId === subscription.priceId);
+	if (!plan) {
+		throw new Error("Plan not found");
+	}
+	return {
+		plan,
+		profilesViewedCount,
+	};
 }

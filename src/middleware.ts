@@ -169,17 +169,24 @@ export async function updateSession(request: NextRequest) {
 				const currentMonth = new Date().getMonth() + "-" + new Date().getFullYear();
 
 				const profilesViewedCountKey = `${isDev ? "test-" : ""}profile-views:${user.id}:${currentMonth}`;
+
+				// FUTURE: use kv.mget() to get both subscription and profile views in one call
+
 				const profilesViewedCount = parseInt((await kv.get(profilesViewedCountKey)) || "0");
 
-				if (profilesViewedCount < 5 && false) {
+				if (profilesViewedCount < 5 || subscription.status=="trialing") {
 					// TODO: remove 'false'
 					// the minimum number of profiles that can be viewed is 5 in the lowest tier
 					// so allow the user to view the profile as long as they have a subscription
+					// or are on a trial - 'unlimited' engagements
 					return supabaseResponse;
 				}
 
 				// get the current view limit for the user's subscription
-				// TODO: look into when can priceId be null? Maybe if it is cancelled?
+				// Why isDev? why testPriceId vs priceID? well... because production and test mode products are different
+				// They have the same name but different product and price IDs
+				// So we need to check the testPriceId for the test mode and priceId for production. 
+				// IMPORTANT: update /shared/index.ts(plans) when adding new plans or updating existing ones
 
 				const plan = isDev ? plans.find((plan) => plan.testPriceId === subscription.priceId) : plans.find((plan) => plan.priceId === subscription.priceId);
 				if (!plan) {
