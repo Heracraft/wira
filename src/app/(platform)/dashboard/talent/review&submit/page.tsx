@@ -34,13 +34,14 @@ export default function Page() {
 
 	const profileCompletionStatus = context?.profileCompletionStatus as ProfileCompletion;
 
-	console.log("profileCompletionStatus", profileCompletionStatus);
+	// console.log("profileCompletionStatus", profileCompletionStatus);
 
 	const {
 		register,
 		control,
 		handleSubmit,
 		watch,
+		setValue,
 		formState: { errors, isDirty, isSubmitting, isSubmitted, isSubmitSuccessful, isValid },
 	} = useForm({
 		mode: "onBlur",
@@ -51,24 +52,41 @@ export default function Page() {
 			if (!user) {
 				throw new Error("User not found");
 			}
+
 			let res;
-			if (!profileCompletionStatus.overallComplete) {
-				res = await updateTalentProfile(
-					{
-						profileCompletionStatus: {
-							personalInfo: profileCompletionStatus.personalInfo,
-							educationExperience: profileCompletionStatus.educationExperience,
-							preferences: profileCompletionStatus.preferences,
-							assessment: profileCompletionStatus.assessment,
-							spotlight: profileCompletionStatus.spotlight,
-							overallComplete: true,
+			const newProfileCompletionStatus = {
+				personalInfo: profileCompletionStatus.personalInfo,
+				educationExperience: profileCompletionStatus.educationExperience,
+				preferences: profileCompletionStatus.preferences,
+				assessment: profileCompletionStatus.assessment,
+				spotlight: profileCompletionStatus.spotlight,
+				overallComplete: true,
+			} as ProfileCompletion;
+
+			const allSectionsOfProfileComplete = Object.values(newProfileCompletionStatus).every((value) => value === true);
+
+			if (allSectionsOfProfileComplete) {
+				// They have completed all sections of the profile
+
+				if (!profileCompletionStatus.overallComplete) {
+					// Update the profile completion status in the database
+					// Only if it was not already complete
+
+					res = await updateTalentProfile(
+						{
+							profileCompletionStatus: newProfileCompletionStatus,
 						},
-					},
-					user.id,
-				);
-				if (res.status == 400) {
-					throw new Error(res.message);
+						user.id,
+					);
+					if (res.status == 400) {
+						throw new Error(res.message);
+					}
+					toast.success("Thank you for completing your profile! You are now visible to employers.");
 				}
+			} else {
+				// They have not completed all sections of the profile
+				toast.error("Please complete all sections of your profile before submitting.");
+				return;
 			}
 
 			if (data.feedback || data.hearAboutUs) {
@@ -80,15 +98,25 @@ export default function Page() {
 				if (res.status === 500) {
 					throw new Error("Failed to submit feedback");
 				}
+				if (profileCompletionStatus.overallComplete) {
+					// If they had already completed all sections of the profile, but have submitted feedback,
+					// show a success message on successful feedback submission
+					// This is to avoid showing 2 success messages in a row.
+					// since the profile completion status is already complete therefore the other success message will not be shown (no update)
+					// remove the condition above if you dont mind showing 2 success messages in a row.
+					toast.success("Feedback submitted successfully");
+					setValue("feedback", "");
+					setValue("hearAboutUs", "");
+				}
 			}
-
-			toast.success("Success");
 		} catch (error: any) {
 			toast.error("An error occured", {
 				description: (error.message as string) + ". Please try again",
 			});
 		}
 	};
+
+	console.log("consent", watch("consentToShare"));
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="flex w-full max-w-xl flex-1 flex-col gap-5">
@@ -112,38 +140,51 @@ export default function Page() {
 			) : (
 				<>
 					<div className="flex items-center space-x-2">
-						<Checkbox
-							// checked={profileCompletionStatus.overallComplete}
-							id="consentToShare"
-							{...register("consentToShare", {
-								validate: (value) => {
-									if (value === false) {
-										return "Consent is required";
-									}
-								},
-							})}
+						<Controller
+							name="consentToShare"
+							control={control}
+							defaultValue={false}
+							rules={{
+								required: "You must consent to share information with partner companies",
+							}}
+							render={({ field }) => (
+								<Checkbox
+									checked={field.value}
+									onCheckedChange={(value) => {
+										field.onChange(value);
+									}}
+									id="consentToShare"
+								/>
+							)}
 						/>
 						<Label htmlFor="consentToShare">
-							I consent to share information with partner companies <span className="text-red-500">*</span>
+							I consent to share information with partner companies <span className="text-destructive">*</span>
 						</Label>
 					</div>
-					{errors.consentToShare && <p className="text-red-500">{errors.consentToShare.message?.toString()}</p>}
+					{errors.consentToShare && <p className="text-xs text-destructive">{errors.consentToShare.message?.toString()}</p>}
 					<div className="flex items-center space-x-2">
-						<Checkbox
-							id="declarationOfAuthenticity"
-							{...register("declarationOfAuthenticity", {
-								validate: (value) => {
-									if (value === false) {
-										return "Declaration of authenticity is required";
-									}
-								},
-							})}
+						<Controller
+							name="declarationOfAuthenticity"
+							control={control}
+							defaultValue={false}
+							rules={{
+								required: "You must declare the authenticity of the information provided",
+							}}
+							render={({ field }) => (
+								<Checkbox
+									checked={field.value}
+									onCheckedChange={(value) => {
+										field.onChange(value);
+									}}
+									id="declarationOfAuthenticity"
+								/>
+							)}
 						/>
 						<Label htmlFor="declarationOfAuthenticity">
 							I declare that the information provided is true and accurate to the best of my knowledge <span className="text-red-500">*</span>
 						</Label>
 					</div>
-					{errors.declarationOfAuthenticity && <p className="text-red-500">{errors.declarationOfAuthenticity.message?.toString()}</p>}
+					{errors.declarationOfAuthenticity && <p className="text-xs text-destructive">{errors.declarationOfAuthenticity.message?.toString()}</p>}
 				</>
 			)}
 
@@ -157,6 +198,9 @@ export default function Page() {
 						validate: (value) => {
 							if (profileCompletionStatus.overallComplete && !value) {
 								return "Please select an option";
+							}
+							if (!profileCompletionStatus.overallComplete) {
+								return true;
 							}
 						},
 					}}
@@ -177,7 +221,6 @@ export default function Page() {
 						</>
 					)}
 				/>
-				{errors.hearAboutUs && <p className="text-xs text-destructive">{errors.hearAboutUs.message?.toString()}</p>}
 			</div>
 			<div>
 				<Label htmlFor="feedback">Do you have any feedback on this platform?</Label>

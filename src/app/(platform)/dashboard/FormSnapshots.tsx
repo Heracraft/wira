@@ -5,6 +5,13 @@
 // This componet basically renders a dialog that allows the user to restore
 // a form from a snapshot.
 
+// Works really well except for one thing.
+// When the form is submitted, a snapshot is saved to the local storage
+// This is because isDirty becomes true when the form is submitted
+// and the form values are saved to the local storage.
+// Solution: compare the form values with the snapshot and if they are the same
+// dont render the dialog.
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -13,6 +20,8 @@ import type { UseFormSetValue, FieldValues } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogClose, DialogDescription, DialogHeader } from "@/components/ui/dialog";
+
+import {deepEqual} from "@/lib/utils"
 
 const isSnapshotEmpty = (obj: FieldValues): boolean => {
 	// console.log( "checking if empty",{obj}, Object.values(obj).length);
@@ -41,9 +50,12 @@ export default function RestoreFromSnapshot({ isDirty, formValues, setValue, sna
 	useEffect(() => {
 		// Load form values from local storage on component mount
 		const snapshot = localStorage.getItem(snapshotName);
-		if (snapshot) {
+		if (snapshot && !deepEqual(formValues, JSON.parse(snapshot))) {
 			const parsedSnapshot = JSON.parse(snapshot);
 			setFormSnapshot(parsedSnapshot);
+		}
+		else{
+			localStorage.removeItem(snapshotName);
 		}
 	}, []);
 

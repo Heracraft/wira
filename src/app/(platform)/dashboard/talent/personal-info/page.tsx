@@ -146,7 +146,7 @@ export default function Page() {
 
 	return (
 		<form className="flex w-full max-w-xl flex-1 flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
-			<FormSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName={SNAPSHOT_NAME} />
+			{/* <FormSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName={SNAPSHOT_NAME} /> */}
 
 			<div className="text-lg font-semibold">Personal Info</div>
 			<div className="flex w-full max-w-md flex-col gap-5">

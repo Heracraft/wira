@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 
-import FromSnapshot from "../../FormSnapshots";
+import FormSnapshot from "../../FormSnapshots";
 import SubmitButton from "@/components/submitButton";
 import MonthPicker from "@/components/MonthPicker";
 
@@ -285,10 +285,10 @@ export default function Page() {
 
 	return (
 		<form className="flex w-full max-w-xl flex-1 flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
-			<FromSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName="form-snapshot-profile" />
+			{/* <FormSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName="form-snapshot-profile" /> */}
 			<h3 className="text-lg font-semibold">Education & Experience</h3>
 			<div>
-				<Label>Education Background</Label>
+				<Label>Education Background <span className="text-destructive">*</span></Label>
 				<Controller
 					name="education"
 					control={control}
@@ -415,7 +415,7 @@ export default function Page() {
 				/>
 			</div>
 			<div>
-				<Label>Work Experience</Label>
+				<Label>Work Experience <span className="text-destructive">*</span></Label>
 				<Controller
 					name="workExperience"
 					control={control}
@@ -527,7 +527,7 @@ export default function Page() {
 				/>
 			</div>
 			<div>
-				<Label>Skills</Label>
+				<Label>Skills <span className="text-destructive">*</span></Label>
 				<Controller
 					control={control}
 					name="skills"
@@ -565,9 +565,9 @@ export default function Page() {
 									</div>
 								)}
 								{field.value.length < 10 && (
-									<div className="flex items-center gap-2">
+									<div className="flex items-center gap-1 rounded border">
 										<input
-											className="rounded border px-4 py-0.5 text-sm !outline-none"
+											className="pr-2 pl-4 py-0.5 text-sm !outline-none rounded-l"
 											placeholder="Add a skill"
 											value={skillsInput}
 											onChange={(e) => setSkillsInput(e.target.value)}
@@ -583,15 +583,16 @@ export default function Page() {
 										<Button
 											type="button"
 											variant="secondary"
+											disabled={skillsInput.trim() === ""}
 											onClick={() => {
 												if (skillsInput.trim() !== "") {
 													field.onChange([...field.value, skillsInput.trim()]);
 													setSkillsInput("");
 												}
 											}}
-											className="flex items-center gap-2 px-4 py-0.5 text-sm h-fit"
+											className="flex h-fit items-center gap-1 m-1 px-2 py-0.5 text-sm rounded"
 										>
-											<Plus size={12} />
+											<Plus size={8} />
 											Add
 										</Button>
 									</div>
@@ -694,7 +695,7 @@ export default function Page() {
 						isSubmitted,
 						isSubmitSuccessful,
 						isValid,
-						isDirty
+						isDirty,
 					}}
 					loadingText="Saving"
 					children="Save"

@@ -106,7 +106,7 @@ export default function Page() {
 
 	return (
 		<form className="flex w-full max-w-xl flex-1 flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
-			<FormSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName={SNAPSHOT_NAME} />
+			{/* <FormSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName={SNAPSHOT_NAME} /> */}
 			<div>
 				<h3 className="text-md font-semibold">Spotlight</h3>
 				<p className="text-sm text-muted-foreground">Use this section to introduce yourself and answer key questions that employers will use to decide whether to engage with you. Thoughtful responses can help you stand out and make a strong impression.</p>

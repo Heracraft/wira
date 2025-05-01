@@ -29,15 +29,17 @@ export function maskEmail(email: string) {
 	return `${visiblePart}@${domain}`;
 }
 
-export function formatToCurrency(amount: number, currency:string="TZS") {
+export function formatToCurrency(amount: number, currency: string = "TZS") {
 	return new Intl.NumberFormat("sw-IN", { style: "currency", currency }).format(amount);
 }
 
-export function isObjectEmpty(obj:any){
-    return Object.values(obj).length === 0 || Object.values(obj).every((value) => 
-        value === null || 
-        value === "" || 
-        value === undefined || 
-        (Array.isArray(value) && value.length === 0)
-    );
+export function isObjectEmpty(obj: any) {
+	return Object.values(obj).length === 0 || Object.values(obj).every((value) => value === null || value === "" || value === undefined || (Array.isArray(value) && value.length === 0));
+}
+
+export function deepEqual(x: any, y: any): boolean {
+	const ok = Object.keys,
+		tx = typeof x,
+		ty = typeof y;
+	return x && y && tx === "object" && tx === ty ? ok(x).length === ok(y).length && ok(x).every((key) => deepEqual(x[key], y[key])) : x === y;
 }

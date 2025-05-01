@@ -94,7 +94,7 @@ export default function Page() {
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="flex w-full max-w-xl flex-1 flex-col gap-5">
-			<FormSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName={SNAPSHOT_NAME} />
+			{/* <FormSnapshot isDirty={isDirty} formValues={formValues} setValue={setValue} snapshotName={SNAPSHOT_NAME} /> */}
 
 			{/* Career Interests and Goals */}
 			<h3 className="text-lg font-semibold">Career Interests and Goals</h3>
