@@ -40,7 +40,7 @@ const ArrayToPSQLFormat = (arr: string[]) => {
 
 export default async function SearchResults({ query, filters }: { query: string; filters: { sortBy?: "newest" | "oldest" | "popular" | "relevance"; preferredCompanyTypes?: string[]; workTypePreference?: string; industryInterests?: string[] } }) {
 	let searchResults;
-	const { sortBy,preferredCompanyTypes, workTypePreference, industryInterests } = filters;
+	const { sortBy, preferredCompanyTypes, workTypePreference, industryInterests } = filters;
 
 	const filterConditions = [];
 	if (preferredCompanyTypes && preferredCompanyTypes.length > 0) {
@@ -56,18 +56,18 @@ export default async function SearchResults({ query, filters }: { query: string;
 	}
 
 	// let orderByClause;
-    // switch (sortBy) {
-    //     case "newest":
-    //         orderByClause = sql`"createdAt" DESC`; // Assuming `createdAt` is a column in `talentProfiles`
-    //         break;
-    //     case "oldest":
-    //         orderByClause = sql`"createdAt" ASC`;
-    //         break;
-    //     case "relevance":
-    //     default:
-    //         orderByClause = sql`ts_rank("searchVector", plainto_tsquery(${query})) DESC`; // Relevance sorting
-    //         break;
-    // }
+	// switch (sortBy) {
+	//     case "newest":
+	//         orderByClause = sql`"createdAt" DESC`; // Assuming `createdAt` is a column in `talentProfiles`
+	//         break;
+	//     case "oldest":
+	//         orderByClause = sql`"createdAt" ASC`;
+	//         break;
+	//     case "relevance":
+	//     default:
+	//         orderByClause = sql`ts_rank("searchVector", plainto_tsquery(${query})) DESC`; // Relevance sorting
+	//         break;
+	// }
 
 	if (query) {
 		searchResults = await db
@@ -156,16 +156,16 @@ export default async function SearchResults({ query, filters }: { query: string;
 				{searchResults.map((result) => (
 					<Sheet key={result.fullName}>
 						<SheetTrigger asChild>
-							<div
-								className="flex aspect-square h-fit flex-col justify-end gap-2 rounded-xl border !bg-cover p-2 hover:cursor-pointer hover:bg-neutral-50 hover:shadow"
-								style={{
-									backgroundImage: `url(${result.avatarUrl})`,
-								}}
-							>
+							<div className="flex h-fit w-full flex-col justify-end gap-2 rounded-xl border !bg-cover hover:cursor-pointer hover:bg-neutral-50 hover:shadow">
 								{/* <div className="flex items-center gap-2"> */}
-								{/* <ProfilePicture className="size-8" fullName={result.fullName as string} avatarUrl={result.avatarUrl as string} /> */}
-								<div className="flex flex-col gap-2 rounded-xl border bg-neutral-50 p-2 backdrop-blur-sm">
-									<div className="space-y-0.5">
+								{/* <div className="p-2 flex w-full justify-center">
+									<ProfilePicture className="size-32" fullName={result.fullName as string} avatarUrl={result.avatarUrl as string} />
+								</div> */}
+								<div className="flex-1 bg-center bg-cover min-h-56 w-full rounded-t-xl" style={{
+									backgroundImage: `url(${result.avatarUrl})`,
+								}}/>
+								<div className="flex flex-col backdrop-blur-sm">
+									<div className="space-y-0.5 p-2">
 										<h6 className="text-base font-semibold">{result.fullName}</h6>
 										<p className="text max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-sm">
 											{result.education.major} at {result.education.institution}
@@ -176,7 +176,7 @@ export default async function SearchResults({ query, filters }: { query: string;
 									</div>
 									{/* </div> */}
 									{result?.skills && result?.skills.length > 0 && (
-										<div className="flex gap-2 overflow-hidden">
+										<div className="flex gap-2 overflow-hidden px-2 pb-2">
 											{result.skills.map((skill) => (
 												<span key={skill} className="text-neutral-800. shrink-0 rounded-full bg-neutral-200 px-2 py-1 text-xs">
 													{skill}
