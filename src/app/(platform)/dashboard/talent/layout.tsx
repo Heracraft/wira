@@ -55,7 +55,7 @@ export default async function Page({
 		data: { user },
 	} = await client.auth.getUser();
 	if (!user) {
-		redirect("/unauthorized");
+		redirect("/errors/401");
 	}
 	const uid = user.id;
 
@@ -69,6 +69,8 @@ export default async function Page({
 		let profileId;
 
 		if (uid) {
+			// FUTURE: consolidate into a single query. 
+			// raw sql? /profile/[uid] is a good referece
 			talentProfile = (await db.select().from(talentProfiles).where(eq(talentProfiles.userId, uid)))[0];
 			profileId = talentProfile.profileId;
 			workExperience = await db.select().from(workExperienceEntries).where(eq(workExperienceEntries.profileId, profileId));
@@ -80,7 +82,7 @@ export default async function Page({
 		}
 	} catch (error) {
 		console.log(error);
-		redirect("/unauthorized");
+		redirect("/errors/401");
 	}
 
 	return (

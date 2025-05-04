@@ -1,3 +1,9 @@
+// Beautifully renders the content of the Sanity CMS.
+// This is a custom renderer for the Portable Text format used by Sanity.
+// It handles various types of content, including images, cards, YouTube embeds, and buttons.
+
+// Archived. Not used.
+
 import Link from "next/link";
 
 import { PortableText } from "next-sanity";

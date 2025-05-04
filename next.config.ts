@@ -5,6 +5,11 @@ const nextConfig: NextConfig = {
   // experimental:{
   //   nodeMiddleware: true,
   // }
+  logging:{
+    fetches:{
+      fullUrl: true,
+    }
+  }
 };
 
 export default nextConfig;

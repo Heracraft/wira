@@ -21,7 +21,7 @@ const client = await createClient();
 		data: { user },
 	} = await client.auth.getUser();
 	if (!user) {
-		redirect("/unauthorized");
+		redirect("/errors/401");
 	}
 
 	// old implementation

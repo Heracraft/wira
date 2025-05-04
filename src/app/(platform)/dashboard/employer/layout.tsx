@@ -37,7 +37,7 @@ export default async function Page({
 	} = await client.auth.getUser();
 
 	if (!user) {
-		redirect("/unauthorized");
+		redirect("/errors/401");
 	}
 
 	const uid = user.id;
@@ -53,7 +53,7 @@ export default async function Page({
 		profile = companyProfile;
 	} catch (error) {
 		console.log(error);
-		redirect("/unauthorized");
+		redirect("/errors/401");
 	}
 
 	return (

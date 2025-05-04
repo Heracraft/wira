@@ -16,7 +16,11 @@ async function getCurrentPlanName(): Promise<string | null> {
 	const {
 		data: { user },
 	} = await client.auth.getUser();
-	if (!user) {
+	if (!user || user.user_metadata.userType == "talent") {
+		// So far talents dont have a subscriptions/plans. so dont even try
+		// This way we skip the redis call below looking for a customer id
+		// Realistically though, with the current setup, talents should not be seeing pricing at all
+		// so this is just a safety net or rather a silly perfomance optimization
 		return null;
 	}
 	const uid = user.id;

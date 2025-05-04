@@ -1,19 +1,34 @@
+import { Button } from "@/components/ui/button";
+
+import { cn } from "@/lib/utils";
+
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title:"Unauthorized",
+	description:"Sorry, the page/resource you’re looking for is inacessible."
+};
+
 export default function Page() {
 	return (
-		<main className="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
-			<div className="text-center">
+		<div className="flex flex-1 items-center justify-center">
+			<div className={cn("flex flex-col items-center p-5")}>
 				<p className="text-base font-semibold text-primary">401</p>
 				<h1 className="mt-4 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">Unauthorized</h1>
-				<p className="mt-6 text-pretty text-lg font-medium text-neutral-500 sm:text-xl/8">Sorry, you do not have valid authentication credentials for the target page/resource you’re looking.</p>
+				<p className="mt-6 text-pretty text-lg font-medium text-neutral-500 sm:text-xl/8">Sorry, the page/resource you’re looking for is inacessible.</p>
 				<div className="mt-10 flex items-center justify-center gap-x-6">
-					<a href="/event" className="shadow-xs rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-						Go back home
+					<a href={"/"}>
+						<Button className="my-2" size={"lg"}>
+							Back Home
+						</Button>
 					</a>
-					<a href="mailto:brockentechnologies@gmail.com" className="text-sm font-semibold text-gray-900">
-						Contact support <span aria-hidden="true">&rarr;</span>
+					<a href="mailto:admin@tu-fund.com" target="_blank" rel="noopener noreferrer">
+						<Button variant="outline" size={"lg"}>
+							Contact support
+						</Button>
 					</a>
 				</div>
 			</div>
-		</main>
+		</div>
 	);
 }

@@ -4,10 +4,10 @@ import { cookies } from "next/headers";
 
 import { createServerClient } from "@supabase/ssr";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
-// import Redis from "ioredis";
+// import Redis from "ioredis"; // faster but not supported in edge runtime. read hack entry 4 at /docs/hacks.md
 import { Redis } from "@upstash/redis";
 import Stripe from "stripe";
-import { createClient as createSanityClient } from "next-sanity";
+// import { createClient as createSanityClient } from "next-sanity";
 
 import { isDev } from "@/lib/utils.server";
 
@@ -54,12 +54,14 @@ export function createKv() {
 	});
 }
 
-export const sanityClient = createSanityClient({
-	projectId: process.env.SANITY_PROJECT_ID,
-	dataset: process.env.SANITY_DATASET,
-	apiVersion: "2021-03-25",
-	useCdn: process.env.NODE_ENV === "production",
-});
+// Purged. No longer used.
+
+// export const sanityClient = createSanityClient({
+// 	projectId: process.env.SANITY_PROJECT_ID,
+// 	dataset: process.env.SANITY_DATASET,
+// 	apiVersion: "2021-03-25",
+// 	useCdn: process.env.NODE_ENV === "production",
+// });
 
 //const isDev = process.env.NODE_ENV === 'development';
 const stripeSecretKey = isDev ? process.env.STRIPE_TEST_SECRET_KEY : process.env.STRIPE_SECRET_KEY;

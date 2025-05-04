@@ -2,18 +2,14 @@ import Link from "next/link";
 
 import { Suspense } from "react";
 
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-
 import Header from "@/components/Header";
 import Hero from "./Hero";
-import { PricingCard } from "@/components/PricingCard";
 import PricingSection from "@/components/PricingSection";
+
+import { Button } from "@/components/ui/button";
 
 import { CheckCircle, Star, Shield, Users, Search, Building, ArrowRight } from "lucide-react";
 
-import { plans } from "@/lib/shared";
-import type { Plan } from "@/types";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
 	// const builder = imageUrlBuilder(sanityClient);

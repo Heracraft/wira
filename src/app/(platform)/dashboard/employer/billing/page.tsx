@@ -19,7 +19,7 @@ export default async function Page() {
 		data: { user },
 	} = await client.auth.getUser();
 	if (!user) {
-		redirect("/unauthorized");
+		redirect("/errors/401");
 	}
 	const uid = user.id;
 	

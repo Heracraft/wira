@@ -1,8 +1,7 @@
 // exports browser clients and global state
 
 import { createBrowserClient } from "@supabase/ssr";
-// import { createClient as createBrowserClient } from "@supabase/supabase-js";
-import { loadStripe } from "@stripe/stripe-js";
+// import { loadStripe } from "@stripe/stripe-js";
 
 import { User } from "@/types";
 
