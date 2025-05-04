@@ -1,3 +1,10 @@
+// I dont know what i was thinking when i wrote this component
+// The parent component is a server component that fetches user profile data and displays a user menu with options
+// The profile data fetched in the parent already includes the profile completion status
+// :facepalm:
+
+// ARCHIVED 
+
 import { redirect } from "next/navigation";
 
 import { db } from "@/db/index";

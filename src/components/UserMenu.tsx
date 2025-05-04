@@ -15,9 +15,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import ProfileCompletionBadge from "./ProfileCompletionBadge";
+// import ProfileCompletionBadge from "./ProfileCompletionBadge"; //archived: extra request to fetch profile completion status for no reason
 
 import { AlertTriangle } from "lucide-react";
+
+import type { ProfileCompletion } from "@/types";
 
 export default async function UserMenu() {
 	const client = await createClient();
@@ -33,6 +35,7 @@ export default async function UserMenu() {
 		fullName: string;
 		avatarUrl: string;
 		companyName?: string;
+		isProfileComplete?: boolean;
 	} | null = null;
 
 	if (userType === "talent") {
@@ -42,6 +45,7 @@ export default async function UserMenu() {
 			profile = {
 				fullName: talentProfile.fullName as string,
 				avatarUrl: talentProfile.avatarUrl as string,
+				isProfileComplete: (talentProfile.profileCompletionStatus as ProfileCompletion).overallComplete,
 			};
 		}
 	} else if (userType === "employer") {
@@ -77,16 +81,14 @@ export default async function UserMenu() {
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem asChild>
-							<Link href={`/dashboard`}>
-							Profile
-							{userType === "talent" && (
-								<Suspense fallback={<Skeleton className="h-4 w-20" />}>
-									<ProfileCompletionBadge />
-								</Suspense>
-							)}
+							{/* If their profile is complete, they can view it as an employer would otherwise they are taken to the dashboard */}
+							{/* If you don't like this behaviour, simply remove this DropdownItem */}
+							<Link href={profile.isProfileComplete ? `/profile/${user.id}` : `/dashboard`}>
+								Profile
+								{userType === "talent" && !profile.isProfileComplete && <span className="ml-auto h-fit rounded bg-yellow-100 px-2 text-[12px] font-semibold text-yellow-800">incomplete</span>}
 							</Link>
 						</DropdownMenuItem>
-						<DropdownMenuItem>	
+						<DropdownMenuItem>
 							<Link href={`/dashboard/${userType}/settings`}>Settings</Link>
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />

@@ -35,7 +35,7 @@ async function incrementEngagementCount(uid: string) {
 
 	// Middleware baby!.
 	// The middleware will check the plan and redirect the user if they have reached their limit.
-	// So we can just increment the count here and let the middleware handle the rest.
+	// So we can just increment the count here because the middleware has already done the heavylifting.
 
 	// Middleware: access control, this RSC page: increment count (this function)
 
@@ -45,9 +45,9 @@ async function incrementEngagementCount(uid: string) {
 	// When the trial ends, it will be a new month and the count will reset. 🤞
 
 	// Now that I think about it, there might be an edge case for this
-	// Even with a "30-day trial", someone signing up on February 1st in a non-leap year would see their trial end on March 3rd, 
+	// Even with a "30-day trial", someone signing up on February 1st in a non-leap year would see their trial end on March 3rd,
 	// but if they sign up on January 1st, it would end on January 31st (same month).
-	// Immediate cancellations: If a user cancels their trial shortly after starting it, 
+	// Immediate cancellations: If a user cancels their trial shortly after starting it,
 	// the trial may end in the same month it began.
 	// I leave this to you to figure out. 😅
 }
@@ -64,7 +64,11 @@ export default async function Page({ params }: { params: Promise<{ uid: string }
 		redirect("/errors/401");
 	}
 
-	await incrementEngagementCount(user.id);
+	if (user.user_metadata.userType !== "talent") {
+		// Record engagement if the user is not a talent
+		// Talents can view their own profile so we don't need to record engagement
+		await incrementEngagementCount(user.id);
+	}
 
 	const profile = (
 		await db.execute(
@@ -277,11 +281,14 @@ GROUP BY u."userId", tp."profileId";`,
 					<p className="text-muted-foreground">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
 				</div>
 			</div> */}
-			<div className="flex flex-1">
-				<Suspense fallback={<Skeleton className="h-10 w-40" />}>
-					<AddToWaitlistRSCwrapper employerUid={user.id} talentId={profile.profileId} />
-				</Suspense>
-			</div>
+			{user.user_metadata.userType === "employer" && (
+				// Talents viewing their own profile don't need to see this
+				<div className="flex flex-1">
+					<Suspense fallback={<Skeleton className="h-10 w-40" />}>
+						<AddToWaitlistRSCwrapper employerUid={user.id} talentId={profile.profileId} />
+					</Suspense>
+				</div>
+			)}
 		</div>
 	);
 }
