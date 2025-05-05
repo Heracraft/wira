@@ -67,6 +67,8 @@ export async function updateSession(request: NextRequest) {
 	if (request.nextUrl.pathname === "/") {
 		const url = request.nextUrl.clone();
 		if (!url.searchParams.get("type") && user?.user_metadata.userType) {
+			// The user is going to the home page and is logged in 
+			// but the `type` query param --that dictates which landing page to show-- is not set in the URL, so set it.
 			url.searchParams.set("type", user?.user_metadata.userType);
 			supabaseResponse = NextResponse.rewrite(url);
 		}

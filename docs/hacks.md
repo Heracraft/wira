@@ -5,6 +5,8 @@ Hacky implementations/solutions in the codebase that might not make the most sen
 ### Entries
 
 1. **Revalidating paths from the client**: `revalidatePath` from '`next/cache`' doesn't seem to be working when called from the client. I get this error: `Error: Invariant: static generation store missing in revalidatePath /`. But works perfectly when called from the server (server action/server component). The only time I seem to want to do this -- call revalidatePath from the client -- is when I am doing auth stuff. So i wrote a dummy server action that just calls revalidatePath from the server. Works for now. I might revisit this later. the server function is `revalidatePathFromClient` in `server.ts`.
+   
+   EDIT: I was being stupid. revalidatePath isn't designed to be called from the client. 
 
 2. **Using tsvector, postgres triggers and GIN indexes**: Currently unsupported by drizzle-orm. The solution to the first part was pretty easy. I made a custom type in drizzle.
 
@@ -30,4 +32,4 @@ On top of it all. The generated migration file ("when the tsvector column is add
 
 Solution from [https://github.com/orgs/supabase/discussions/21110#discussioncomment-11020419](https://github.com/orgs/supabase/discussions/21110#discussioncomment-11020419)
 
-4. **Using kv in middleware**: ioredis does not work in middleware. [link to issue](https://github.com/vercel/next.js/issues/73424#issuecomment-2520244687). We use redis (a kv db) to store subscription and usage data. So we need to use kv in middleware for acess control. I considered pollyfilling `process.version` which is missing in the edge runtime using an env variable. But that would be a hacky solution. So I decided to use the `@upstash/redis` client which is compatible with the edge runtime. The only downside is that it does not support all the features of ioredis and it is slower. But it works for our use case.
+4. **Using kv in middleware**: ioredis does not work in middleware. [link to issue](https://github.com/vercel/next.js/issues/73424#issuecomment-2520244687). We use redis (a kv db) to store subscription and track engagement. So we need to use kv in middleware for access control. I considered pollyfilling `process.version` which is missing in the edge runtime using an env variable. But that would be a hacky solution. So I decided to use the `@upstash/redis` client which is compatible with the edge runtime. The only downside is that it does not support all the features of redis and it is slower. But it works for our use case.
