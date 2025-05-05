@@ -1,11 +1,7 @@
-import { redirect } from "next/navigation";
-import { Suspense } from "react";
-
 import { createKv, stripeAdmin as stripe, createClient } from "@/lib/store.server";
 import { isDev } from "@/lib/utils.server";
 
 import { PricingCard } from "./PricingCard";
-import { Skeleton } from "@/components/ui/skeleton";
 
 import { plans } from "@/lib/shared";
 

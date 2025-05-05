@@ -1,3 +1,6 @@
+// replaced by /errors/401 but will be kept for now.
+// Just in case.
+
 import { Button } from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";
