@@ -24,7 +24,7 @@ So components only used by a specific route, can be colocated in the same folder
 
 Lets take two routes as an example. `src/app/(platform)/pricing` and `src/app/(platform)/profile/[uid]`. Pricing uses a component called `PricingSection` from `@/components/PricingSection`. Why isn't the component collocated? because it is used across multiple routes: `/pricing`, `/onboarding` and `/limit-reached`. Collocating it with /pricing wouldn't make sense.
 
-`src/app/(platform)/profile/[uid]` on the other hand includes the page itself (`page.tsx`) and `AddToWaitlist.tsx` which the route uses. The component isn't used else where therefore is collocated in the same page as the route definition. I hope this explains it.
+`src/app/(platform)/profile/[uid]` on the other hand includes the page itself (`page.tsx`) and `AddToWaitlist.tsx` which the route uses. The component isn't used else where therefore is collocated in the same folder as the route definition. I hope this explains it.
 
 # Route Groups
 Whats the problem and what are route groups?.
