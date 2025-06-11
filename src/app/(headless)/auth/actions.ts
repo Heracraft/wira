@@ -8,6 +8,9 @@ import { createClient } from "@/lib/store.server";
 // FUTURE: Integrate zod for validation
 
 export async function login(credentials: { email: string; password: string }) {
+	// Not used anymore. Logging the user right in the browser (client) seemed to be a better option.
+	// Mainly because it triggered onAuthStateChanged more relibly and it avoids an etra fetch step
+	// that seemed pointless 
 	const { email, password } = credentials;
 
 	const supabase = await createClient();

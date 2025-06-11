@@ -1,4 +1,16 @@
-### Documentation for Maintainers
+This is a [Next.js](https://nextjs.org) project built ontop of Supabase and Vercel.
+
+### Getting Started
+1. Populate .env with the necessary .env variables. You can duplicate .env.example to see whats up.
+2. ...npm stuff
+
+_If you are starting from a clean supabse project. Proceed with the following_
+
+3. Delete previous migration files (`/supabase/migrations`) and generate a new migration and run it against the database to create the necessary tables.
+4. Create 1 public storage bucket named `static`. It should give authed users WRITE access to `avatars` and `resumes` folders
+5. Sync the auth config as outlined in [auth config.md](/docs/auth%20config.md)
+
+### How certain things work (Maintainer docs)
 
 + [Hacks](/docs/hacks.md)
     A collection of hacky implementations in the codebase. The writing goes over the problem, the solution, and the reasoning behind the solution.
@@ -7,27 +19,3 @@
 
 + [ ] TODO: document infra
     - redis + supabse
-
----
-
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

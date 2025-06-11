@@ -18,7 +18,7 @@ const tsvector = customType<{ data: string }>({
 });
 ```
 
-The other 2 not so much so. Since drizzle does not support either natively, I had to write the sql code for both then add it to a migration file. This means if the migrations were to be lost, One would have to manually add the triggers and indexes again. I left them as a comment in the schema file. The migration file is: `/supabase/migrations/0014_elite_wolfpack.sql`
+The other 2 not so much so. Since drizzle does not support either natively, I had to write the sql code for both then add it to a migration file. This means if the migrations were to be lost, One would have to manually add the triggers and indexes again. I left them as a comment in the schema file. The migration file is: [/supabase/migrations/0014_elite_wolfpack.sql](/supabase/migrations/0014_elite_wolfpack.sql)
 
 On top of it all. The generated migration file ("when the tsvector column is added") always generates with quotes around `tsvector` ("tsvector"). This is not valid sql. So I had to manually remove the quotes from the migration file (`supabase/migrations/0013_superb_agent_zero.sql`). Just a heads up for anyone who might run into this issue.
 

@@ -1,3 +1,5 @@
+import "server-only"
+
 import { customType, pgTable, serial, varchar, text, date, integer, jsonb } from "drizzle-orm/pg-core";
 
 // const tsvector = customType<{ data: string }>({

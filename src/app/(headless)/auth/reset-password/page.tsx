@@ -1,15 +1,6 @@
 "use client";
-import { redirect } from "next/navigation";
-// import { useRouter } from "next/navigation";
-// import { revalidatePath } from "next/cache";
-
-import Link from "next/link";
 
 import { useState } from "react";
-import { useForm, SubmitHandler, set } from "react-hook-form";
-
-import SubmitButton from "@/components/submitButton";
-import PasswordInput from "@/components/auth/PasswordInput";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,7 +9,6 @@ import { Label } from "@/components/ui/label";
 
 import { createClient } from "@/lib/store";
 
-import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 
 export default function page() {

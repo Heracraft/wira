@@ -3,6 +3,7 @@ First of many documents to come. This document will be about the components and 
 ---
 
 ### File structure
+
 + /src/lib
 	+ store(.server).ts:
 		`store.ts` and `store.server.ts` export global state and clients. With `.server.ts` including server only clients, stuff we don't want to leak to the client. An example of the clients exported are the supabase clients for the server and the client.
@@ -13,6 +14,10 @@ First of many documents to come. This document will be about the components and 
 
 + /supabase/migrations:
 	Migrations for postgres db hosted on supabase
+
+
++ /src/app/*/[some page]/actions.ts
+	Stores server actions for that specific page. Take `src/app/(headless)/auth/actions.ts`, it contains server actions for /auth such as `signUp()`. Writing backend logic as server actions saves us tremendous time that would have been spent creating individual api routes and making sure the URLs are called correctly. Additionally they are fully typesafe because as long as typescript is concerned, you're just calling a function. This allows us for seamless end to end type safety in our backend logic. Lastly, we can collocate them!!!!!. This adds up to the organizational benefits of server actions. Since all you need is a .ts|.js file with `"use server"`, you are free to organize them however you want. That's why each actions.ts is located under the page that calles the defined server actions.
 
 + /archive:
 	Implementations of features that are not used in the current version of the application but may be useful for future reference. This can include old routes, components, or logic that has been deprecated but not deleted.
@@ -26,7 +31,7 @@ Lets take two routes as an example. `src/app/(platform)/pricing` and `src/app/(p
 
 `src/app/(platform)/profile/[uid]` on the other hand includes the page itself (`page.tsx`) and `AddToWaitlist.tsx` which the route uses. The component isn't used else where therefore is collocated in the same folder as the route definition. I hope this explains it.
 
-# Route Groups
+### Route Groups
 Whats the problem and what are route groups?.
 
 The issue is not all pages can share the same root layout. So we need to separate them. *A layout is UI that is shared between multiple pages. On navigation, layouts preserve state, remain interactive, and do not rerender*.  The layout for the marketing sections of the app might contain a header, auth and a footer while the main app will contain that except a footer and it might add things like a toaster and etc. Other parts of the platform like error and auth pages do not have a header nor a footer. You can Imagine handling all these conditions in one root layout will quickly get messy. So we'll keep them separate using route groups.
