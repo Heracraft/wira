@@ -49,8 +49,6 @@ export function createKv() {
 	return new Redis({
 		url: process.env.REDIS_HOST!,
 		token: process.env.REDIS_TOKEN!,
-		// REDIS_CONNECTION_URL="https://just-killdeer-50042.upstash.io"
-		// REDIS_TOKEN="AcN6AAIjcDEwN2IyZTUyNDNhYjk0YmZmYTIzOTMzNGFjNmVlZTY0ZHAxMA"
 	});
 }
 
