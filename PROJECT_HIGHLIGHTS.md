@@ -35,7 +35,7 @@ This project showcases strong full-stack development skills, modern web technolo
 
 #### 2. **Advanced Database Design**
 **Schema Complexity**: 7 interconnected tables with referential integrity
-```
+```text
 users (auth layer)
 ├── talentProfiles (1:1)
 │   ├── educationEntries (1:many)
@@ -53,13 +53,11 @@ users (auth layer)
 - JSON columns for structured metadata storage
 
 #### 3. **Full-Text Search Implementation**
-```typescript
-// Example from search functionality
+**Key Features**:
 - tsvector column auto-updated via database triggers
 - Multi-field search (name, skills, location, education)
 - Filter combinations (skills, industry, work preference)
 - Ranked results by relevance and assessment scores
-```
 
 #### 4. **Subscription & Payment Infrastructure**
 **Stripe Integration Features**:
@@ -71,11 +69,8 @@ users (auth layer)
 - ✅ Checkout session management with success/failure flows
 
 **Business Logic**:
-```typescript
-// Subscription limits enforcement
-Essential Plan: 10 talent engagements/month
-Premium Plan: 50 talent engagements/month
-```
+- Essential Plan: 10 talent engagements/month
+- Premium Plan: 50 talent engagements/month
 
 #### 5. **Assessment & Scoring System**
 - Multi-question skill assessment (20-30 questions)
