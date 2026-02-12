@@ -1,4 +1,8 @@
-This is a [Next.js](https://nextjs.org) project built ontop of Supabase and Vercel.
+# Wira - Talent Marketplace Platform
+
+This is a [Next.js](https://nextjs.org) project built on top of Supabase and Vercel. Wira is a B2B SaaS talent marketplace that connects job seekers with employers through sophisticated search, profile management, and subscription-based engagement.
+
+> 📋 **Looking to showcase this project?** Check out [PROJECT_HIGHLIGHTS.md](./PROJECT_HIGHLIGHTS.md) for a comprehensive technical overview and resume guidance.
 
 ### Getting Started
 1. Populate .env with the necessary .env variables. You can duplicate .env.example to see whats up.
