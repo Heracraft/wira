@@ -36,6 +36,7 @@ This project showcases strong full-stack development skills, modern web technolo
 #### 2. **Advanced Database Design**
 **Schema Complexity**: 7 interconnected tables with referential integrity
 ```text
+# Database relationships (1:1 = one-to-one, 1:many = one-to-many)
 users (auth layer)
 ├── talentProfiles (1:1)
 │   ├── educationEntries (1:many)
